@@ -5,6 +5,7 @@ namespace Drupal\slick\Entity;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
+use Drupal\slick\SlickDefault;
 
 /**
  * Defines the Slick configuration entity.
@@ -340,45 +341,20 @@ class Slick extends ConfigEntityBase implements SlickInterface {
    *
    * @return array
    *   The default settings.
+   *
+   * @deprecated to be removed for SlickDefault::htmlSettings()
    */
   public static function htmlSettings() {
-    return [
-      'cache'             => 0,
-      'current_view_mode' => '',
-      'display'           => 'main',
-      'grid'              => 0,
-      'id'                => '',
-      'nav'               => FALSE,
-      'navpos'            => FALSE,
-      'media_switch'      => '',
-      'optionset'         => 'default',
-      'ratio'             => '',
-      'skin'              => '',
-      'unslick'           => FALSE,
-      'vanilla'           => FALSE,
-      'vertical'          => FALSE,
-      'vertical_tn'       => FALSE,
-      'view_name'         => '',
-    ];
+    return SlickDefault::htmlSettings();
   }
 
   /**
    * Defines JS options required by theme_slick(), used with optimized option.
+   *
+   * @deprecated to be removed for SlickDefault::htmlSettings()
    */
   public static function jsSettings() {
-    return [
-      'asNavFor'        => '',
-      'downArrowTarget' => '',
-      'downArrowOffset' => '',
-      'lazyLoad'        => 'ondemand',
-      'prevArrow'       => '<button type="button" data-role="none" class="slick-prev" aria-label="Previous" tabindex="0">Previous</button>',
-      'nextArrow'       => '<button type="button" data-role="none" class="slick-next" aria-label="Next" tabindex="0">Next</button>',
-      'rows'            => 1,
-      'slidesPerRow'    => 1,
-      'slide'           => '',
-      'slidesToShow'    => 1,
-      'vertical'        => FALSE,
-    ];
+    return SlickDefault::jsSettings();
   }
 
 }

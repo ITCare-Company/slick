@@ -4,6 +4,7 @@ namespace Drupal\Tests\slick\Kernel;
 
 use Drupal\Tests\blazy\Kernel\BlazyKernelTestBase;
 use Drupal\Tests\slick\Traits\SlickUnitTestTrait;
+use Drupal\slick\SlickDefault;
 use Drupal\slick\Entity\Slick;
 use Drupal\slick_ui\Form\SlickForm;
 
@@ -141,7 +142,7 @@ class SlickManagerTest extends BlazyKernelTestBase {
    */
   public function testBuild($items, array $settings, array $options, $expected) {
     $manager = $this->slickManager;
-    $defaults = $this->getFormatterSettings() + Slick::htmlSettings();
+    $defaults = $this->getFormatterSettings() + SlickDefault::htmlSettings();
     $settings = array_merge($defaults, $settings);
 
     $settings['optionset'] = 'test';

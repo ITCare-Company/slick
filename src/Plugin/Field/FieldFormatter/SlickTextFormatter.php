@@ -60,7 +60,7 @@ class SlickTextFormatter extends FormatterBase implements ContainerFactoryPlugin
    * {@inheritdoc}
    */
   public static function defaultSettings() {
-    return SlickDefault::baseSettings();
+    return SlickDefault::baseSettings() + SlickDefault::gridSettings();
   }
 
   /**

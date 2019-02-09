@@ -8,4 +8,4 @@ dependencies:
   - blazy:blazy_test (>= 2.x)
   - slick:slick (>= 2.x)
   # @todo remove no longer supported VEM.
-  - video_embed_field/video_embed_media
+  - video_embed_field:video_embed_media

@@ -78,13 +78,7 @@ function slick_library_info_alter(&$libraries, $extension) {
       $libraries['slick.css']['css']['theme'] = ['/' . $library_path . '/slick/slick-theme.css' => []];
     }
 
-    $library_easing = libraries_get_path('easing') ?: libraries_get_path('jquery.easing');
-    if ($library_easing) {
-      $easing_path = $library_easing . '/jquery.easing.min.js';
-      // Composer via bower-asset puts the library within `js` directory.
-      if (!is_file($easing_path)) {
-        $easing_path = $library_path . '/js/jquery.easing.min.js';
-      }
+    if ($easing_path = \Drupal::service('slick.manager')->getEasingPath()) {
       $libraries['slick.easing']['js'] = ['/' . $easing_path => ['weight' => -4]];
     }
 

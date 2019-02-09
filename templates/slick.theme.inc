@@ -7,6 +7,7 @@
 
 use Drupal\Core\Template\Attribute;
 use Drupal\Component\Serialization\Json;
+use Drupal\slick\SlickDefault;
 use Drupal\slick\Entity\Slick;
 
 /**
@@ -14,7 +15,7 @@ use Drupal\slick\Entity\Slick;
  */
 function template_preprocess_slick(&$variables) {
   $element   = $variables['element'];
-  $defaults  = Slick::htmlSettings();
+  $defaults  = SlickDefault::htmlSettings();
   $settings  = isset($element['#settings']) ? array_merge($defaults, $element['#settings']) : $defaults;
   $customs   = isset($element['#options']) ? $element['#options'] : [];
   $optionset = isset($element['#optionset']) ? $element['#optionset'] : Slick::load($settings['optionset']);
@@ -39,7 +40,7 @@ function template_preprocess_slick(&$variables) {
   $settings['count']   = isset($settings['count']) ? $settings['count'] : count($element['#items']);
   $settings['unslick'] = $settings['unslick'] || $settings['count'] == 1;
 
-  foreach (Slick::jsSettings() as $key => $default) {
+  foreach (SlickDefault::jsSettings() as $key => $default) {
     $settings[$key] = isset($js[$key]) ? $js[$key] : $default;
   }
 
@@ -82,8 +83,8 @@ function template_preprocess_slick(&$variables) {
     }
 
     // Add the configuration as JSON object into the slick container.
-    $variables['js'] = isset($variables['js']) ? array_merge($js, $variables['js']) : $js;
-    if ($json = $optionset->removeDefaultValues($variables['js'])) {
+    $js = isset($variables['js']) ? array_merge($js, $variables['js']) : $js;
+    if ($json = $optionset->removeDefaultValues($js)) {
       $content_attributes->setAttribute('data-slick', Json::encode($json));
     }
   }
