@@ -20,6 +20,7 @@ class SlickManager extends BlazyManagerBase implements BlazyManagerInterface, Sl
    */
   private static $skins = [
     'browser',
+    'lightbox',
     'overlay',
     'main',
     'thumbnail',
@@ -97,7 +98,7 @@ class SlickManager extends BlazyManagerBase implements BlazyManagerInterface, Sl
     $libraries['slick.css'] = [
       'dependencies' => ['slick/slick'],
       'css' => [
-        'theme' => ['/libraries/slick/slick/slick-theme.css' => []],
+        'theme' => ['/libraries/slick/slick/slick-theme.css' => ['weight' => -2]],
       ],
     ];
 

@@ -75,7 +75,7 @@ function slick_library_info_alter(&$libraries, $extension) {
     if ($library_path) {
       $libraries['slick']['js'] = ['/' . $library_path . '/slick/slick.min.js' => ['weight' => -3]];
       $libraries['slick']['css']['base'] = ['/' . $library_path . '/slick/slick.css' => []];
-      $libraries['slick.css']['css']['theme'] = ['/' . $library_path . '/slick/slick-theme.css' => []];
+      $libraries['slick.css']['css']['theme'] = ['/' . $library_path . '/slick/slick-theme.css' => ['weight' => -2]];
     }
 
     if ($easing_path = \Drupal::service('slick.manager')->getEasingPath()) {
