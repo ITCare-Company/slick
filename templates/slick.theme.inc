@@ -100,7 +100,7 @@ function template_preprocess_slick(&$variables) {
     $settings['current_item'] = $display;
     $settings = isset($item['settings']) ? array_merge($settings, $item['settings']) : $settings;
     $item_attributes = isset($item['attributes']) ? $item['attributes'] : [];
-    unset($item['settings'], $item['attributes']);
+    unset($item['settings'], $item['attributes'], $item['item']);
 
     $theme = $settings['vanilla'] ? 'vanilla' : ($display == 'thumbnail' ? 'thumbnail' : 'slide');
 
@@ -202,12 +202,9 @@ function template_preprocess_slick_grid(&$variables) {
   foreach ($variables['element']['#items'] as $delta => $item) {
     $settings = isset($item['settings']) ? array_merge($settings, $item['settings']) : $settings;
     $settings['current_item'] = 'grid';
-    unset($item['settings']);
 
-    $item_attributes = [];
-    if (!empty($item['#attributes'])) {
-      $item_attributes = $item['#attributes'];
-    }
+    $item_attributes = empty($item['attributes']) ? [] : $item['attributes'];
+    unset($item['settings'], $item['attributes']);
 
     $slide['content'] = [
       '#theme'    => empty($settings['vanilla']) ? 'slick_slide' : 'slick_vanilla',

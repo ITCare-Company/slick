@@ -381,7 +381,7 @@ class SlickManager extends BlazyManagerBase implements BlazyManagerInterface, Sl
     $id       = $settings['id'];
     $thumb_id = $id . '-thumbnail';
     $options  = $build['options'];
-    $switch   = isset($settings['media_switch']) ? $settings['media_switch'] : '';
+    $switch   = $settings['media_switch'];
     $thumbs   = isset($build['thumb']) ? $build['thumb'] : [];
 
     // Prevents unused thumb going through the main display.
@@ -407,8 +407,8 @@ class SlickManager extends BlazyManagerBase implements BlazyManagerInterface, Sl
 
     $settings['count']    = empty($settings['count']) ? count($build['items']) : $settings['count'];
     $settings['id']       = $id;
-    $settings['nav']      = isset($settings['nav']) ? $settings['nav'] : (!empty($settings['optionset_thumbnail']) && isset($build['items'][1]));
-    $settings['navpos']   = !empty($settings['nav']) && !empty($settings['thumbnail_position']);
+    $settings['nav']      = $settings['nav'] ?: (!empty($settings['optionset_thumbnail']) && isset($build['items'][1]));
+    $settings['navpos']   = $settings['nav'] && !empty($settings['thumbnail_position']);
     $settings['vertical'] = $build['optionset']->getSetting('vertical');
     $mousewheel           = $build['optionset']->getSetting('mouseWheel');
 
