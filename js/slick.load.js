@@ -158,9 +158,9 @@
       t.children().sort(function () {
         return 0.5 - Math.random();
       })
-      .each(function () {
-        t.append(this);
-      });
+        .each(function () {
+          t.append(this);
+        });
     }
 
     /**
@@ -168,9 +168,6 @@
      *
      * @param {Object} slick
      *   The slick instance object.
-     *
-     * @return {String}
-     *   The visibility of slick arrows controlled by CSS class visually-hidden.
      */
     function setPosition(slick) {
       // Use the options that applies for the current breakpoint and not the
