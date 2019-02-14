@@ -125,7 +125,6 @@ class SlickManager extends BlazyManagerBase implements BlazyManagerInterface, Sl
    */
   public function getEasingPath() {
     if (!isset($this->easingPath)) {
-      $this->easingPath = FALSE;
       if (function_exists('libraries_get_path')) {
         $library_easing = libraries_get_path('easing') ?: libraries_get_path('jquery.easing');
         if ($library_easing) {
@@ -134,9 +133,12 @@ class SlickManager extends BlazyManagerBase implements BlazyManagerInterface, Sl
           if (!is_file($easing_path)) {
             $easing_path = $library_easing . '/js/jquery.easing.min.js';
           }
-          $this->easingPath = is_file($easing_path) ? $easing_path : FALSE;
         }
       }
+      else {
+        $easing_path = DRUPAL_ROOT . '/libraries/easing/jquery.easing.min.js';
+      }
+      $this->easingPath = isset($easing_path) && is_file($easing_path) ? $easing_path : FALSE;
     }
     return $this->easingPath;
   }
