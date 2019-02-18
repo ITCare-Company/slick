@@ -23,6 +23,8 @@ function template_preprocess_slick(&$variables) {
 
   // Prepare attributes.
   $attributes = &$variables['attributes'];
+  $custom_classes = empty($attributes['class']) ? [] : $attributes['class'];
+  $attributes['class'] = array_merge(['slick'], $custom_classes);
   $content_attributes = new Attribute();
   $display = $variables['display'] = $settings['display'];
 
@@ -30,10 +32,9 @@ function template_preprocess_slick(&$variables) {
   $attributes['id'] = $display == 'thumbnail' ? $id . '-thumbnail' : $id;
 
   // Sniffs for Views to allow block__no_wrapper, views__no_wrapper, etc.
-  // @todo: Use $attributes if TWIG class ordering puts $attributes to the last.
   if ($settings['view_name'] && $settings['current_view_mode']) {
-    $settings['attributes']['class'][] = str_replace('_', '-', 'slick--view--' . $settings['view_name']);
-    $settings['attributes']['class'][] = str_replace('_', '-', 'slick--view--' . $settings['view_name'] . '--' . $settings['current_view_mode']);
+    $attributes['class'][] = 'slick--view--' . str_replace('_', '-', $settings['view_name']);
+    $attributes['class'][] = 'slick--view--' . str_replace('_', '-', $settings['view_name'] . '--' . $settings['current_view_mode']);
   }
 
   // @see SlickManager::buildGrid(), and this should make sense.

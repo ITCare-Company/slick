@@ -239,7 +239,10 @@ class Slick extends ConfigEntityBase implements SlickInterface {
     $defaults = self::defaultSettings();
 
     // Remove wasted dependent options if disabled, empty or not.
-    $this->removeWastedDependentOptions($js);
+    if (!$this->optimized) {
+      $this->removeWastedDependentOptions($js);
+    }
+
     $config = array_diff_assoc($js, $defaults);
 
     // Remove empty lazyLoad, or left to default ondemand, to avoid JS error.
@@ -272,7 +275,9 @@ class Slick extends ConfigEntityBase implements SlickInterface {
         }
         else {
           // Remove wasted dependent options if disabled, empty or not.
-          $this->removeWastedDependentOptions($responsives[$key]['settings']);
+          if (!$this->optimized) {
+            $this->removeWastedDependentOptions($responsives[$key]['settings']);
+          }
           $cleaned[$key]['settings'] = array_diff_assoc($responsives[$key]['settings'], $defaults);
         }
       }

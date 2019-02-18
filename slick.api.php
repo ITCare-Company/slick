@@ -571,10 +571,18 @@ function hook_slick_optionset_alter(Slick &$slick, array $settings) {
 function hook_slick_settings_alter(array &$build, $items) {
   $settings = &$build['settings'];
 
-  // Change skin if meeting a particular criteria.
   // See blazy_blazy_settings_alter() at blazy.module for existing samples.
-  if ($settings['optionset'] == 'x_slick_for') {
-    $settings['skin'] = $settings['entity_id'] == 54 ? 'fullwidth' : $settings['skin'];
+  // First check the $settings array. Slick Views may have different array.
+  if (isset($settings['entity_id'])) {
+    // Change skin if meeting a particular criteria.
+    if ($settings['optionset'] == 'x_slick_for') {
+      $settings['skin'] = $settings['entity_id'] == 54 ? 'fullwidth' : $settings['skin'];
+    }
+
+    // Swap optionset at particular pages.
+    if (in_array($settings['entity_id'], [54, 64, 74])) {
+      $settings['optionset'] == 'my_slick_pages';
+    }
   }
 }
 

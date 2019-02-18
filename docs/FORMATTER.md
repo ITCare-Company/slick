@@ -1,4 +1,4 @@
-ABOUT
+# SLICK FORMATTERS
 
 Adds a field display formatter to allow you to display field content using
 Slick carousel. The module doesn't require Field UI to be enabled by default
@@ -6,22 +6,19 @@ Slick carousel. The module doesn't require Field UI to be enabled by default
 to use to setup your display settings.
 
 
-SUPPORTED FIELDS
-All is applicable only to multi-value fields.
-- Image
-- Text, Text long, Text with summary
-- Media Entity via slick_media contrib [1]
-- Paragraphs via slick_paragraphs contrib [2]
+## SUPPORTED FIELDS
+All is applicable only to multi-value fields. Ignored for single value.
 
-[1] http://dgo.to/slick_media
-[2] http://dgo.to/slick_paragraphs
+* Image
+* Core Media
+* Text, Text long, Text with summary
+* [Paragraphs](http://dgo.to/paragraphs)
 
 
-USAGE
-
+## USAGE
 Manage the fields on any entity (e.g.: node of type Article):
 
-"admin/structure/types/manage/article/display"
+[Article display](/admin/structure/types/manage/article/display)
 
 Select any field of type "Image", "Media Entity" or "Paragraphs" and set the
 display options to "Slick Text", "Slick Image", "Slick Media" or
@@ -41,13 +38,13 @@ Further work is required like everything else, but the ease of field composition
 is there without too much custom code, except for CSS which is normal for any
 site building.
 
-OPTIONSET
+## OPTIONSET
 To create your option sets, go to:
 
-"admin/config/media/slick"
+[Slick UI]("/admin/config/media/slick)
 
 
-SLIDE LAYOUT
+## SLIDE LAYOUT
 The slide layout option depends on at least a skin selected. No skin, just DIY.
 Core image field support several caption placements/ layout that affect the
 entire slides uniformly.
@@ -60,35 +57,37 @@ top, right, bottom, left, center, below, e.g:
 Option #1
 ---------
 
-bottom|Caption bottom
-top|Caption top
-right|Caption right
-left|Caption left
-center|Caption center
-center-top|Caption center top
-below|Caption below the slide
-
+```
+bottom|Caption bottom  
+top|Caption top  
+right|Caption right  
+left|Caption left  
+center|Caption center  
+center-top|Caption center top  
+below|Caption below the slide  
+```
 
 Option #2
 ---------
-
 If you have complex slide layout via Media Entity/ Paragraphs with overlay video
 or images within slide captions, also supported:
 
-stage-right|Caption left, stage right
-stage-left|Caption right, stage left
-stage-zebra|Stage zebra
-
+```
+stage-right|Caption left, stage right  
+stage-left|Caption right, stage left  
+stage-zebra|Stage zebra  
+```
 
 Option #3
 ---------
 
 If you choose skin Split, additional layout options supported:
 
-split-right|Caption left, stage right, split half
-split-left|Caption right, stage left, split half
-split-zebra|Split zebra
-
+```
+split-right|Caption left, stage right, split half  
+split-left|Caption right, stage left, split half  
+split-zebra|Split zebra  
+```
 
 Split means image and caption are displayed side by side.
 

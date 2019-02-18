@@ -92,7 +92,7 @@ class SlickManagerTest extends BlazyKernelTestBase {
       'thumbnail_effect' => 'hover',
       'slick_css'        => TRUE,
       'module_css'       => TRUE,
-    ] + $this->getFormatterSettings();
+    ] + $this->getFormatterSettings() + SlickDefault::extendedSettings();
 
     $attachments = $manager->attach($settings);
     $this->assertArrayHasKey('slick', $attachments['drupalSettings']);

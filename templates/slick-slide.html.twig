@@ -68,7 +68,9 @@
             <p class="slide__description">{{ item.caption.alt }}</p>
           {% endif %}
 
-          {{ item.caption.data }}
+          {% if item.caption.data %}
+            <div class="slide__description">{{ item.caption.data }}</div>
+          {% endif %}
 
           {% if item.caption.link %}
             <div class="slide__link">{{ item.caption.link }}</div>

@@ -500,3 +500,5 @@ over them, and click a dark question mark.
 See the Slick docs at:
 - http://kenwheeler.github.io/slick/
 - https://github.com/kenwheeler/slick/
+
+@todo remove for docs/** files.
