@@ -12,13 +12,6 @@ trait SlickFormatterTrait {
   /**
    * The slick field formatter manager.
    *
-   * @var \Drupal\slick\SlickFormatterInterface
-   */
-  protected $formatter;
-
-  /**
-   * The slick field formatter manager.
-   *
    * @var \Drupal\slick\SlickManagerInterface
    */
   protected $manager;
