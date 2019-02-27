@@ -17,6 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Base class for Slick media formatters with field details, and oEmbed support.
  *
  * @see Drupal\slick\Plugin\Field\FieldFormatter\SlickMediaFormatter
+ * @todo move it into SlickMediaFormatter directly if no variants are needed.
  */
 abstract class SlickMediaFormatterBase extends BlazyMediaFormatterBase implements ContainerFactoryPluginInterface {
 
@@ -59,15 +60,34 @@ abstract class SlickMediaFormatterBase extends BlazyMediaFormatterBase implement
   }
 
   /**
+   * Builds the settings.
+   */
+  public function buildSettings() {
+    $settings = parent::buildSettings();
+    $settings['blazy'] = TRUE;
+
+    return $settings;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function getScopedFormElements() {
-    $multiple = $this->fieldDefinition->getFieldStorageDefinition()->isMultiple();
+    $admin       = $this->admin();
+    $target_type = $this->getFieldSetting('target_type');
+    $views_ui    = $this->getFieldSetting('handler') == 'default';
+    $bundles     = $views_ui ? [] : $this->getFieldSetting('handler_settings')['target_bundles'];
+    $texts       = ['text', 'text_long', 'string', 'string_long', 'link'];
+    $texts       = $admin->getFieldOptions($bundles, $texts, $target_type);
+    $multiple    = $this->fieldDefinition->getFieldStorageDefinition()->isMultiple();
 
     return [
-      'namespace' => 'slick',
-      'grid_form' => $multiple,
-      'style' => $multiple,
+      'namespace'       => 'slick',
+      'grid_form'       => $multiple,
+      'style'           => $multiple,
+      'thumb_captions'  => $texts,
+      'thumb_positions' => TRUE,
+      'nav'             => TRUE,
     ] + parent::getScopedFormElements();
   }
 

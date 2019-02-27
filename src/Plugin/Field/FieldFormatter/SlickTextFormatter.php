@@ -72,8 +72,7 @@ class SlickTextFormatter extends FormatterBase implements ContainerFactoryPlugin
       return [];
     }
 
-    $settings = $this->getSettings();
-    $settings['vanilla'] = TRUE;
+    $settings = $this->buildSettings();
 
     // Build the settings.
     $build = ['settings' => $settings];
@@ -104,6 +103,16 @@ class SlickTextFormatter extends FormatterBase implements ContainerFactoryPlugin
 
     $this->admin()->buildSettingsForm($element, $definition);
     return $element;
+  }
+
+  /**
+   * Builds the settings.
+   */
+  public function buildSettings() {
+    $settings              = $this->getSettings();
+    $settings['plugin_id'] = $this->getPluginId();
+    $settings['vanilla']   = TRUE;
+    return $settings;
   }
 
   /**

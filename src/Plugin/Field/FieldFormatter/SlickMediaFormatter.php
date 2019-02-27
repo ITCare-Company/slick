@@ -44,11 +44,7 @@ class SlickMediaFormatter extends SlickMediaFormatterBase {
     }
 
     // Collects specific settings to this formatter.
-    $settings = $this->getSettings();
-
-    // Asks for Blazy to deal with iFrames, and mobile-optimized lazy loading.
-    $settings['blazy']     = TRUE;
-    $settings['plugin_id'] = $this->getPluginId();
+    $settings = $this->buildSettings();
 
     // Sets dimensions once to reduce method ::transformDimensions() calls.
     // @todo: A more flexible way to also support paragraphs at one go.

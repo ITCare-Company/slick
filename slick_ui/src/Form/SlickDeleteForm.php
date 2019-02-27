@@ -64,7 +64,7 @@ class SlickDeleteForm extends EntityConfirmFormBase {
     $this->entity->delete();
 
     $this->messenger->addMessage($this->t('The Slick optionset %label has been deleted.', ['%label' => $this->entity->label()]));
-    $this->logger('user')->notice('Deleted optionset %oid (%label)', ['%oid' => $this->entity->id(), '%label' => $this->entity->label()]);
+    $this->logger('slick')->notice('Deleted optionset %oid (%label)', ['%oid' => $this->entity->id(), '%label' => $this->entity->label()]);
 
     $form_state->setRedirectUrl($this->getCancelUrl());
   }

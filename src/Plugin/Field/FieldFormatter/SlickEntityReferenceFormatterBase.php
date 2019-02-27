@@ -89,8 +89,18 @@ abstract class SlickEntityReferenceFormatterBase extends BlazyEntityReferenceBas
    * {@inheritdoc}
    */
   public function getScopedFormElements() {
+    $admin       = $this->admin();
+    $target_type = $this->getFieldSetting('target_type');
+    $views_ui    = $this->getFieldSetting('handler') == 'default';
+    $bundles     = $views_ui ? [] : $this->getFieldSetting('handler_settings')['target_bundles'];
+    $texts       = ['text', 'text_long', 'string', 'string_long', 'link'];
+    $texts       = $admin->getFieldOptions($bundles, $texts, $target_type);
+
     return [
-      'namespace' => 'slick',
+      'namespace'       => 'slick',
+      'thumb_captions'  => $texts,
+      'thumb_positions' => TRUE,
+      'nav'             => TRUE,
     ] + parent::getScopedFormElements();
   }
 

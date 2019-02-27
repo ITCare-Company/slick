@@ -45,7 +45,7 @@ use Drupal\slick\Entity\Slick;
  *   // Caption contains: alt, data, link, overlay, title.
  *   // Each item has keys: slide, caption, settings.
  *   $items[] = [
- *     // Use $formatter->getImage($element) to have lazyLoad where $element
+ *     // Use $formatter->getBlazy($element) to have lazyLoad where $element
  *     // contains:
  *     // item: Drupal\image\Plugin\Field\FieldType\ImageItem.
  *     'slide'   => '<img src="https://drupal.org/files/One.gif" />',
@@ -258,7 +258,7 @@ use Drupal\slick\Entity\Slick;
  *     // Each item has keys: slide, caption, settings.
  *     $build['items'][] = [
  *
- *       // Use $formatter->getImage($element) to have lazyLoad where $element
+ *       // Use $formatter->getBlazy($element) to have lazyLoad where $element
  *       // contains:
  *       // item: Drupal\image\Plugin\Field\FieldType\ImageItem.
  *       'slide'   => '<img src="/path/to/image-0' . $key . '.jpg">',

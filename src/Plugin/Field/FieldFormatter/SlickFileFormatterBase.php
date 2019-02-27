@@ -103,6 +103,7 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
       $settings = $element['settings'];
 
       // Image with responsive image, lazyLoad, and lightbox supports.
+      // @todo replace with getBlazy() post Blazy RC, or last Beta.
       $element[$item_id] = $this->formatter->getImage($element);
 
       if (!empty($settings['caption'])) {

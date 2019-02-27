@@ -44,6 +44,13 @@ class SlickManager extends BlazyManagerBase implements BlazyManagerInterface, Sl
   protected $easingPath;
 
   /**
+   * The library info definition.
+   *
+   * @var array
+   */
+  protected $libraryInfoBuild;
+
+  /**
    * Returns the supported skins.
    */
   public static function getConstantSkins() {
@@ -95,29 +102,33 @@ class SlickManager extends BlazyManagerBase implements BlazyManagerInterface, Sl
    * Implements hook_library_info_build().
    */
   public function libraryInfoBuild() {
-    $libraries['slick.css'] = [
-      'dependencies' => ['slick/slick'],
-      'css' => [
-        'theme' => ['/libraries/slick/slick/slick-theme.css' => ['weight' => -2]],
-      ],
-    ];
+    if (!isset($this->libraryInfoBuild)) {
+      $libraries['slick.css'] = [
+        'dependencies' => ['slick/slick'],
+        'css' => [
+          'theme' => ['/libraries/slick/slick/slick-theme.css' => ['weight' => -2]],
+        ],
+      ];
 
-    foreach (self::getConstantSkins() as $group) {
-      if ($skins = $this->getSkinsByGroup($group)) {
-        foreach ($skins as $key => $skin) {
-          $provider = isset($skin['provider']) ? $skin['provider'] : 'slick';
-          $id = $provider . '.' . $group . '.' . $key;
+      foreach (self::getConstantSkins() as $group) {
+        if ($skins = $this->getSkinsByGroup($group)) {
+          foreach ($skins as $key => $skin) {
+            $provider = isset($skin['provider']) ? $skin['provider'] : 'slick';
+            $id = $provider . '.' . $group . '.' . $key;
 
-          foreach (['css', 'js', 'dependencies'] as $property) {
-            if (isset($skin[$property]) && is_array($skin[$property])) {
-              $libraries[$id][$property] = $skin[$property];
+            foreach (['css', 'js', 'dependencies'] as $property) {
+              if (isset($skin[$property]) && is_array($skin[$property])) {
+                $libraries[$id][$property] = $skin[$property];
+              }
             }
           }
         }
       }
+
+      $this->libraryInfoBuild = $libraries;
     }
 
-    return $libraries;
+    return $this->libraryInfoBuild;
   }
 
   /**
