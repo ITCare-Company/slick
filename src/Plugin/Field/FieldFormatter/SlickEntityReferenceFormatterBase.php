@@ -3,6 +3,7 @@
 namespace Drupal\slick\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Image\ImageFactory;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\blazy\BlazyEntity;
