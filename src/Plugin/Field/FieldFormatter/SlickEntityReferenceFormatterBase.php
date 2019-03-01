@@ -8,6 +8,8 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\blazy\BlazyEntity;
 use Drupal\blazy\Dejavu\BlazyEntityReferenceBase;
+use Drupal\blazy\Dejavu\BlazyVideoTrait;
+use Drupal\slick\SlickDefault;
 use Drupal\slick\SlickFormatterInterface;
 use Drupal\slick\SlickManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -21,6 +23,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 abstract class SlickEntityReferenceFormatterBase extends BlazyEntityReferenceBase implements ContainerFactoryPluginInterface {
 
   use SlickFormatterTrait;
+  use BlazyVideoTrait;
 
   /**
    * The logger factory.
@@ -70,7 +73,7 @@ abstract class SlickEntityReferenceFormatterBase extends BlazyEntityReferenceBas
   }
 
   /**
-   * Build thumbnail navigation such as for Slick asnavfor.
+   * {@inheritdoc}
    */
   public function buildElementThumbnail(array &$build, $element, $entity, $delta) {
     // @todo move it to Slick as too specific for Slick which has thumbnail.
@@ -84,6 +87,16 @@ abstract class SlickEntityReferenceFormatterBase extends BlazyEntityReferenceBas
 
       $build['thumb']['items'][$delta] = $element;
     }
+  }
+
+  /**
+   * Builds the settings.
+   */
+  public function buildSettings() {
+    $settings              = $this->getSettings();
+    $settings['plugin_id'] = $this->getPluginId();
+
+    return $settings;
   }
 
   /**

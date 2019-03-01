@@ -4,7 +4,6 @@ namespace Drupal\slick\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\blazy\Dejavu\BlazyVideoTrait;
 
 /**
  * Plugin implementation of the 'slick media' formatter.
@@ -21,9 +20,7 @@ use Drupal\blazy\Dejavu\BlazyVideoTrait;
  *   }
  * )
  */
-class SlickMediaFormatter extends SlickMediaFormatterBase {
-
-  use BlazyVideoTrait;
+class SlickMediaFormatter extends SlickEntityReferenceFormatterBase {
 
   /**
    * Returns the blazy manager.
@@ -63,6 +60,28 @@ class SlickMediaFormatter extends SlickMediaFormatterBase {
     $this->buildElements($build, $entities, $langcode);
 
     return $this->manager()->build($build);
+  }
+
+  /**
+   * Builds the settings.
+   */
+  public function buildSettings() {
+    $settings = parent::buildSettings();
+    $settings['blazy'] = TRUE;
+
+    return $settings;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getScopedFormElements() {
+    $multiple = $this->fieldDefinition->getFieldStorageDefinition()->isMultiple();
+
+    return [
+      'grid_form' => $multiple,
+      'style'     => $multiple,
+    ] + parent::getScopedFormElements();
   }
 
   /**

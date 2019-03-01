@@ -1,4 +1,9 @@
 
+Slick 8.x-2.0-dev, 2019-03-01
+-----------------------------
+- Updated to the latest Blazy.
+- Removed SlickMediaFormatterBase as in TODO.
+
 Slick 8.x-2.0-dev, 2019-02-12
 -----------------------------
 - Added weight to Slick library CSS to prevent it from overriding module CSS.
