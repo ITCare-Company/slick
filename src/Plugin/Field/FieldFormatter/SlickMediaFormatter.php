@@ -48,8 +48,8 @@ class SlickMediaFormatter extends SlickEntityReferenceFormatterBase {
     $entities = array_values($entities);
     if (!empty($settings['image_style']) && ($entities[0]->getEntityTypeId() == 'media' && $entities[0]->hasField('thumbnail'))) {
       $item             = $entities[0]->get('thumbnail')->first();
-      $settings['item'] = $item;
-      $settings['uri']  = $item->entity->getFileUri();
+      $settings['item'] = $settings['first_item'] = $item;
+      $settings['uri']  = $settings['first_uri'] = $item->entity->getFileUri();
     }
 
     $build = ['settings' => $settings];

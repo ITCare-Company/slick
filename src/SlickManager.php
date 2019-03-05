@@ -375,6 +375,7 @@ class SlickManager extends BlazyManagerBase implements BlazyManagerInterface, Sl
       $slick['#cache'] = $cache;
     }
 
+    $this->moduleHandler->alter('slick_build', $slick, $settings);
     return empty($build['items']) ? [] : $slick;
   }
 

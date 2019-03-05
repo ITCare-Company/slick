@@ -121,7 +121,7 @@ class SlickAdmin implements SlickAdminInterface {
   /**
    * Returns the opening form elements.
    */
-  public function openingForm(array &$form, $definition = []) {
+  public function openingForm(array &$form, &$definition = []) {
     $path         = drupal_get_path('module', 'slick');
     $is_slick_ui  = $this->manager()->getModuleHandler()->moduleExists('slick_ui');
     $route_name   = ['name' => 'slick_ui'];
