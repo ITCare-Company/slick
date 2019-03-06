@@ -47,9 +47,9 @@ class SlickMediaFormatter extends SlickEntityReferenceFormatterBase {
     // @todo: A more flexible way to also support paragraphs at one go.
     $entities = array_values($entities);
     if (!empty($settings['image_style']) && ($entities[0]->getEntityTypeId() == 'media' && $entities[0]->hasField('thumbnail'))) {
-      $item             = $entities[0]->get('thumbnail')->first();
-      $settings['item'] = $settings['first_item'] = $item;
-      $settings['uri']  = $settings['first_uri'] = $item->entity->getFileUri();
+      $item = $entities[0]->get('thumbnail')->first();
+      $settings['first_item'] = $item;
+      $settings['first_uri'] = $item->entity->getFileUri();
     }
 
     $build = ['settings' => $settings];
