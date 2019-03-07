@@ -3,8 +3,6 @@
 namespace Drupal\slick\Entity;
 
 use Drupal\Component\Utility\Html;
-use Drupal\Component\Utility\NestedArray;
-use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\slick\SlickDefault;
 
 /**
@@ -35,28 +33,7 @@ use Drupal\slick\SlickDefault;
  *   }
  * )
  */
-class Slick extends ConfigEntityBase implements SlickInterface {
-
-  /**
-   * The legacy CTools ID for the configurable optionset.
-   *
-   * @var string
-   */
-  protected $name;
-
-  /**
-   * The human-readable name for the optionset.
-   *
-   * @var string
-   */
-  protected $label;
-
-  /**
-   * The weight to re-arrange the order of slick optionsets.
-   *
-   * @var int
-   */
-  protected $weight = 0;
+class Slick extends SlickBase implements SlickInterface {
 
   /**
    * The optionset group for easy selections.
@@ -87,25 +64,11 @@ class Slick extends ConfigEntityBase implements SlickInterface {
   protected $optimized = FALSE;
 
   /**
-   * The plugin instance options.
-   *
-   * @var array
-   */
-  protected $options = [];
-
-  /**
    * The slick HTML ID.
    *
    * @var int
    */
   private static $slickId;
-
-  /**
-   * Overrides Drupal\Core\Entity\Entity::id().
-   */
-  public function id() {
-    return $this->name;
-  }
 
   /**
    * {@inheritdoc}
@@ -133,61 +96,6 @@ class Slick extends ConfigEntityBase implements SlickInterface {
    */
   public function optimized() {
     return $this->optimized;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getOptions($group = NULL, $property = NULL) {
-    if ($group) {
-      if (is_array($group)) {
-        return NestedArray::getValue($this->options, (array) $group);
-      }
-      elseif (isset($property) && isset($this->options[$group])) {
-        return isset($this->options[$group][$property]) ? $this->options[$group][$property] : NULL;
-      }
-      return $this->options[$group];
-    }
-
-    return $this->options;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getSettings() {
-    // With the Optimized options, all defaults are cleaned out, merge em.
-    return isset($this->options['settings']) ? array_merge(self::defaultSettings(), $this->options['settings']) : self::defaultSettings();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setSettings(array $settings = []) {
-    $this->options['settings'] = $settings;
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getSetting($name) {
-    return isset($this->getSettings()[$name]) ? $this->getSettings()[$name] : NULL;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setSetting($name, $value) {
-    $this->options['settings'][$name] = $value;
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function defaultSettings($group = 'settings') {
-    return self::load('default')->options[$group];
   }
 
   /**
