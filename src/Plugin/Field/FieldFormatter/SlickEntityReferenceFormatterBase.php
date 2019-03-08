@@ -8,7 +8,6 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\blazy\BlazyEntity;
 use Drupal\blazy\Dejavu\BlazyEntityReferenceBase;
-use Drupal\blazy\Dejavu\BlazyVideoTrait;
 use Drupal\slick\SlickDefault;
 use Drupal\slick\SlickFormatterInterface;
 use Drupal\slick\SlickManagerInterface;
@@ -23,7 +22,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 abstract class SlickEntityReferenceFormatterBase extends BlazyEntityReferenceBase implements ContainerFactoryPluginInterface {
 
   use SlickFormatterTrait;
-  use BlazyVideoTrait;
 
   /**
    * The logger factory.

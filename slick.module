@@ -41,14 +41,14 @@ function slick_config_schema_info_alter(array &$definitions) {
 /**
  * Implements hook_field_formatter_info_alter().
  *
- * @todo TBD; remove post or prior to release, or keep for core Media.
+ * @todo TBD; remove post or prior to release for core Media.
  */
 function slick_field_formatter_info_alter(array &$info) {
   // Supports Media Entity via VEM within VEF if available.
   if (\Drupal::moduleHandler()->moduleExists('video_embed_media')) {
     $info['slick_file'] = [
       'id'          => 'slick_file',
-      'label'       => t('Slick Image with Media (deprecated for Slick Media)'),
+      'label'       => t('Slick Image with VEF (deprecated)'),
       'description' => t('Display the images associated to VEM/ME as a simple mix of Slick image/video carousel.'),
       'class'       => 'Drupal\slick\Plugin\Field\FieldFormatter\SlickFileFormatter',
       'field_types' => ['entity_reference', 'image'],

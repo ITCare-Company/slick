@@ -1,4 +1,8 @@
 
+Slick 8.x-2.0-dev, 2019-03-08
+-----------------------------
+- Cleaned up deprecated VEF/ VEM from test files.
+
 Slick 8.x-2.0-dev, 2019-03-07
 -----------------------------
 - Made Slick and Slick UI extensible.

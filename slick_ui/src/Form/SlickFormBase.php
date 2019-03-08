@@ -4,10 +4,10 @@ namespace Drupal\slick_ui\Form;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\slick\Form\SlickAdminInterface;
-use Drupal\slick\SlickManagerInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Messenger\Messenger;
+use Drupal\slick\SlickManagerInterface;
+use Drupal\slick\Form\SlickAdminInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides base form for a slick instance configuration form.

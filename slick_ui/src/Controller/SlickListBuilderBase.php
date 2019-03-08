@@ -2,14 +2,14 @@
 
 namespace Drupal\slick_ui\Controller;
 
+use Drupal\Core\Config\Entity\DraggableListBuilder;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\Config\Entity\DraggableListBuilder;
+use Drupal\Core\Messenger\Messenger;
 use Drupal\slick\SlickManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Messenger\Messenger;
 
 /**
  * Provides a listing of Slick optionsets.

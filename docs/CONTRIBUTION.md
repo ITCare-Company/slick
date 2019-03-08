@@ -17,15 +17,16 @@ understand better your bug reports, or patches as needed:
 ### SUBMITTING ISSUES
 When submitting bug reports, please:
 
-* be kind with proper reproduction, and enough details.  
+* be kind with proper reproduction, and enough details.
 * mention library version, related-module version, if any, active theme, or
-  anything which may help us identify issue better.  
-* ensure the library is loaded, not 404.  
-* switch to stock Bartik for just in case it is your custom theme.  
-* use matching or similar branches or tags for related modules.  
-* check out dups.  
+  anything which may help us identify issue better.
+* ensure the library is loaded, not 404.
+* switch to stock (Responsive) Bartik for just in case it is your custom theme.
+* switch to default formatters, image to Image, text to Default, etc.
+* use matching or similar branches or tags for related modules.
+* check out dups at project issues.
 * file it a support request, if unsure. We'll mark a bug a bug even if you
-  file it under support requests.  
+  file it under support requests.
 
 ### SUBMITTING PATCHES
 We consider a patch as help, they consider it a sale, so thank you in advanced!

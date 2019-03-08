@@ -2,8 +2,8 @@
 
 namespace Drupal\slick_ui\Controller;
 
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\blazy\BlazyGrid;
 
 /**

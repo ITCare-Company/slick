@@ -3,8 +3,8 @@
 namespace Drupal\slick_ui\Form;
 
 use Drupal\Core\Url;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\slick\Entity\Slick;
 
 /**

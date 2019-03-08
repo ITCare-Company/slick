@@ -144,6 +144,7 @@
         return (css.match(/(\S+)loading/g) || []).join(' ');
       });
 
+      // @todo remove this for Blazy background.
       if ($bg.length) {
         $bg.css('background-image', 'url(' + $img.attr('src') + ')');
         $bg.find('> img').remove();
