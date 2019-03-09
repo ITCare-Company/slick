@@ -72,12 +72,6 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
     // Build the elements.
     $this->buildElements($build, $files);
 
-    // Supports Blazy multi-breakpoint images if provided.
-    // @todo move ::isBlazy() to #pre_render post Blazy beta1.
-    if (!empty($build['items'][0])) {
-      $this->formatter->isBlazy($build['settings'], $build['items'][0]);
-    }
-
     return $this->manager()->build($build);
   }
 
