@@ -56,7 +56,7 @@ abstract class SlickBase extends ConfigEntityBase implements SlickBaseInterface 
       elseif (isset($property) && isset($this->options[$group])) {
         return isset($this->options[$group][$property]) ? $this->options[$group][$property] : NULL;
       }
-      return $this->options[$group];
+      return isset($this->options[$group]) ? $this->options[$group] : NULL;
     }
 
     return $this->options;

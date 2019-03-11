@@ -57,6 +57,9 @@ class SlickFormatter extends BlazyFormatterManager implements SlickFormatterInte
     }
 
     $this->getModuleHandler()->alter('slick_settings', $build, $items);
+
+    // Done at top level works, prevents leaking to child for few settings.
+    unset($settings['first_item']);
   }
 
   /**
