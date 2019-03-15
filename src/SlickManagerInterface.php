@@ -2,10 +2,12 @@
 
 namespace Drupal\slick;
 
+use Drupal\blazy\BlazyManagerInterface;
+
 /**
  * Defines re-usable services and functions for slick plugins.
  */
-interface SlickManagerInterface {
+interface SlickManagerInterface extends BlazyManagerInterface {
 
   /**
    * Returns a cacheable renderable array of a single slick instance.

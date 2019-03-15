@@ -6,12 +6,11 @@ use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Cache\Cache;
 use Drupal\slick\Entity\Slick;
 use Drupal\blazy\BlazyManagerBase;
-use Drupal\blazy\BlazyManagerInterface;
 
 /**
  * Implements BlazyManagerInterface, SlickManagerInterface.
  */
-class SlickManager extends BlazyManagerBase implements BlazyManagerInterface, SlickManagerInterface {
+class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
   /**
    * The supported skins.
@@ -412,13 +411,7 @@ class SlickManager extends BlazyManagerBase implements BlazyManagerInterface, Sl
     }
 
     // Additional settings.
-    $build['optionset'] = $build['optionset'] ?: Slick::load($settings['optionset']);
-
-    // Ensures deleted optionset while being used doesn't screw up.
-    if (empty($build['optionset'])) {
-      $build['optionset'] = Slick::load('default');
-    }
-
+    $build['optionset']   = $build['optionset'] ?: Slick::loadWithFallback($settings['optionset']);
     $settings['count']    = empty($settings['count']) ? count($build['items']) : $settings['count'];
     $settings['id']       = $id;
     $settings['nav']      = $settings['nav'] ?: (!empty($settings['optionset_thumbnail']) && isset($build['items'][1]));
@@ -428,7 +421,7 @@ class SlickManager extends BlazyManagerBase implements BlazyManagerInterface, Sl
 
     if ($settings['nav']) {
       $options['asNavFor']     = "#{$thumb_id}-slider";
-      $optionset_thumbnail     = Slick::load($settings['optionset_thumbnail']);
+      $optionset_thumbnail     = Slick::loadWithFallback($settings['optionset_thumbnail']);
       $mousewheel              = $optionset_thumbnail->getSetting('mouseWheel');
       $settings['vertical_tn'] = $optionset_thumbnail->getSetting('vertical');
     }
@@ -483,6 +476,7 @@ class SlickManager extends BlazyManagerBase implements BlazyManagerInterface, Sl
 
     // Collect the slick instances.
     $element['#items'] = $slick;
+    unset($build);
     return $element;
   }
 

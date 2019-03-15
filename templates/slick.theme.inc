@@ -18,7 +18,7 @@ function template_preprocess_slick(&$variables) {
   $defaults  = SlickDefault::htmlSettings();
   $settings  = isset($element['#settings']) ? array_merge($defaults, $element['#settings']) : $defaults;
   $customs   = isset($element['#options']) ? $element['#options'] : [];
-  $optionset = isset($element['#optionset']) ? $element['#optionset'] : Slick::load($settings['optionset']);
+  $optionset = isset($element['#optionset']) ? $element['#optionset'] : Slick::loadWithFallback($settings['optionset']);
   $js        = $customs ? array_merge($optionset->getSettings(), $customs) : $optionset->getSettings();
 
   // Prepare attributes.
@@ -73,6 +73,7 @@ function template_preprocess_slick(&$variables) {
     $content_attributes->setAttribute('id', $attributes['id'] . '-slider');
 
     $variables['arrow_attributes'] = new Attribute();
+    $variables['arrow_attributes']['role'] = 'navigation';
     if ($display == 'main' && !empty($js['downArrow']) && !empty($js['downArrowTarget'])) {
       $variables['arrow_down_attributes'] = new Attribute();
     }

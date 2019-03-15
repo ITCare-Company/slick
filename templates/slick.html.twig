@@ -72,6 +72,7 @@
         {% if arrow_down_attributes is defined %}
           <button{{ arrow_down_attributes.addClass('slick-down')
             .setAttribute('type', 'button')
+            .setAttribute('data-role', 'none')
             .setAttribute('data-target', settings.downArrowTarget)
             .setAttribute('data-offset', settings.downArrowOffset) }}></button>
         {% endif %}

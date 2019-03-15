@@ -121,7 +121,10 @@ class SlickTextFormatter extends FormatterBase implements ContainerFactoryPlugin
   public function getScopedFormElements() {
     return [
       'current_view_mode' => $this->viewMode,
+      'no_image_style'    => TRUE,
       'no_layouts'        => TRUE,
+      'responsive_image'  => FALSE,
+      'style'             => TRUE,
       'plugin_id'         => $this->getPluginId(),
       'settings'          => $this->getSettings(),
     ];
