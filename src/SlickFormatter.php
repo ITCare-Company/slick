@@ -23,6 +23,22 @@ class SlickFormatter extends BlazyFormatterManager implements SlickFormatterInte
 
     // Pass basic info to parent::buildSettings().
     parent::buildSettings($build, $items);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function preBuildElements(array &$build, $items, array $entities = []) {
+    // Checks if we are syncing with Blazy post Beta2.
+    // @todo remove conditions post RC1.
+    if (method_exists(get_parent_class($this), 'preBuildElements')) {
+      parent::preBuildElements($build, $items, $entities);
+    }
+    else {
+      $this->buildSettings($build, $items);
+    }
+
+    $settings = &$build['settings'];
 
     // Slick specific stuffs.
     $build['optionset'] = Slick::loadWithFallback($settings['optionset']);
@@ -55,6 +71,19 @@ class SlickFormatter extends BlazyFormatterManager implements SlickFormatterInte
 
     // Done at top level works, prevents leaking to child for few settings.
     unset($settings['first_item']);
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @todo remove post Blazy RC1.
+   */
+  public function postBuildElements(array &$build, $items, array $entities = []) {
+
+    // Checks if we are syncing with Blazy post Beta2.
+    if (method_exists(get_parent_class($this), 'postBuildElements')) {
+      parent::postBuildElements($build, $items, $entities);
+    }
   }
 
   /**

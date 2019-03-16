@@ -42,22 +42,16 @@ class SlickMediaFormatter extends SlickEntityReferenceFormatterBase {
 
     // Collects specific settings to this formatter.
     $settings = $this->buildSettings();
-
-    // Sets dimensions once to reduce method ::transformDimensions() calls.
-    // @todo: A more flexible way to also support paragraphs at one go.
-    $entities = array_values($entities);
-    if (!empty($settings['image_style']) && ($entities[0]->getEntityTypeId() == 'media' && $entities[0]->hasField('thumbnail'))) {
-      $item = $entities[0]->get('thumbnail')->first();
-      $settings['first_item'] = $item;
-      $settings['first_uri'] = $item->entity->getFileUri();
-    }
-
     $build = ['settings' => $settings];
 
-    $this->formatter->buildSettings($build, $items);
+    // Modifies settings before building elements.
+    $this->formatter->preBuildElements($build, $items, $entities);
 
     // Build the elements.
     $this->buildElements($build, $entities, $langcode);
+
+    // Modifies settings post building elements.
+    $this->formatter->postBuildElements($build, $items, $entities);
 
     return $this->manager()->build($build);
   }

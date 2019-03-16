@@ -76,7 +76,9 @@ class SlickTextFormatter extends FormatterBase implements ContainerFactoryPlugin
 
     // Build the settings.
     $build = ['settings' => $settings];
-    $this->formatter->buildSettings($build, $items);
+
+    // Modifies settings before building elements.
+    $this->formatter->preBuildElements($build, $items);
 
     // The ProcessedText element already handles cache context & tag bubbling.
     // @see \Drupal\filter\Element\ProcessedText::preRenderText()
@@ -90,6 +92,9 @@ class SlickTextFormatter extends FormatterBase implements ContainerFactoryPlugin
       $build['items'][$key] = $element;
       unset($element);
     }
+
+    // Modifies settings post building elements.
+    $this->formatter->postBuildElements($build, $items);
 
     return $this->manager()->build($build);
   }

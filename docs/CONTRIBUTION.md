@@ -58,6 +58,7 @@ A basic knowledge of Drupal site building is required. If you get stuck:
    * install **slick_example**.
 
 If you do have bug reports, we love bugs, please:
+
    * provide steps to reproduce it, valid bugs must have consistent
      reproduction,
    * provide detailed info, a screenshot of the output and Slick form, or words

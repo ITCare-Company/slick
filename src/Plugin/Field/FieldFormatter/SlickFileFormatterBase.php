@@ -67,10 +67,14 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
     $settings['langcode'] = $langcode;
     $build = ['settings' => $settings];
 
-    $this->formatter->buildSettings($build, $items);
+    // Modifies settings before building elements.
+    $this->formatter->preBuildElements($build, $items, $files);
 
     // Build the elements.
     $this->buildElements($build, $files);
+
+    // Modifies settings post building elements.
+    $this->formatter->postBuildElements($build, $items, $files);
 
     return $this->manager()->build($build);
   }

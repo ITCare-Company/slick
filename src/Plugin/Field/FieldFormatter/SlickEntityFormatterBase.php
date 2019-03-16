@@ -91,10 +91,15 @@ abstract class SlickEntityFormatterBase extends BlazyEntityBase implements Conta
     // Asks for Blazy to deal with iFrames, and mobile-optimized lazy loading.
     $build = ['settings' => $settings];
 
-    $this->formatter->buildSettings($build, $items);
+    // Modifies settings before building elements.
+    $entities = array_values($entities);
+    $this->formatter->preBuildElements($build, $items, $entities);
 
     // Build the elements.
     $this->buildElements($build, $entities, $langcode);
+
+    // Modifies settings post building elements.
+    $this->formatter->postBuildElements($build, $items, $entities);
 
     return $this->manager()->build($build);
   }
