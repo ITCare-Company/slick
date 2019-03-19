@@ -162,6 +162,7 @@ class SlickManagerTest extends BlazyKernelTestBase {
 
     $slick['#build']['settings'] = $settings;
     $slick['#build']['items'] = $items;
+    $slick['#build']['options'] = [];
 
     $element = $manager->preRenderSlick($slick);
     $this->assertEquals($expected, !empty($element));
