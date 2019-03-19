@@ -198,12 +198,6 @@ class SlickManagerTest extends BlazyKernelTestBase {
    */
   public function providerTestSlickBuild() {
     $data[] = [
-      FALSE,
-      [],
-      [],
-      FALSE,
-    ];
-    $data[] = [
       TRUE,
       [
         'grid' => 3,
