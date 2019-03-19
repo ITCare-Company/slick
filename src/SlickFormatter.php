@@ -29,14 +29,7 @@ class SlickFormatter extends BlazyFormatterManager implements SlickFormatterInte
    * {@inheritdoc}
    */
   public function preBuildElements(array &$build, $items, array $entities = []) {
-    // Checks if we are syncing with Blazy post Beta2.
-    // @todo remove conditions post RC1.
-    if (method_exists(get_parent_class($this), 'preBuildElements')) {
-      parent::preBuildElements($build, $items, $entities);
-    }
-    else {
-      $this->buildSettings($build, $items);
-    }
+    parent::preBuildElements($build, $items, $entities);
 
     $settings = &$build['settings'];
 
@@ -68,34 +61,10 @@ class SlickFormatter extends BlazyFormatterManager implements SlickFormatterInte
     }
 
     $this->getModuleHandler()->alter('slick_settings', $build, $items);
-
-    // Done at top level works, prevents leaking to child for few settings.
-    unset($settings['first_item']);
   }
 
   /**
    * {@inheritdoc}
-   *
-   * @todo remove post Blazy RC1.
-   */
-  public function postBuildElements(array &$build, $items, array $entities = []) {
-
-    // Checks if we are syncing with Blazy post Beta2.
-    if (method_exists(get_parent_class($this), 'postBuildElements')) {
-      parent::postBuildElements($build, $items, $entities);
-    }
-  }
-
-  /**
-   * Gets the thumbnail image using theme_image_style().
-   *
-   * @param array $settings
-   *   The array containing: thumbnail_style, etc.
-   * @param object $item
-   *   The \Drupal\image\Plugin\Field\FieldType\ImageItem object.
-   *
-   * @return array
-   *   The renderable array of thumbnail image.
    */
   public function getThumbnail(array $settings = [], $item = NULL) {
     $thumbnail = [];

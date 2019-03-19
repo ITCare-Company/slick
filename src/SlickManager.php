@@ -243,10 +243,6 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $build = $element['#build'];
     unset($element['#build']);
 
-    if (empty($build['items'])) {
-      return [];
-    }
-
     $settings = $build['settings'];
 
     // Adds helper class if thumbnail on dots hover provided.
@@ -384,10 +380,6 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   public function preRenderSlickWrapper($element) {
     $build = $element['#build'];
     unset($element['#build']);
-
-    if (empty($build['items'])) {
-      return [];
-    }
 
     // One slick_theme() to serve multiple displays: main, overlay, thumbnail.
     $settings = array_merge(SlickDefault::htmlSettings(), $build['settings']);
