@@ -52,16 +52,13 @@
     settings.skin_arrows ? 'slick__arrow--' ~ settings.skin_arrows|clean_class
   ]
 %}
-
 <div{{ attributes.addClass(classes) }}>
   {% if not settings.unslick %}
     <div{{ content_attributes.addClass('slick__slider') }}>
   {% endif %}
 
   {% block slick_content %}
-    {% for item in items %}
-      {{ item }}
-    {% endfor %}
+    {{ items }}
   {% endblock %}
 
   {% if not settings.unslick %}
