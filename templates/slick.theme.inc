@@ -31,12 +31,6 @@ function template_preprocess_slick(&$variables) {
   $id = empty($settings['id']) ? Slick::getHtmlId('slick') : $settings['id'];
   $attributes['id'] = $display == 'thumbnail' ? $id . '-thumbnail' : $id;
 
-  // Sniffs for Views to allow block__no_wrapper, views__no_wrapper, etc.
-  if ($settings['view_name'] && $settings['current_view_mode']) {
-    $attributes['class'][] = 'slick--view--' . str_replace('_', '-', $settings['view_name']);
-    $attributes['class'][] = 'slick--view--' . str_replace('_', '-', $settings['view_name'] . '--' . $settings['current_view_mode']);
-  }
-
   // @see SlickManager::buildGrid(), and this should make sense.
   $settings['count']   = isset($settings['count']) ? $settings['count'] : count($element['#items']);
   $settings['unslick'] = $settings['unslick'] || $settings['count'] == 1;
@@ -46,19 +40,10 @@ function template_preprocess_slick(&$variables) {
   }
 
   // Blazy can still lazyload an unslick.
-  $settings['lazy'] = empty($settings['lazy']) ? $js['lazyLoad'] : $settings['lazy'];
-  if ($display != 'thumbnail') {
-    if ($settings['lazy'] == 'blazy' || !empty($settings['blazy'])) {
-      if ($settings['lazy'] == 'blazy') {
-        $js['lazyLoad'] = 'blazy';
-      }
-      $attributes['data-blazy'] = empty($settings['blazy_data']) ? '' : Json::encode($settings['blazy_data']);
-    }
-
-    if (!empty($settings['media_switch']) && empty($settings['grid'])) {
-      $switch = str_replace('_', '-', $settings['media_switch']);
-      $attributes['data-' . $switch . '-gallery'] = TRUE;
-    }
+  // The lazy supercedes JS lazyLoad for background, breakpoints, media, etc.
+  $settings['lazy'] = $settings['lazy'] ?: $js['lazyLoad'];
+  if ($display != 'thumbnail' && ($settings['lazy'] == 'blazy' || !empty($settings['blazy']))) {
+    $js['lazyLoad'] = 'blazy';
   }
 
   // Make slick language-direction-aware.
@@ -99,18 +84,18 @@ function template_preprocess_slick(&$variables) {
   // Process individual item.
   $variables['items'] = [];
   foreach ($element['#items'] as $delta => $item) {
-    $settings['current_item'] = $display;
-    $settings = isset($item['settings']) ? array_merge($settings, $item['settings']) : $settings;
+    $item_settings = isset($item['settings']) ? array_merge($settings, $item['settings']) : $settings;
     $item_attributes = isset($item['attributes']) ? $item['attributes'] : [];
+    $item_settings['current_item'] = $display;
+
     unset($item['settings'], $item['attributes'], $item['item']);
 
     $theme = $settings['vanilla'] ? 'vanilla' : ($display == 'thumbnail' ? 'thumbnail' : 'slide');
-
     $slide = [
       '#theme'      => 'slick_' . $theme,
       '#item'       => $item,
       '#delta'      => $delta,
-      '#settings'   => $settings,
+      '#settings'   => $item_settings,
       '#attributes' => $item_attributes,
     ];
     $variables['items'][$delta] = $slide;
@@ -162,8 +147,9 @@ function template_preprocess_slick_slide(&$variables) {
     $variables['item']['caption'][$key] = isset($variables['item']['caption'][$key]) ? $variables['item']['caption'][$key] : [];
   }
 
-  $item     = &$variables['item'];
+  $item = &$variables['item'];
   $settings = &$variables['settings'];
+  $variables['caption_attributes'] = new Attribute();
 
   // split: Split image from captions if we do have captions, and main image.
   // fullwidth: If full skins, add wrappers to hold caption and overlay.

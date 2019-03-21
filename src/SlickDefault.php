@@ -66,23 +66,20 @@ class SlickDefault extends BlazyDefault {
    */
   public static function htmlSettings() {
     return [
-      'cache'             => 0,
-      'current_view_mode' => '',
-      'display'           => 'main',
-      'grid'              => 0,
-      'id'                => '',
-      'nav'               => FALSE,
-      'navpos'            => FALSE,
-      'media_switch'      => '',
-      'optionset'         => 'default',
-      'ratio'             => '',
-      'skin'              => '',
-      'unslick'           => FALSE,
-      'vanilla'           => FALSE,
-      'vertical'          => FALSE,
-      'vertical_tn'       => FALSE,
-      'view_name'         => '',
-    ];
+      'display'       => 'main',
+      'grid'          => 0,
+      'id'            => '',
+      'lazy'          => '',
+      'namespace'     => 'slick',
+      'nav'           => FALSE,
+      'navpos'        => FALSE,
+      'thumbnail_uri' => '',
+      'unslick'       => FALSE,
+      'vanilla'       => FALSE,
+      'vertical'      => FALSE,
+      'vertical_tn'   => FALSE,
+      'view_name'     => '',
+    ] + self::imageSettings();
   }
 
   /**
@@ -101,6 +98,20 @@ class SlickDefault extends BlazyDefault {
       'slide'           => '',
       'slidesToShow'    => 1,
       'vertical'        => FALSE,
+    ];
+  }
+
+  /**
+   * Returns slick theme properties.
+   */
+  public static function themeProperties() {
+    return [
+      'attached',
+      'attributes',
+      'items',
+      'options',
+      'optionset',
+      'settings',
     ];
   }
 

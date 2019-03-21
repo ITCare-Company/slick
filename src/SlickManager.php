@@ -2,6 +2,7 @@
 
 namespace Drupal\slick;
 
+use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Cache\Cache;
 use Drupal\slick\Entity\Slick;
@@ -224,7 +225,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    * {@inheritdoc}
    */
   public function slick(array $build = []) {
-    foreach (['items', 'options', 'optionset', 'settings'] as $key) {
+    foreach (SlickDefault::themeProperties() as $key) {
       $build[$key] = isset($build[$key]) ? $build[$key] : [];
     }
 
@@ -237,6 +238,40 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   }
 
   /**
+   * Prepare attributes for the known module features, not necessarily users'.
+   */
+  public function prepareAttributes(array $settings = []) {
+    $classes = $attributes = [];
+
+    if ($settings['display'] == 'main') {
+      // Sniffs for Views to allow block__no_wrapper, views__no_wrapper, etc.
+      if ($settings['view_name'] && $settings['current_view_mode']) {
+        $classes[] = 'view--' . str_replace('_', '-', $settings['view_name']);
+        $classes[] = 'view--' . str_replace('_', '-', $settings['view_name'] . '--' . $settings['current_view_mode']);
+      }
+
+      // Blazy can still lazyload an unslick.
+      if ($settings['lazy'] == 'blazy' || !empty($settings['blazy'])) {
+        $attributes['data-blazy'] = empty($settings['blazy_data']) ? '' : Json::encode($settings['blazy_data']);
+      }
+
+      // Provide a context for lightbox, or multimedia galleries, save for grid.
+      if (!empty($settings['media_switch']) && empty($settings['grid'])) {
+        $switch = str_replace('_', '-', $settings['media_switch']);
+        $attributes['data-' . $switch . '-gallery'] = TRUE;
+      }
+    }
+
+    if ($classes) {
+      foreach ($classes as $class) {
+        $attributes['class'][] = 'slick--' . $class;
+      }
+    }
+
+    return $attributes;
+  }
+
+  /**
    * Builds the Slick instance as a structured array ready for ::renderer().
    */
   public function preRenderSlick(array $element) {
@@ -244,6 +279,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     unset($element['#build']);
 
     $settings = $build['settings'];
+    $settings += SlickDefault::htmlSettings();
 
     // Adds helper class if thumbnail on dots hover provided.
     if (!empty($settings['thumbnail_effect']) && (!empty($settings['thumbnail_style']) || !empty($settings['thumbnail']))) {
@@ -274,14 +310,16 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
       }
     }
 
+    $build['attributes'] = $this->prepareAttributes($settings);
     $build['options'] = isset($js) ? array_merge($build['options'], $js) : $build['options'];
 
     $this->moduleHandler->alter('slick_optionset', $build['optionset'], $settings);
 
-    foreach (['items', 'options', 'optionset', 'settings'] as $key) {
+    foreach (SlickDefault::themeProperties() as $key) {
       $element["#$key"] = $build[$key];
     }
 
+    unset($build);
     return $element;
   }
 
@@ -335,7 +373,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    * {@inheritdoc}
    */
   public function build(array $build = []) {
-    foreach (['items', 'options', 'optionset', 'settings'] as $key) {
+    foreach (SlickDefault::themeProperties() as $key) {
       $build[$key] = isset($build[$key]) ? $build[$key] : [];
     }
 
@@ -354,24 +392,32 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
       'items'       => [],
     ];
 
-    // Provides cache for both slick instances once.
-    if (isset($settings['cache'])) {
-      $suffixes[]        = count($build['items']);
-      $suffixes[]        = count(array_filter($settings));
-      $cache['contexts'] = ['languages'];
-      $cache['max-age']  = $settings['cache'];
-      $cache['keys']     = isset($settings['cache_metadata']['keys']) ? $settings['cache_metadata']['keys'] : [$settings['id']];
-      $cache['tags']     = Cache::buildTags('slick:' . $settings['id'], $suffixes, '.');
-
-      if (!empty($settings['cache_tags'])) {
-        $cache['tags'] = Cache::mergeTags($cache['tags'], $settings['cache_tags']);
-      }
-
-      $slick['#cache'] = $cache;
-    }
-
     $this->moduleHandler->alter('slick_build', $slick, $settings);
     return empty($build['items']) ? [] : $slick;
+  }
+
+  /**
+   * Return the cache metadata.
+   *
+   * @todo remove for BlazyManagerBase::getCacheMetadata() post RC1.
+   */
+  public function getCacheMetadata(array $build = []) {
+    $settings          = $build['settings'];
+    $max_age           = $this->configLoad('cache.page.max_age', 'system.performance');
+    $max_age           = empty($settings['cache']) ? $max_age : $settings['cache'];
+    $id                = $settings['id'];
+    $suffixes[]        = empty($settings['count']) ? count(array_filter($settings)) : $settings['count'];
+    $suffixes[]        = $max_age;
+    $cache['tags']     = Cache::buildTags($settings['namespace'] . ':' . $id, $suffixes, '.');
+    $cache['contexts'] = ['languages'];
+    $cache['max-age']  = $max_age;
+    $cache['keys']     = isset($settings['cache_metadata']['keys']) ? $settings['cache_metadata']['keys'] : [$id];
+
+    if (!empty($settings['cache_tags'])) {
+      $cache['tags'] = Cache::mergeTags($cache['tags'], $settings['cache_tags']);
+    }
+
+    return $cache;
   }
 
   /**
@@ -468,6 +514,8 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
     // Collect the slick instances.
     $element['#items'] = $slick;
+    $element['#cache'] = $this->getCacheMetadata($build);
+
     unset($build);
     return $element;
   }

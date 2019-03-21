@@ -1,6 +1,8 @@
 
 Slick 8.x-2.0-dev, 2019-03-21
 -----------------------------
+- Moved obvious module features to #pre_render to declutter preprocess.
+- Added caption_attributes for easy preprocess overrides.
 - Removed useless loop.
 
 Slick 8.x-2.0-dev, 2019-03-19
