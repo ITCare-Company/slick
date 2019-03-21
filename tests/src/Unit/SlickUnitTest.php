@@ -16,14 +16,10 @@ class SlickUnitTest extends UnitTestCase {
   /**
    * Tests for slick entity methods.
    *
-   * @covers \Drupal\slick\SlickDefault::htmlSettings
    * @covers \Drupal\slick\SlickDefault::jsSettings
    * @covers ::getDependentOptions
    */
   public function testSlickEntity() {
-    $html_settings = SlickDefault::htmlSettings();
-    $this->assertArrayHasKey('display', $html_settings);
-
     $js_settings = SlickDefault::jsSettings();
     $this->assertArrayHasKey('lazyLoad', $js_settings);
 
