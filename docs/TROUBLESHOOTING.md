@@ -24,6 +24,9 @@ reading to save you from headaches.
 
 4. Slick release is similar, or later than Blazy.
 
+5. Skins are permanently cached. Clear cache if new skins you created or
+   provided by sub-modules do not appear immediately.
+
 
 ## KNOWN ISSUES
 1. Slick admin CSS may not be compatible with private or contrib admin
