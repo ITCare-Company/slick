@@ -240,8 +240,10 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   /**
    * Prepare attributes for the known module features, not necessarily users'.
    */
-  public function prepareAttributes(array $settings = []) {
-    $classes = $attributes = [];
+  public function prepareAttributes(array $build = []) {
+    $settings = $build['settings'];
+    $attributes = isset($build['attributes']) ? $build['attributes'] : [];
+    $classes = [];
 
     if ($settings['display'] == 'main') {
       // Sniffs for Views to allow block__no_wrapper, views__no_wrapper, etc.
@@ -310,7 +312,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
       }
     }
 
-    $build['attributes'] = $this->prepareAttributes($settings);
+    $build['attributes'] = $this->prepareAttributes($build);
     $build['options'] = isset($js) ? array_merge($build['options'], $js) : $build['options'];
 
     $this->moduleHandler->alter('slick_optionset', $build['optionset'], $settings);
@@ -462,6 +464,13 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
       $optionset_thumbnail     = Slick::loadWithFallback($settings['optionset_thumbnail']);
       $mousewheel              = $optionset_thumbnail->getSetting('mouseWheel');
       $settings['vertical_tn'] = $optionset_thumbnail->getSetting('vertical');
+    }
+    else {
+      // Pass extra attributes such as those from Commerce product variations to
+      // theme_slick() since we have no asNavFor wrapper here.
+      if (isset($element['#attributes'])) {
+        $build['attributes'] = empty($build['attributes']) ? $element['#attributes'] : NestedArray::mergeDeep($build['attributes'], $element['#attributes']);
+      }
     }
 
     // Attach libraries.
