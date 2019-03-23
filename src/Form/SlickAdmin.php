@@ -124,9 +124,10 @@ class SlickAdmin implements SlickAdminInterface {
   public function openingForm(array &$form, &$definition = []) {
     $path         = drupal_get_path('module', 'slick');
     $is_slick_ui  = $this->manager()->getModuleHandler()->moduleExists('slick_ui');
+    $is_help      = $this->manager()->getModuleHandler()->moduleExists('help');
     $route_name   = ['name' => 'slick_ui'];
-    $readme       = $is_slick_ui ? Url::fromRoute('help.page', $route_name)->toString() : Url::fromUri('base:' . $path . '/docs/README.md')->toString();
-    $readme_field = $is_slick_ui ? Url::fromRoute('help.page', $route_name)->toString() : Url::fromUri('base:' . $path . '/docs/FORMATTER.md')->toString();
+    $readme       = $is_slick_ui && $is_help ? Url::fromRoute('help.page', $route_name)->toString() : Url::fromUri('base:' . $path . '/docs/README.md')->toString();
+    $readme_field = $is_slick_ui && $is_help ? Url::fromRoute('help.page', $route_name)->toString() : Url::fromUri('base:' . $path . '/docs/FORMATTER.md')->toString();
     $arrows       = $this->getSkinsByGroupOptions('arrows');
     $dots         = $this->getSkinsByGroupOptions('dots');
 

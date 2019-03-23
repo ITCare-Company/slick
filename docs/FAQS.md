@@ -130,13 +130,13 @@ broken Grid, see skin Grid above for more details.
 ## <a name="html-structure"></a>HTML STRUCTURE
 Note, non-BEM classes are added by JS.
 
-    ````
-      < div class="slick" >
-        < div class="slick__slider slick-initialized slick-slider" >
-          < div class="slick__slide" > < /div >
-        < /div >
-        < nav class="slick__arrow" > < /nav >
-      < /div >
-    ````
+````
+<div class="slick">
+  <div class="slick__slider slick-initialized slick-slider">
+    <div class="slick__slide"> </div>
+  </div>
+  <nav class="slick__arrow" > </nav>
+</div>
+````
 
 asNavFor should target slick-initialized class/ID attributes.

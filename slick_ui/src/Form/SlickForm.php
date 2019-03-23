@@ -17,11 +17,13 @@ class SlickForm extends SlickFormBase {
    */
   public function form(array $form, FormStateInterface $form_state) {
     $form      = parent::form($form, $form_state);
+    $path      = drupal_get_path('module', 'slick');
     $slick     = $this->entity;
     $options   = $slick->getOptions() ?: [];
     $tooltip   = ['class' => ['is-tooltip']];
     $route     = ['name' => 'slick_ui'];
-    $readme    = Url::fromRoute('help.page', $route)->toString();
+    $is_help   = $this->manager()->getModuleHandler()->moduleExists('help');
+    $readme    = $is_help ? Url::fromRoute('help.page', $route)->toString() : Url::fromUri('base:' . $path . '/docs/README.md')->toString();
     $admin_css = $this->manager->configLoad('admin_css', 'blazy.settings');
 
     $form['label'] = [
