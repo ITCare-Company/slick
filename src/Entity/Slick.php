@@ -2,8 +2,7 @@
 
 namespace Drupal\slick\Entity;
 
-use Drupal\Component\Utility\Html;
-use Drupal\slick\SlickDefault;
+use Drupal\blazy\Blazy;
 
 /**
  * Defines the Slick configuration entity.
@@ -62,13 +61,6 @@ class Slick extends SlickBase implements SlickInterface {
    * @var bool
    */
   protected $optimized = FALSE;
-
-  /**
-   * The slick HTML ID.
-   *
-   * @var int
-   */
-  private static $slickId;
 
   /**
    * {@inheritdoc}
@@ -238,36 +230,10 @@ class Slick extends SlickBase implements SlickInterface {
    * @return string
    *   The html ID.
    *
-   * @todo: Consider Blazy::getHtmlId() instead.
+   * @deprecated to be removed for Blazy::getHtmlId().
    */
   public static function getHtmlId($string = 'slick', $id = '') {
-    if (!isset(static::$slickId)) {
-      static::$slickId = 0;
-    }
-
-    // Do not use dynamic Html::getUniqueId, otherwise broken asnavfors.
-    return empty($id) ? Html::getId($string . '-' . ++static::$slickId) : strip_tags($id);
-  }
-
-  /**
-   * Returns HTML or layout related settings to shut up notices.
-   *
-   * @return array
-   *   The default settings.
-   *
-   * @deprecated to be removed for SlickDefault::htmlSettings()
-   */
-  public static function htmlSettings() {
-    return SlickDefault::htmlSettings();
-  }
-
-  /**
-   * Defines JS options required by theme_slick(), used with optimized option.
-   *
-   * @deprecated to be removed for SlickDefault::htmlSettings()
-   */
-  public static function jsSettings() {
-    return SlickDefault::jsSettings();
+    return Blazy::getHtmlId($string, $id);
   }
 
 }

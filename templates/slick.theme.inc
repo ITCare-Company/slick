@@ -7,6 +7,7 @@
 
 use Drupal\Core\Template\Attribute;
 use Drupal\Component\Serialization\Json;
+use Drupal\blazy\Blazy;
 use Drupal\slick\SlickDefault;
 use Drupal\slick\Entity\Slick;
 
@@ -28,7 +29,7 @@ function template_preprocess_slick(&$variables) {
   $content_attributes = new Attribute();
   $display = $variables['display'] = $settings['display'];
 
-  $id = empty($settings['id']) ? Slick::getHtmlId('slick') : $settings['id'];
+  $id = empty($settings['id']) ? Blazy::getHtmlId('slick') : $settings['id'];
   $attributes['id'] = $display == 'thumbnail' ? $id . '-thumbnail' : $id;
 
   // @see SlickManager::buildGrid(), and this should make sense.

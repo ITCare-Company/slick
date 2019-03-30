@@ -1,6 +1,11 @@
 
 Slick 8.x-2.0-dev, 2019-03-30
 -----------------------------
+- Removed deprecated SlickAdmin::settingsSummary() for SlickAdmin
+  ::getSettingsSummary().
+- Removed deprecated Slick::htmlSettings() for SlickDefault::htmlSettings().
+- Removed deprecated Slick::jsSettings() for SlickDefault::jsSettings().
+- Deprecated Slick::getHtmlId() for Blazy::getHtmlId().
 - Updated to the latest Blazy 03/30.
 - Removed BlazyManagerBase::getCacheMetadata() for BlazyManagerBase
   ::getCacheMetadata() at Blazy RC1.

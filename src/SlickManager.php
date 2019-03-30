@@ -5,6 +5,7 @@ namespace Drupal\slick;
 use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\slick\Entity\Slick;
+use Drupal\blazy\Blazy;
 use Drupal\blazy\BlazyManagerBase;
 
 /**
@@ -390,7 +391,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
     $settings       = &$build['settings'];
     $id             = isset($settings['id']) ? $settings['id'] : '';
-    $settings['id'] = Slick::getHtmlId('slick', $id);
+    $settings['id'] = Blazy::getHtmlId('slick', $id);
 
     $slick = [
       '#theme'      => 'slick_wrapper',

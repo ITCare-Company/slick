@@ -198,12 +198,6 @@ class SlickCrudTest extends BlazyKernelTestBase {
 
     $slicks = Slick::loadMultiple();
     $this->assertFalse(isset($slicks[$nav->id()]), 'Slick::loadMultiple: Disabled slick optionset no longer exists.');
-
-    $id1 = Slick::getHtmlId('slick');
-    $this->assertNotEmpty($id1);
-
-    $id2 = Slick::getHtmlId('slick', 'slick-image');
-    $this->assertEquals($id2, 'slick-image');
   }
 
   /**
