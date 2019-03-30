@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\slick\Kernel;
 
+use Drupal\slick\SlickDefault;
 use Drupal\slick\Entity\Slick;
 use Drupal\Tests\blazy\Kernel\BlazyKernelTestBase;
 use Drupal\Tests\slick\Traits\SlickUnitTestTrait;
@@ -185,7 +186,7 @@ class SlickCrudTest extends BlazyKernelTestBase {
     $options = $nav->getOptions();
     $this->assertArrayHasKey('settings', $options);
 
-    $merged = array_merge(Slick::defaultSettings() + Slick::jsSettings(), $settings);
+    $merged = array_merge(Slick::defaultSettings() + SlickDefault::jsSettings(), $settings);
     $nav->setSettings($merged);
     $nav->save();
     $this->assertTrue(!empty($nav->getSetting('mobileFirst')));
