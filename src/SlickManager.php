@@ -4,7 +4,6 @@ namespace Drupal\slick;
 
 use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\NestedArray;
-use Drupal\Core\Cache\Cache;
 use Drupal\slick\Entity\Slick;
 use Drupal\blazy\BlazyManagerBase;
 
@@ -404,30 +403,6 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
     $this->moduleHandler->alter('slick_build', $slick, $settings);
     return empty($build['items']) ? [] : $slick;
-  }
-
-  /**
-   * Return the cache metadata.
-   *
-   * @todo remove for BlazyManagerBase::getCacheMetadata() post RC1.
-   */
-  public function getCacheMetadata(array $build = []) {
-    $settings          = $build['settings'];
-    $max_age           = $this->configLoad('cache.page.max_age', 'system.performance');
-    $max_age           = empty($settings['cache']) ? $max_age : $settings['cache'];
-    $id                = $settings['id'];
-    $suffixes[]        = empty($settings['count']) ? count(array_filter($settings)) : $settings['count'];
-    $suffixes[]        = $max_age;
-    $cache['tags']     = Cache::buildTags($settings['namespace'] . ':' . $id, $suffixes, '.');
-    $cache['contexts'] = ['languages'];
-    $cache['max-age']  = $max_age;
-    $cache['keys']     = isset($settings['cache_metadata']['keys']) ? $settings['cache_metadata']['keys'] : [$id];
-
-    if (!empty($settings['cache_tags'])) {
-      $cache['tags'] = Cache::mergeTags($cache['tags'], $settings['cache_tags']);
-    }
-
-    return $cache;
   }
 
   /**

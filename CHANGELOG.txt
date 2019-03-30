@@ -1,4 +1,12 @@
 
+Slick 8.x-2.0-dev, 2019-03-30
+-----------------------------
+- Updated to the latest Blazy 03/30.
+- Removed BlazyManagerBase::getCacheMetadata() for BlazyManagerBase
+  ::getCacheMetadata() at Blazy RC1.
+- Removed Drupal.blazy.init.revalidate() for Drupal.blazy.init.load() as being
+  too expensive, also for IO compatibility.
+
 Slick 8.x-2.0-dev, 2019-03-23
 -----------------------------
 - Micro optimizations.
