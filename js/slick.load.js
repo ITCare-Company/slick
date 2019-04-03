@@ -51,10 +51,18 @@
         randomize();
       }
 
-      // Puts dots in between arrows for easy theming like this: < ooooo >.
-      if (d === '.slick__arrow' && !unSlick) {
+      if (!unSlick) {
         t.on('init.sl', function (e, slick) {
-          $(slick.$dots).insertAfter(slick.$prevArrow);
+          // Puts dots in between arrows for easy theming like this: < ooooo >.
+          if (d === '.slick__arrow') {
+            $(slick.$dots).insertAfter(slick.$prevArrow);
+          }
+
+          // Fixes for slidesToShow > 1, centerMode, clones with Blazy IO.
+          var $src = t.find('.slick-cloned.slick-active .b-lazy:not(.b-loaded)');
+          if (isBlazy && $src.length) {
+            Drupal.blazy.init.load($src);
+          }
         });
       }
 

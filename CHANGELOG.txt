@@ -1,4 +1,9 @@
 
+Slick 8.x-2.0-dev, 2019-04-03
+-----------------------------
+- Updated SlickManager::attach() parameter for Blazy RC2+.
+- Fixes for slidesToShow > 1, centerMode, clones with Blazy IO.
+
 Slick 8.x-2.0-dev, 2019-03-30
 -----------------------------
 - Removed deprecated SlickAdmin::settingsSummary() for SlickAdmin

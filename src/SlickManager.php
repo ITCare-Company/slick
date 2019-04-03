@@ -167,7 +167,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   /**
    * {@inheritdoc}
    */
-  public function attach($attach = []) {
+  public function attach(array $attach = []) {
     $load = parent::attach($attach);
 
     if (!empty($attach['lazy'])) {
