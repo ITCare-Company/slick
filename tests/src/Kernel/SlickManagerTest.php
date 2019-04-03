@@ -43,6 +43,18 @@ class SlickManagerTest extends BlazyKernelTestBase {
   protected function setUp() {
     parent::setUp();
 
+    $this->installConfig([
+      'field',
+      'image',
+      'media',
+      'responsive_image',
+      'node',
+      'views',
+      'blazy',
+      'slick',
+      'slick_ui',
+    ]);
+
     $bundle = $this->bundle;
 
     $this->messenger = $this->container->get('messenger');
