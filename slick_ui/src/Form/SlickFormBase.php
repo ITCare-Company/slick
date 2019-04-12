@@ -4,7 +4,7 @@ namespace Drupal\slick_ui\Form;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Messenger\Messenger;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\slick\SlickManagerInterface;
 use Drupal\slick\Form\SlickAdminInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -45,7 +45,7 @@ abstract class SlickFormBase extends EntityForm {
   /**
    * The messenger service.
    *
-   * @var \Drupal\Core\Messenger\Messenger
+   * @var \Drupal\Core\Messenger\MessengerInterface
    */
   protected $messenger;
 
@@ -66,7 +66,7 @@ abstract class SlickFormBase extends EntityForm {
   /**
    * Constructs a SlickForm object.
    */
-  public function __construct(Messenger $messenger, SlickAdminInterface $admin, SlickManagerInterface $manager) {
+  public function __construct(MessengerInterface $messenger, SlickAdminInterface $admin, SlickManagerInterface $manager) {
     $this->messenger = $messenger;
     $this->admin = $admin;
     $this->manager = $manager;

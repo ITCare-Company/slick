@@ -4,7 +4,7 @@ namespace Drupal\slick_ui\Form;
 
 use Drupal\Core\Entity\EntityConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Messenger\Messenger;
+use Drupal\Core\Messenger\MessengerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -29,14 +29,14 @@ abstract class SlickDeleteFormBase extends EntityConfirmFormBase {
   /**
    * The messenger service.
    *
-   * @var \Drupal\Core\Messenger\Messenger
+   * @var \Drupal\Core\Messenger\MessengerInterface
    */
   protected $messenger;
 
   /**
    * Class constructor.
    */
-  public function __construct(Messenger $messenger) {
+  public function __construct(MessengerInterface $messenger) {
     $this->messenger = $messenger;
   }
 

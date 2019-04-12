@@ -7,7 +7,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\Messenger\Messenger;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\slick\SlickManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -26,7 +26,7 @@ abstract class SlickListBuilderBase extends DraggableListBuilder {
   /**
    * The messenger service.
    *
-   * @var \Drupal\Core\Messenger\Messenger
+   * @var \Drupal\Core\Messenger\MessengerInterface
    */
   protected $messenger;
 
@@ -37,12 +37,12 @@ abstract class SlickListBuilderBase extends DraggableListBuilder {
    *   The entity type definition.
    * @param \Drupal\Core\Entity\EntityStorageInterface $storage
    *   The entity storage class.
-   * @param \Drupal\Core\Messenger\Messenger $messenger
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    *   The messenger service.
    * @param \Drupal\slick\SlickManagerInterface $manager
    *   The slick manager.
    */
-  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage, Messenger $messenger, SlickManagerInterface $manager) {
+  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage, MessengerInterface $messenger, SlickManagerInterface $manager) {
     parent::__construct($entity_type, $storage);
     $this->manager = $manager;
     $this->messenger = $messenger;
