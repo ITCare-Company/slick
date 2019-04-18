@@ -105,6 +105,12 @@
       if (isBlazy) {
         preloadBlazy(false);
       }
+
+      // Cleans up preloader if any named b-loader due to the ways clones built..
+      var $preloader = t.find('.b-loaded ~ .b-loader');
+      if ($preloader.length) {
+        $preloader.remove();
+      }
     }
 
     /**

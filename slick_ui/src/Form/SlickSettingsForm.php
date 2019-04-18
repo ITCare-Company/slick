@@ -88,6 +88,7 @@ class SlickSettingsForm extends ConfigFormBase {
 
     // Invalidate the library discovery cache to update new assets.
     $this->libraryDiscovery->clearCachedDefinitions();
+    $this->configFactory->clearStaticCache();
 
     parent::submitForm($form, $form_state);
   }

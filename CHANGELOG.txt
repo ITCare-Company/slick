@@ -1,4 +1,9 @@
 
+Slick 8.x-2.0-dev, 2019-04-18
+-----------------------------
+- Added support for Ajaxin module preloader.
+- Lowered slick.colorbox library weight.
+
 Slick 8.x-2.0-dev, 2019-04-03
 -----------------------------
 - Updated SlickManager::attach() parameter for Blazy RC2+.
