@@ -318,6 +318,7 @@ class SlickForm extends SlickFormBase {
                   switch ($k) {
                     case 'pauseOnHover':
                     case 'pauseOnDotsHover':
+                    case 'pauseOnFocus':
                     case 'autoplaySpeed':
                       $states = ['visible' => [':input[name*="[' . $i . '][settings][autoplay]"]' => ['checked' => TRUE]]];
                       break;
@@ -431,6 +432,12 @@ class SlickForm extends SlickFormBase {
         'type'        => 'checkbox',
         'title'       => $this->t('Pause on dots hover'),
         'description' => $this->t('Pause autoplay when a dot is hovered.'),
+      ];
+
+      $elements['pauseOnFocus'] = [
+        'type'        => 'checkbox',
+        'title'       => $this->t('Pause on focus'),
+        'description' => $this->t('Pause autoplay on focus.'),
       ];
 
       $elements['arrows'] = [

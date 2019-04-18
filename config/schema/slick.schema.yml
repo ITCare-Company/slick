@@ -41,6 +41,9 @@ slick_optionset:
     pauseOnDotsHover:
       type: boolean
       label: 'Pause on dots hover'
+    pauseOnFocus:
+      type: boolean
+      label: 'Pause on focus'
     autoplaySpeed:
       type: integer
       label: 'Autoplay speed'
