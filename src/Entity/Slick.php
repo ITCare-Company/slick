@@ -215,7 +215,12 @@ class Slick extends SlickBase implements SlickInterface {
     return [
       'arrows'     => ['prevArrow', 'nextArrow', 'downArrow'] + $down_arrow,
       'downArrow'  => $down_arrow,
-      'autoplay'   => ['pauseOnHover', 'pauseOnDotsHover', 'pauseOnFocus', 'autoplaySpeed'],
+      'autoplay'   => [
+        'pauseOnHover',
+        'pauseOnDotsHover',
+        'pauseOnFocus',
+        'autoplaySpeed',
+      ],
       'centerMode' => ['centerPadding'],
       'dots'       => ['dotsClass', 'appendDots'],
       'swipe'      => ['swipeToSlide'],
