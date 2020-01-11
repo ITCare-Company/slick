@@ -15,8 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * This is not 'Slick Media', instead a simple mix of image and optional video.
  *
- * @deprecated for Slick Media (with oEmbed).
- * @todo remove post/ prior to 2.x release.
+ * @todo TBD; deprecate for core Media and remove post/ prior to 3.x release.
  */
 class SlickFileFormatter extends SlickFileFormatterBase {
 

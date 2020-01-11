@@ -2,6 +2,7 @@ services:
   slick.manager:
     class: Drupal\slick\SlickManager
     parent: blazy.manager.base
+    arguments: ['@slick.skin_manager']
 
   slick.formatter:
     class: Drupal\slick\SlickFormatter
@@ -10,3 +11,8 @@ services:
   slick.admin:
     class: Drupal\slick\Form\SlickAdmin
     arguments: ['@blazy.admin.extended', '@slick.manager']
+
+  slick.skin_manager:
+    class: Drupal\slick\SlickSkinManager
+    parent: default_plugin_manager
+    arguments: ['@config.factory']

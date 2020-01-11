@@ -48,7 +48,7 @@ class SlickAdmin implements SlickAdminInterface {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static (
+    return new static(
       $container->get('blazy.admin.extended'),
       $container->get('slick.manager')
     );
@@ -166,7 +166,7 @@ class SlickAdmin implements SlickAdminInterface {
         '#title'       => $this->t('Skin arrows'),
         '#options'     => $arrows,
         '#enforced'    => TRUE,
-        '#description' => $this->t('Implement \Drupal\slick\SlickSkinInterface::arrows() to add your own arrows skins, in the same format as SlickSkinInterface::skins().'),
+        '#description' => $this->t('Check out slick.api.php to add your own skins.'),
         '#weight'      => -105,
       ];
     }
@@ -177,7 +177,7 @@ class SlickAdmin implements SlickAdminInterface {
         '#title'       => $this->t('Skin dots'),
         '#options'     => $dots,
         '#enforced'    => TRUE,
-        '#description' => $this->t('Implement \Drupal\slick\SlickSkinInterface::dots() to add your own dots skins, in the same format as SlickSkinInterface::skins().'),
+        '#description' => $this->t('Check out slick.api.php to add your own skins.'),
         '#weight'      => -105,
       ];
     }
@@ -221,7 +221,7 @@ class SlickAdmin implements SlickAdminInterface {
 
     if (isset($form['skin'])) {
       $form['skin']['#title'] = $this->t('Skin main');
-      $form['skin']['#description'] = $this->t('Skins allow various layouts with just CSS. Some options below depend on a skin. However a combination of skins and options may lead to unpredictable layouts, get yourself dirty. E.g.: Skin Split requires any split layout option. Failing to choose the expected layout makes it useless. See <a href=":url" target="_blank">SKINS section at README</a> for details on Skins. Leave empty to DIY. Or use hook_slick_skins_info() and implement \Drupal\slick\SlickSkinInterface to register ones. Skins are permanently cached. Clear cache if new skins do not appear.', [':url' => $readme]);
+      $form['skin']['#description'] = $this->t('Skins allow various layouts with just CSS. Some options below depend on a skin. However a combination of skins and options may lead to unpredictable layouts, get yourself dirty. E.g.: Skin Split requires any split layout option. Failing to choose the expected layout makes it useless. See <a href=":url" target="_blank">SKINS section at README</a> for details on Skins. Leave empty to DIY. Skins are permanently cached. Clear cache if new skins do not appear. Check out slick.api.php to add your own skins.', [':url' => $readme]);
     }
 
     if (isset($form['layout'])) {
@@ -419,7 +419,7 @@ class SlickAdmin implements SlickAdminInterface {
    * Returns available slick skins for select options.
    */
   public function getSkinsByGroupOptions($group = '') {
-    return $this->manager->getSkinsByGroup($group, TRUE);
+    return $this->manager->skinManager()->getSkinsByGroup($group, TRUE);
   }
 
   /**

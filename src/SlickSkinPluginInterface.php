@@ -4,15 +4,16 @@ namespace Drupal\slick;
 
 /**
  * Provides an interface defining Slick skins.
- *
- * The hook_hook_info() is deprecated, and no resolution by 1/16/16:
- *   #2233261: Deprecate hook_hook_info()
- *     Postponed till D9
- *
- * @todo deprecate at 3.x, and remove post 3.x.
- * @see slick.api.php for more supported methods.
  */
-interface SlickSkinInterface {
+interface SlickSkinPluginInterface {
+
+  /**
+   * Returns the plugin label.
+   *
+   * @return string
+   *   The plugin label.
+   */
+  public function label();
 
   /**
    * Returns the Slick skins.
@@ -40,5 +41,21 @@ interface SlickSkinInterface {
    *   The array of the main and thumbnail skins.
    */
   public function skins();
+
+  /**
+   * Returns the plugin arrow skins.
+   *
+   * @return array
+   *   The plugin arrow skins.
+   */
+  public function arrows();
+
+  /**
+   * Returns the plugin dot skins.
+   *
+   * @return array
+   *   The plugin dot skins.
+   */
+  public function dots();
 
 }

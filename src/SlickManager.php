@@ -4,9 +4,16 @@ namespace Drupal\slick;
 
 use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityRepositoryInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\slick\Entity\Slick;
 use Drupal\blazy\Blazy;
 use Drupal\blazy\BlazyManagerBase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Implements BlazyManagerInterface, SlickManagerInterface.
@@ -14,154 +21,40 @@ use Drupal\blazy\BlazyManagerBase;
 class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
   /**
-   * The supported skins.
+   * The slick skin manager service.
    *
-   * @var array
+   * @var \Drupal\slick\SlickSkinManagerInterface
    */
-  private static $skins = [
-    'browser',
-    'lightbox',
-    'overlay',
-    'main',
-    'thumbnail',
-    'arrows',
-    'dots',
-    'widget',
-  ];
+  protected $skinManager;
 
   /**
-   * Static cache for the skin definition.
-   *
-   * @var array
+   * {@inheritdoc}
    */
-  protected $skinDefinition;
-
-  /**
-   * Static cache for the skins by group.
-   *
-   * @var array
-   */
-  protected $skinsByGroup;
-
-  /**
-   * The easing libray.
-   *
-   * @var string|bool
-   */
-  protected $easingPath;
-
-  /**
-   * The library info definition.
-   *
-   * @var array
-   */
-  protected $libraryInfoBuild;
-
-  /**
-   * Returns the supported skins.
-   */
-  public static function getConstantSkins() {
-    return self::$skins;
+  public function __construct(EntityRepositoryInterface $entity_repository, EntityTypeManagerInterface $entity_type_manager, ModuleHandlerInterface $module_handler, RendererInterface $renderer, ConfigFactoryInterface $config_factory, CacheBackendInterface $cache, SlickSkinManagerInterface $skin_manager) {
+    parent::__construct($entity_repository, $entity_type_manager, $module_handler, $renderer, $config_factory, $cache);
+    $this->skinManager = $skin_manager;
   }
 
   /**
-   * Returns slick skins registered via hook_slick_skins_info(), or defaults.
-   *
-   * @see \Drupal\blazy\BlazyManagerBase::buildSkins()
+   * {@inheritdoc}
    */
-  public function getSkins() {
-    if (!isset($this->skinDefinition)) {
-      $methods = ['skins', 'arrows', 'dots'];
-      $this->skinDefinition = $this->buildSkins('slick', '\Drupal\slick\SlickSkin', $methods);
-    }
-
-    return $this->skinDefinition;
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('entity.repository'),
+      $container->get('entity_type.manager'),
+      $container->get('module_handler'),
+      $container->get('renderer'),
+      $container->get('config.factory'),
+      $container->get('cache.default'),
+      $container->get('slick.skin_manager')
+    );
   }
 
   /**
-   * Returns available slick skins by group.
+   * Returns slick skin manager service.
    */
-  public function getSkinsByGroup($group = '', $option = FALSE) {
-    if (!isset($this->skinsByGroup[$group])) {
-      $skins         = $groups = $ungroups = [];
-      $nav_skins     = in_array($group, ['arrows', 'dots']);
-      $defined_skins = $nav_skins ? $this->getSkins()[$group] : $this->getSkins()['skins'];
-
-      foreach ($defined_skins as $skin => $properties) {
-        $item = $option ? strip_tags($properties['name']) : $properties;
-        if (!empty($group)) {
-          if (isset($properties['group'])) {
-            if ($properties['group'] != $group) {
-              continue;
-            }
-            $groups[$skin] = $item;
-          }
-          elseif (!$nav_skins) {
-            $ungroups[$skin] = $item;
-          }
-        }
-        $skins[$skin] = $item;
-      }
-
-      $this->skinsByGroup[$group] = $group ? array_merge($ungroups, $groups) : $skins;
-    }
-    return $this->skinsByGroup[$group];
-  }
-
-  /**
-   * Implements hook_library_info_build().
-   */
-  public function libraryInfoBuild() {
-    if (!isset($this->libraryInfoBuild)) {
-      $libraries['slick.css'] = [
-        'dependencies' => ['slick/slick'],
-        'css' => [
-          'theme' => ['/libraries/slick/slick/slick-theme.css' => ['weight' => -2]],
-        ],
-      ];
-
-      foreach (self::getConstantSkins() as $group) {
-        if ($skins = $this->getSkinsByGroup($group)) {
-          foreach ($skins as $key => $skin) {
-            $provider = isset($skin['provider']) ? $skin['provider'] : 'slick';
-            $id = $provider . '.' . $group . '.' . $key;
-
-            foreach (['css', 'js', 'dependencies'] as $property) {
-              if (isset($skin[$property]) && is_array($skin[$property])) {
-                $libraries[$id][$property] = $skin[$property];
-              }
-            }
-          }
-        }
-      }
-
-      $this->libraryInfoBuild = $libraries;
-    }
-
-    return $this->libraryInfoBuild;
-  }
-
-  /**
-   * Returns easing library path if available, else FALSE.
-   */
-  public function getEasingPath() {
-    if (!isset($this->easingPath)) {
-      if (function_exists('libraries_get_path')) {
-        $library_easing = libraries_get_path('easing') ?: libraries_get_path('jquery.easing');
-        if ($library_easing) {
-          $easing_path = $library_easing . '/jquery.easing.min.js';
-          // Composer via bower-asset puts the library within `js` directory.
-          if (!is_file($easing_path)) {
-            $easing_path = $library_easing . '/js/jquery.easing.min.js';
-          }
-        }
-      }
-      else {
-        $easing_path = DRUPAL_ROOT . '/libraries/easing/jquery.easing.min.js';
-      }
-      $this->easingPath = isset($easing_path) && is_file($easing_path) ? $easing_path : FALSE;
-    }
-    return $this->easingPath;
+  public function skinManager() {
+    return $this->skinManager;
   }
 
   /**
@@ -175,7 +68,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     }
 
     // Load optional easing library.
-    if ($this->getEasingPath()) {
+    if ($this->skinManager->getEasingPath()) {
       $load['library'][] = 'slick/slick.easing';
     }
 
@@ -188,7 +81,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     }
 
     if (!empty($attach['skin'])) {
-      $this->attachSkin($load, $attach);
+      $this->skinManager->attachSkin($load, $attach);
     }
 
     // Attach default JS settings to allow responsive displays have a lookup,
@@ -199,36 +92,6 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
     $this->moduleHandler->alter('slick_attach', $load, $attach);
     return $load;
-  }
-
-  /**
-   * Provides skins only if required.
-   */
-  public function attachSkin(array &$load, $attach = []) {
-    if ($this->configLoad('slick_css', 'slick.settings')) {
-      $load['library'][] = 'slick/slick.css';
-    }
-
-    if ($this->configLoad('module_css', 'slick.settings')) {
-      $load['library'][] = 'slick/slick.theme';
-    }
-
-    if (!empty($attach['thumbnail_effect'])) {
-      $load['library'][] = 'slick/slick.thumbnail.' . $attach['thumbnail_effect'];
-    }
-
-    if (!empty($attach['down_arrow'])) {
-      $load['library'][] = 'slick/slick.arrow.down';
-    }
-
-    foreach (self::getConstantSkins() as $group) {
-      $skin = $group == 'main' ? $attach['skin'] : (isset($attach['skin_' . $group]) ? $attach['skin_' . $group] : '');
-      if (!empty($skin)) {
-        $skins = $this->getSkinsByGroup($group);
-        $provider = isset($skins[$skin]['provider']) ? $skins[$skin]['provider'] : 'slick';
-        $load['library'][] = 'slick/' . $provider . '.' . $group . '.' . $skin;
-      }
-    }
   }
 
   /**
@@ -427,7 +290,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     // Supports programmatic options defined within skin definitions to allow
     // addition of options with other libraries integrated with Slick without
     // modifying optionset such as for Zoom, Reflection, Slicebox, Transit, etc.
-    if (!empty($settings['skin']) && $skins = $this->getSkinsByGroup('main')) {
+    if (!empty($settings['skin']) && $skins = $this->skinManager->getSkinsByGroup('main')) {
       if (isset($skins[$settings['skin']]['options'])) {
         $options = array_merge($options, $skins[$settings['skin']]['options']);
       }
@@ -510,6 +373,76 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
     unset($build);
     return $element;
+  }
+
+  /**
+   * Returns slick skins registered via SlickSkin plugin, or defaults.
+   *
+   * @todo deprecate this anytime post slick:8.x-2.1, or slick:8.x-3.0.
+   */
+  public function getSkins() {
+    return $this->skinManager->getSkins();
+  }
+
+  /**
+   * Returns available slick skins by group.
+   *
+   * @todo deprecate this anytime post slick:8.x-2.1, or slick:8.x-3.0.
+   */
+  public function getSkinsByGroup($group = '', $option = FALSE) {
+    return $this->skinManager->getSkinsByGroup($group, $option);
+  }
+
+  /**
+   * Implements hook_library_info_build().
+   *
+   * @todo put @trigger_error post slick:8.x-2.1, or slick:8.x-3.0.
+   *
+   * @deprecated in slick:8.x-2.1 and is removed from slick:8.x-3.0. Use
+   *   SlickSkinManager::libraryInfoBuild() instead.
+   * @see https://www.drupal.org/node/3105648
+   */
+  public function libraryInfoBuild() {
+    return $this->skinManager->libraryInfoBuild();
+  }
+
+  /**
+   * Provides skins only if required.
+   *
+   * @todo put @trigger_error post slick:8.x-2.1, or slick:8.x-3.0.
+   *
+   * @deprecated in slick:8.x-2.1 and is removed from slick:8.x-3.0. Use
+   *   SlickSkinManager::attachSkin() instead.
+   * @see https://www.drupal.org/node/3105648
+   */
+  public function attachSkin(array &$load, $attach = []) {
+    $this->skinManager->attachSkin($load, $attach);
+  }
+
+  /**
+   * Returns easing library path if available, else FALSE.
+   *
+   * @todo put @trigger_error post slick:8.x-2.1, or slick:8.x-3.0.
+   *
+   * @deprecated in slick:8.x-2.1 and is removed from slick:8.x-3.0. Use
+   *   SlickSkinManager::getEasingPath() instead.
+   * @see https://www.drupal.org/node/3105648
+   */
+  public function getEasingPath() {
+    return $this->skinManager->getEasingPath();
+  }
+
+  /**
+   * Returns the supported skins.
+   *
+   * @todo put @trigger_error post slick:8.x-2.1, or slick:8.x-3.0.
+   *
+   * @deprecated in slick:8.x-2.1 and is removed from slick:8.x-3.0. Use
+   *   SlickSkinManager::getConstantSkins() instead.
+   * @see https://www.drupal.org/node/3105648
+   */
+  public static function getConstantSkins() {
+    return \Drupal::service('slick.skin_manager')->getConstantSkins();
   }
 
 }

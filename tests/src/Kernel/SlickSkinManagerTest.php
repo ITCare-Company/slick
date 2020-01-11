@@ -1,0 +1,103 @@
+<?php
+
+namespace Drupal\Tests\slick\Kernel;
+
+use Drupal\Tests\blazy\Kernel\BlazyKernelTestBase;
+use Drupal\Tests\slick\Traits\SlickUnitTestTrait;
+use Drupal\slick\SlickDefault;
+
+/**
+ * Tests the Slick skin manager methods.
+ *
+ * @coversDefaultClass \Drupal\slick\SlickSkinManager
+ *
+ * @group slick
+ */
+class SlickSkinManagerTest extends BlazyKernelTestBase {
+
+  use SlickUnitTestTrait;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static $modules = [
+    'system',
+    'user',
+    'field',
+    'file',
+    'filter',
+    'image',
+    'node',
+    'text',
+    'blazy',
+    'slick',
+    'slick_ui',
+    'slick_test',
+  ];
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp() {
+    parent::setUp();
+
+    $this->installConfig([
+      'field',
+      'image',
+      'media',
+      'responsive_image',
+      'node',
+      'views',
+      'blazy',
+      'slick',
+      'slick_ui',
+    ]);
+
+    $this->slickSkinManager = $this->container->get('slick.skin_manager');
+  }
+
+  /**
+   * Tests cases for various methods.
+   *
+   * @covers ::getSkins
+   * @covers ::getSkinsByGroup
+   * @covers ::libraryInfoBuild
+   */
+  public function testSlickManagerMethods() {
+    $manager = $this->slickSkinManager;
+    $settings = [
+      'media_switch'     => 'media',
+      'lazy'             => 'ondemand',
+      'mousewheel'       => TRUE,
+      'skin'             => 'classic',
+      'down_arrow'       => TRUE,
+      'thumbnail_effect' => 'hover',
+      'slick_css'        => TRUE,
+      'module_css'       => TRUE,
+    ] + $this->getFormatterSettings() + SlickDefault::extendedSettings();
+
+    // Tests for skins.
+    $skins = $manager->getSkins();
+    $this->assertArrayHasKey('skins', $skins);
+    $this->assertArrayHasKey('arrows', $skins);
+    $this->assertArrayHasKey('dots', $skins);
+
+    // Verify we have cached skins.
+    $cid = 'slick_skins_data';
+    $cached_skins = $manager->getCache()->get($cid);
+    $this->assertEquals($cid, $cached_skins->cid);
+    $this->assertEquals($skins, $cached_skins->data);
+
+    // Verify skins has thumbnail constant.
+    $defined_skins = $manager->getConstantSkins();
+    $this->assertTrue(in_array('thumbnail', $defined_skins));
+
+    // Verify libraries.
+    $libraries = $manager->libraryInfoBuild();
+    $this->assertArrayHasKey('slick.main.default', $libraries);
+
+    $skins = $manager->getSkinsByGroup('dots');
+    $this->assertArrayHasKey('dots', $skins);
+  }
+
+}

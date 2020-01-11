@@ -232,10 +232,12 @@ class Slick extends SlickBase implements SlickInterface {
   /**
    * Returns the trusted HTML ID of a single slick instance.
    *
+   * @deprecated in slick:8.x-2.0 and is removed from slick:8.x-2.2. Use
+   *   \Drupal\blazy\Blazy::getHtmlId() instead.
+   * @see https://www.drupal.org/node/3105648
+   *
    * @return string
    *   The html ID.
-   *
-   * @deprecated to be removed for Blazy::getHtmlId().
    */
   public static function getHtmlId($string = 'slick', $id = '') {
     return Blazy::getHtmlId($string, $id);
