@@ -1,5 +1,5 @@
 
-# Slick Carousel
+# INTRODUCTION
 
 Visit **/admin/help/slick_ui** once Slick UI installed to read this in comfort.
 
@@ -7,9 +7,9 @@ Slick is a powerful and performant slideshow/carousel solution leveraging Ken
 Wheeler's [Slick Carousel](http://kenwheeler.github.io/slick).
 
 Slick has gazillion options, please start with the very basic working
-samples from [Slick Example](http://dgo.to/slick_extras) only if trouble to
-build slicks. Spending 5 minutes or so will save you hours in building more
-complex slideshows.
+samples from [Slick Example](https://drupal.org/project/slick_extras) only if
+trouble to build slicks. Spending 5 minutes or so will save you hours in
+building more complex slideshows.
 
 The module supports Slick 1.6 above until 1.8.1. Versions 1.9.0 and above are
 not currently supported. Slick 2.x is just out 9/21/15, and hasn't been
@@ -34,8 +34,8 @@ officially supported now, Feb 2019.
 
    This is CSS easing fallback for non-supporting browsers.
 
-3. [Blazy](http://dgo.to/blazy), to reduce DRY stuffs, and as a bonus,
-   advanced lazyloading such as delay lazyloading for below-fold sliders,
+3. [Blazy](https://drupal.org/project/blazy), to reduce DRY stuffs, and as a
+   bonus, advanced lazyloading such as delay lazyloading for below-fold sliders,
    iframe, (fullscreen) CSS background lazyloading, breakpoint dependent
    multi-serving images, lazyload ahead for smoother UX.
    Check out Blazy installation guides!
@@ -59,7 +59,7 @@ officially supported now, Feb 2019.
 
    Or jump here:
 
-   [2907371](https://www.drupal.org/project/slick/issues/2907371#comment-12882235)
+   [2907371](https://drupal.org/project/slick/issues/2907371#comment-12882235)
 
    It is up to you to decide which works best. Composer is not designed to
    manage JS, CSS or HTML framework assets. It is for PHP. Then come Composer
@@ -72,7 +72,7 @@ officially supported now, Feb 2019.
    npm.
 
    If using Composer with https://github.com/fxpio/composer-asset-plugin and via
-   bower-asset, [Libraries[(http://dgo.to/libraries) is required.
+   bower-asset, [Libraries[(https://drupal.org/project/libraries) is required.
    Watch out dots and dashes:
 
    ```
@@ -88,8 +88,10 @@ officially supported now, Feb 2019.
    $ composer global require "fxp/composer-asset-plugin:~1.3"
    ```
 
+   Use regular constraints (^ or ~) if any issue with versioning.
+
    And setup the required config first:
-   [2907371](https://www.drupal.org/project/slick/issues/2907371#comment-12882235)
+   [2907371](https://drupal.org/project/slick/issues/2907371#comment-12882235)
 
 
 ## FEATURES
@@ -121,27 +123,29 @@ The Slick module has several sub-modules:
 
 * slick_fields, included.
 
-* [slick_views](http://dgo.to/slick_views), to get more complex slides.
+* [slick_views](https://drupal.org/project/slick_views), to get more complex
+  slides.
 
 * slick_devel, if you want to help testing and developing the Slick.
 
 * slick_example, to get up and running quickly.
-  Both are included in [slick_extras](http://dgo.to/slick_extras).
+  Both are included in [slick_extras](https://drupal.org/project/slick_extras).
 
 
 ## INTEGRATION
 Slick supports enhancements and more complex layouts.
 
 ## OPTIONAL
-* [Media](http://dgo.to/media), to have richer contents: image, video, or a mix
-  of em.
-* [Colorbox](http://dgo.to/colorbox), to have grids/slides that open up image/
-  video in overlay.
-* [Photobox](http://dgo.to/photobox), idem ditto.
-* [Picture](http://dgo.to/picture) for more robust responsive image.
-* [Paragraphs](http://dgo.to/paragraphs), to get more complex slides at field
-  level.  
-* [Field Collection](http://dgo.to/field_collection), idem ditto.    
+* [Media](https://drupal.org/project/media), to have richer contents: image,
+  video, or a mix of em.
+* [Colorbox](https://drupal.org/project/colorbox), to have grids/slides that
+   open up image/ video in overlay.
+* [Photobox](https://drupal.org/project/photobox), idem ditto.
+* [Picture](https://drupal.org/project/picture) for more robust responsive
+  image.
+* [Paragraphs](https://drupal.org/project/paragraphs), to get more complex
+  slides at field level.  
+* [Field Collection](https://drupal.org/project/field_collection), idem ditto.    
 * [Mousewheel](https://github.com/brandonaaron/jquery-mousewheel) at:
   + **/libraries/mousewheel/jquery.mousewheel.min.js**
 

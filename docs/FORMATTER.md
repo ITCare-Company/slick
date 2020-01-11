@@ -12,7 +12,7 @@ All is applicable only to multi-value fields. Ignored for single value.
 * Image
 * Core Media
 * Text, Text long, Text with summary
-* [Paragraphs](http://dgo.to/paragraphs)
+* [Paragraphs](https://drupal.org/project/paragraphs)
 
 
 ## USAGE

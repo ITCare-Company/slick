@@ -81,13 +81,10 @@ more advanced 3d carousels, etc, simply put them into js array of the target
 skin. Be sure to add proper weight, if you are acting on existing slick events,
 normally < 0 (slick.load.min.js) is the one.
 
-Use `hook_slick_skins_info()` and implement \Drupal\slick\SlickSkinInterface
-to register ones. Clear the cache once.
+See slick.api.php for more info on skins, including registering skins.
 
-See slick.api.php for more info on skins.
-See **\Drupal\slick\SlickSkinInterface**.
-
-Other skins are available at [Slick Extras](http://dgo.to/slick_extras).
+Other skins are available at
+[Slick Extras](https://drupal.org/project/slick_extras).
 Some extra skins are WIP which may not work as expected. Use them as starters,
 not final products.
 
