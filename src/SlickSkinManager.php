@@ -250,8 +250,8 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
    */
   public function getEasingPath() {
     if (!isset($this->easingPath)) {
-      if (function_exists('libraries_get_path')) {
-        $library_easing = libraries_get_path('easing') ?: libraries_get_path('jquery.easing');
+      if (slick_libraries_get_path('easing') || slick_libraries_get_path('jquery.easing')) {
+        $library_easing = slick_libraries_get_path('easing') ?: slick_libraries_get_path('jquery.easing');
         if ($library_easing) {
           $easing_path = $library_easing . '/jquery.easing.min.js';
           // Composer via bower-asset puts the library within `js` directory.
@@ -272,7 +272,7 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
    * Implements hook_library_info_alter().
    */
   public function libraryInfoAlter(&$libraries, $extension) {
-    $library_path = libraries_get_path('slick') ?: libraries_get_path('slick-carousel');
+    $library_path = slick_libraries_get_path('slick') ?: slick_libraries_get_path('slick-carousel');
     if ($library_path) {
       $libraries['slick']['js'] = ['/' . $library_path . '/slick/slick.min.js' => ['weight' => -3]];
       $libraries['slick']['css']['base'] = ['/' . $library_path . '/slick/slick.css' => []];
@@ -283,7 +283,7 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
       $libraries['slick.easing']['js'] = ['/' . $easing_path => ['weight' => -4]];
     }
 
-    $library_mousewheel = libraries_get_path('mousewheel') ?: libraries_get_path('jquery-mousewheel');
+    $library_mousewheel = slick_libraries_get_path('mousewheel') ?: slick_libraries_get_path('jquery-mousewheel');
     if ($library_mousewheel) {
       $libraries['slick.mousewheel']['js'] = ['/' . $library_mousewheel . '/jquery.mousewheel.min.js' => ['weight' => -4]];
     }

@@ -4,7 +4,6 @@ namespace Drupal\Tests\slick\Kernel;
 
 use Drupal\Tests\blazy\Kernel\BlazyKernelTestBase;
 use Drupal\Tests\slick\Traits\SlickUnitTestTrait;
-use Drupal\slick\SlickDefault;
 
 /**
  * Tests the Slick skin manager methods.
@@ -65,17 +64,6 @@ class SlickSkinManagerTest extends BlazyKernelTestBase {
    */
   public function testSlickManagerMethods() {
     $manager = $this->slickSkinManager;
-    $settings = [
-      'media_switch'     => 'media',
-      'lazy'             => 'ondemand',
-      'mousewheel'       => TRUE,
-      'skin'             => 'classic',
-      'down_arrow'       => TRUE,
-      'thumbnail_effect' => 'hover',
-      'slick_css'        => TRUE,
-      'module_css'       => TRUE,
-    ] + $this->getFormatterSettings() + SlickDefault::extendedSettings();
-
     // Tests for skins.
     $skins = $manager->getSkins();
     $this->assertArrayHasKey('skins', $skins);

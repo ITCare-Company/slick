@@ -60,9 +60,10 @@ function slick_library_info_build() {
 
 /**
  * Implements hook_config_schema_info_alter().
+ *
+ * @todo replace with BlazyAlter::configSchemaInfoAlter() post blazy:8.x-2.0.
  */
 function slick_config_schema_info_alter(array &$definitions) {
-  // @todo use BlazyAlter post full Blazy release, or so.
   Blazy::configSchemaInfoAlter($definitions, 'slick_base', SlickDefault::extendedSettings());
 }
 
@@ -70,9 +71,19 @@ function slick_config_schema_info_alter(array &$definitions) {
  * Implements hook_library_info_alter().
  */
 function slick_library_info_alter(&$libraries, $extension) {
-  if ($extension === 'slick' && function_exists('libraries_get_path')) {
+  if ($extension === 'slick') {
     slick('skin')->libraryInfoAlter($libraries, $extension);
   }
+}
+
+/**
+ * Provides a wrapper to replace deprecated libraries_get_path() at ease.
+ *
+ * @todo replace with blazy_libraries_get_path() post blazy:8.x-2.0.
+ */
+function slick_libraries_get_path($name, $base_path = FALSE) {
+  $function = 'libraries_get_path';
+  return is_callable($function, TRUE) ? $function($name, $base_path) : FALSE;
 }
 
 /**
