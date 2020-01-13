@@ -369,10 +369,10 @@
  * - css: An array of CSS files to attach.
  * - js: An array of JS files to attach, e.g.: image zoomer, reflection, etc.
  * - group: A string grouping the current skin: main, thumbnail, arrows, dots.
- * - dependencies: SImilar to how core library dependencies constructed.
+ * - dependencies: Similar to how core library dependencies constructed.
  * - provider: A module name registering the skins.
  * - options: Extra JavaScript (Slicebox, 3d carousel, etc) options merged into
- *     into existing [data-slick] attribute to be consumed by custom JS.
+ *     existing [data-slick] attribute to be consumed by custom JS.
  *
  * @section sec_skins Defines the Slick main and thumbnail skins
  *

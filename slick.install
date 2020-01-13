@@ -50,3 +50,22 @@ function slick_update_8201() {
 function slick_update_8202() {
   // Do nothing to clear cache.
 }
+
+/**
+ * Removed HTML tags from arrows due to translation issue as per #3075838.
+ */
+function slick_update_8203() {
+  // Configuration translation disallowed HTML.
+  // See https://drupal.org/node/3075838
+  $config_factory = \Drupal::configFactory();
+  foreach ($config_factory->listAll('slick.optionset.') as $optionset_name) {
+    $optionset = $config_factory->getEditable($optionset_name);
+    foreach (['prevArrow', 'nextArrow'] as $key) {
+      // Don't bother with Optimized ON, as arrows are removed already.
+      if ($value = $optionset->get('options.settings.' . $key)) {
+        $optionset->set('options.settings.' . $key, trim(strip_tags($value)));
+      }
+    }
+    $optionset->save(TRUE);
+  }
+}
