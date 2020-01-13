@@ -63,32 +63,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   public function attach(array $attach = []) {
     $load = parent::attach($attach);
 
-    if (!empty($attach['lazy'])) {
-      $load['library'][] = 'blazy/loading';
-    }
-
-    // Load optional easing library.
-    if ($this->skinManager->getEasingPath()) {
-      $load['library'][] = 'slick/slick.easing';
-    }
-
-    $load['library'][] = 'slick/slick.load';
-
-    foreach (['colorbox', 'mousewheel'] as $component) {
-      if (!empty($attach[$component])) {
-        $load['library'][] = 'slick/slick.' . $component;
-      }
-    }
-
-    if (!empty($attach['skin'])) {
-      $this->skinManager->attachSkin($load, $attach);
-    }
-
-    // Attach default JS settings to allow responsive displays have a lookup,
-    // excluding wasted/trouble options, e.g.: PHP string vs JS object.
-    $excludes = explode(' ', 'mobileFirst appendArrows appendDots asNavFor prevArrow nextArrow respondTo');
-    $excludes = array_combine($excludes, $excludes);
-    $load['drupalSettings']['slick'] = array_diff_key(Slick::defaultSettings(), $excludes);
+    $this->skinManager->attach($load, $attach);
 
     $this->moduleHandler->alter('slick_attach', $load, $attach);
     return $load;
@@ -396,7 +371,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   /**
    * Implements hook_library_info_build().
    *
-   * @todo put @trigger_error post slick:8.x-2.1, or slick:8.x-3.0.
+   * @todo put @trigger_error post slick:8.x-2.1, safe to remove before 8.x-3.0.
    *
    * @deprecated in slick:8.x-2.1 and is removed from slick:8.x-3.0. Use
    *   SlickSkinManager::libraryInfoBuild() instead.
@@ -409,7 +384,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   /**
    * Provides skins only if required.
    *
-   * @todo put @trigger_error post slick:8.x-2.1, or slick:8.x-3.0.
+   * @todo put @trigger_error post slick:8.x-2.1, safe to remove before 8.x-3.0.
    *
    * @deprecated in slick:8.x-2.1 and is removed from slick:8.x-3.0. Use
    *   SlickSkinManager::attachSkin() instead.
@@ -422,7 +397,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   /**
    * Returns easing library path if available, else FALSE.
    *
-   * @todo put @trigger_error post slick:8.x-2.1, or slick:8.x-3.0.
+   * @todo put @trigger_error post slick:8.x-2.1, safe to remove before 8.x-3.0.
    *
    * @deprecated in slick:8.x-2.1 and is removed from slick:8.x-3.0. Use
    *   SlickSkinManager::getEasingPath() instead.
@@ -435,7 +410,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   /**
    * Returns the supported skins.
    *
-   * @todo put @trigger_error post slick:8.x-2.1, or slick:8.x-3.0.
+   * @todo put @trigger_error post slick:8.x-2.1, safe to remove before 8.x-3.0.
    *
    * @deprecated in slick:8.x-2.1 and is removed from slick:8.x-3.0. Use
    *   SlickSkinManager::getConstantSkins() instead.

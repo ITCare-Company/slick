@@ -349,6 +349,7 @@
  * @see \Drupal\slick\SlickSkinPluginInterface
  * @see \Drupal\slick_example\Plugin\slick\SlickExampleSkin
  * @see \Drupal\slick_extras\Plugin\slick\SlickExtrasSkin
+ * @see \Drupal\slick_test\Plugin\slick\SlickSkin for the most complete samples
  *
  * Add the needed methods accordingly.
  * This can be used to register skins for the Slick. Skins will be
@@ -362,13 +363,16 @@
  * A skin can specify CSS and JS files to include when Slick is displayed,
  * except for a thumbnail skin which accepts CSS only.
  *
- * Each skin supports 5 keys:
+ * Each skin supports a few keys:
  * - name: The human readable name of the skin.
  * - description: The description about the skin, for help and manage pages.
  * - css: An array of CSS files to attach.
  * - js: An array of JS files to attach, e.g.: image zoomer, reflection, etc.
- * - group: A string grouping the current skin: main, thumbnail.
+ * - group: A string grouping the current skin: main, thumbnail, arrows, dots.
+ * - dependencies: SImilar to how core library dependencies constructed.
  * - provider: A module name registering the skins.
+ * - options: Extra JavaScript (Slicebox, 3d carousel, etc) options merged into
+ *     into existing [data-slick] attribute to be consumed by custom JS.
  *
  * @section sec_skins Defines the Slick main and thumbnail skins
  *

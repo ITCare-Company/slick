@@ -1,23 +1,28 @@
 <?php
 
-namespace Drupal\slick_test;
+namespace Drupal\slick_test\Plugin\slick;
 
-use Drupal\slick\SlickSkinInterface;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\slick\SlickSkinPluginBase;
 
 /**
- * Implements SlickSkinInterface as registered via hook_slick_skins_info().
+ * Provides slick skin tests.
  *
- * @todo deprecated and remove for plugin. 
+ * @SlickSkin(
+ *   id = "slick_skin_test",
+ *   label = @Translation("Slick skin test")
+ * )
  */
-class SlickSkinTest implements SlickSkinInterface {
-
-  use StringTranslationTrait;
+class SlickSkinTest extends SlickSkinPluginBase {
 
   /**
-   * {@inheritdoc}
+   * Sets the slick skins.
+   *
+   * @inheritdoc
    */
-  public function skins() {
+  protected function setSkins() {
+    // If you copy this file, be sure to add base_path() before any asset path
+    // (css or js) as otherwise failing to load the assets. Your module can
+    // register paths pointing to a theme. Check out slick.api.php for details.
     $path = base_path() . drupal_get_path('module', 'slick_test');
     $skins = [
       'test' => [
@@ -40,9 +45,11 @@ class SlickSkinTest implements SlickSkinInterface {
   }
 
   /**
-   * {@inheritdoc}
+   * Sets the slick arrow skins.
+   *
+   * @inheritdoc
    */
-  public function arrows() {
+  protected function setArrows() {
     $path = base_path() . drupal_get_path('module', 'slick_test');
     $skins = [
       'arrows' => [
@@ -62,9 +69,11 @@ class SlickSkinTest implements SlickSkinInterface {
   }
 
   /**
-   * {@inheritdoc}
+   * Sets the slick dots skins.
+   *
+   * @inheritdoc
    */
-  public function dots() {
+  protected function setDots() {
     $path = base_path() . drupal_get_path('module', 'slick_test');
     $skins = [
       'dots' => [

@@ -10,6 +10,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\slick\Entity\Slick;
 
 /**
  * Implements SlickSkinManagerInterface.
@@ -132,7 +133,7 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
           $skins = NestedArray::mergeDeep($skins, $items);
         }
 
-        // @todo deprecate or for the new plugin system at slick:8.x-3.0.
+        // @todo remove for the new plugin system at slick:8.x-3.0.
         $disabled = $this->config()->get('disable_old_skins');
         if (empty($disabled)) {
           $slick = \Drupal::service('slick.manager');
@@ -213,6 +214,38 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
       $this->libraryInfoBuild = $libraries;
     }
     return $this->libraryInfoBuild;
+  }
+
+  /**
+   * Provides slick skins and libraries.
+   */
+  public function attach(array &$load, array $attach = []) {
+    if (!empty($attach['lazy'])) {
+      $load['library'][] = 'blazy/loading';
+    }
+
+    // Load optional easing library.
+    if ($this->getEasingPath()) {
+      $load['library'][] = 'slick/slick.easing';
+    }
+
+    $load['library'][] = 'slick/slick.load';
+
+    foreach (['colorbox', 'mousewheel'] as $component) {
+      if (!empty($attach[$component])) {
+        $load['library'][] = 'slick/slick.' . $component;
+      }
+    }
+
+    if (!empty($attach['skin'])) {
+      $this->attachSkin($load, $attach);
+    }
+
+    // Attach default JS settings to allow responsive displays have a lookup,
+    // excluding wasted/trouble options, e.g.: PHP string vs JS object.
+    $excludes = explode(' ', 'mobileFirst appendArrows appendDots asNavFor prevArrow nextArrow respondTo');
+    $excludes = array_combine($excludes, $excludes);
+    $load['drupalSettings']['slick'] = array_diff_key(Slick::defaultSettings(), $excludes);
   }
 
   /**

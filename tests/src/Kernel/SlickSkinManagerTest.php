@@ -84,8 +84,12 @@ class SlickSkinManagerTest extends BlazyKernelTestBase {
     $libraries = $manager->libraryInfoBuild();
     $this->assertArrayHasKey('slick.main.default', $libraries);
 
+    // Tests for Drupal\slick_test\Plugin\slick\SlickSkin as a plugin.
     $skins = $manager->getSkinsByGroup('dots');
     $this->assertArrayHasKey('dots', $skins);
+
+    $skins = $manager->getSkinsByGroup('arrows');
+    $this->assertArrayHasKey('arrows', $skins);
   }
 
 }

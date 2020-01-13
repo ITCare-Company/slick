@@ -21,12 +21,3 @@ function template_preprocess_slick_test(&$variables) {
   $variables['content'] = $element['#children'];
   $variables['settings'] = isset($element['#settings']) ? $element['#settings'] : [];
 }
-
-/**
- * Implements hook_slick_skins_info().
- *
- * @todo deprecated and remove for plugin.
- */
-function slick_test_slick_skins_info() {
-  return '\Drupal\slick_test\SlickSkinTest';
-}

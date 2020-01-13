@@ -34,8 +34,11 @@ interface SlickSkinPluginInterface {
    * - description: The description about the skin, for help and manage pages.
    * - css: An array of CSS files to attach.
    * - js: An array of JS files to attach, e.g.: image zoomer, reflection, etc.
-   * - group: A string grouping the current skin: main, thumbnail.
+   * - group: A string grouping the current skin: main, thumbnail, arrows, dots.
+   * - dependencies: SImilar to how core library dependencies constructed.
    * - provider: A module name registering the skins.
+   * - options: Extra JavaScript (Slicebox, 3d carousel, etc) options merged
+   *     into existing [data-slick] attribute to be consumed by custom JS.
    *
    * @return array
    *   The array of the main and thumbnail skins.
