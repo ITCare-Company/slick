@@ -7,6 +7,8 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * Implements SlickSkinInterface as registered via hook_slick_skins_info().
+ *
+ * @todo deprecated and remove for plugin. 
  */
 class SlickSkinTest implements SlickSkinInterface {
 

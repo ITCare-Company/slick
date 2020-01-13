@@ -83,7 +83,7 @@ function slick_library_info_alter(&$libraries, $extension) {
  */
 function slick_libraries_get_path($name, $base_path = FALSE) {
   $function = 'libraries_get_path';
-  return is_callable($function, TRUE) ? $function($name, $base_path) : FALSE;
+  return is_callable($function) ? $function($name, $base_path) : FALSE;
 }
 
 /**

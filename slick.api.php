@@ -152,12 +152,10 @@
  *       // Individual slide supports some useful settings like layout, classes,
  *       // etc.
  *       // Meaning each slide can have different layout, or classes.
- *       // @see src/Plugin/Field/README.txt
  *       'settings' => [
  *
  *         // Optionally add a custom layout, can be a static uniform value, or
  *         // dynamic one based on the relevant field value.
- *         // @see src/Plugin/Field/README.txt for the supported layout keys.
  *         'layout' => 'bottom',
  *
  *         // Optionally add a custom class, can be a static uniform class, or
