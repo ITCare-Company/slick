@@ -9,8 +9,9 @@ namespace Drupal\slick;
  *   #2233261: Deprecate hook_hook_info()
  *     Postponed till D9
  *
- * @todo deprecate at 3.x, and remove post 3.x.
- * @see slick.api.php for more supported methods.
+ * @todo deprecated at 8.x-2.0, and is removed from slick:8.x-3.0. Use
+ * Drupal\slick\SlickSkinPluginBase instead.
+ * @see https://www.drupal.org/node/3105648
  */
 interface SlickSkinInterface {
 

@@ -7,7 +7,9 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 /**
  * Implements SlickSkinInterface.
  *
- * @todo deprecate at 3.x, and remove post 3.x.
+ * @todo deprecated at 8.x-2.0, and is removed from slick:8.x-3.0. Use
+ * Drupal\slick\SlickSkinPluginBase instead.
+ * @see https://www.drupal.org/node/3105648
  */
 class SlickSkin implements SlickSkinInterface {
 

@@ -105,13 +105,3 @@ function slick_field_formatter_info_alter(array &$info) {
     ];
   }
 }
-
-/**
- * Implements hook_hook_info().
- *
- * @todo remove at slick:8.x-3.0 for the new skins using plugin.
- */
-function slick_hook_info() {
-  $hooks['slick_skins_info'] = ['group' => 'slick'];
-  return $hooks;
-}

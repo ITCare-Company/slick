@@ -1,4 +1,6 @@
-# SLICK FORMATTERS
+***
+***
+# <a name="formatters"> </a>SLICK FORMATTERS
 
 Adds a field display formatter to allow you to display field content using
 Slick carousel. The module doesn't require Field UI to be enabled by default

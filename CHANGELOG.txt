@@ -1,4 +1,9 @@
 
+Slick 8.x-2.0-dev, 2020-01-15
+-----------------------------
+- Removed slick_hook_info() for the new skins as plugins.
+- Updated docs.
+
 Slick 8.x-2.0-dev, 2020-01-13
 -----------------------------
 - Issue #3075838 by volkerk, gausarts: Configuration translation disallowed HTML
