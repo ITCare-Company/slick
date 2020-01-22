@@ -21,7 +21,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 abstract class SlickEntityReferenceFormatterBase extends BlazyEntityReferenceBase implements ContainerFactoryPluginInterface {
 
-  use SlickFormatterTrait;
+  use SlickFormatterTrait {
+    buildSettings as traitBuildSettings;
+  }
 
   /**
    * The logger factory.
@@ -85,16 +87,6 @@ abstract class SlickEntityReferenceFormatterBase extends BlazyEntityReferenceBas
 
       $build['thumb']['items'][$delta] = $element;
     }
-  }
-
-  /**
-   * Builds the settings.
-   */
-  public function buildSettings() {
-    $settings              = $this->getSettings();
-    $settings['plugin_id'] = $this->getPluginId();
-
-    return $settings;
   }
 
   /**

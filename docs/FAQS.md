@@ -63,9 +63,9 @@ It is not the module job to match your awesome design requirements.
 ### Registering Slick skins:
 [**slick.api.php**](https://git.drupalcode.org/project/slick/blob/8.x-2.x/slick.api.php#L337)
 
-1. copy `\Drupal\slick\Plugin\slick\SlickSkin` into your module
+1. Copy `\Drupal\slick\Plugin\slick\SlickSkin` into your module
   `/src/Plugin/slick directory`.
-2. Adjust everything accordinngly: rename the file, change SlickSkin ID and
+2. Adjust everything accordingly: rename the file, change SlickSkin ID and
   label, change class name and its namespace, define skin name, and its CSS and
   JS assets.
 
@@ -74,6 +74,7 @@ The SlickSkin object has 3 supported methods: `::setSkins()`, `::setDots()`,
 and arrows skins respectively.
 
 The declared skins will be available for custom coded, or UI selections.
+Be sure to clear cache since skins are permanently cached!
 
 ### Optional skins:
 * **None**
@@ -118,25 +119,25 @@ The declared skins will be available for custom coded, or UI selections.
 
   **Requires:**
 
-  Visible slides, Skin Grid for starter, A reasonable amount of slides,
+  `Visible slides`, `Skin Grid` for starter, A reasonable amount of slides,
   Optionset with Rows and slidesPerRow = 1.
 
-  Avoid variableWidth and adaptiveHeight. Use consistent dimensions.
-  This is module feature, older than core Rows, and offers more flexibility.
-  Available at slick_views, and configurable via Views UI.
+  Avoid `variableWidth` and `adaptiveHeight`. Use consistent dimensions.
+  This is module feature, older than core `Rows`, and offers more flexibility.
+  Available at `slick_views`, and configurable via Views UI.
 
 If you want to attach extra 3rd libraries, e.g.: image reflection, image zoomer,
 more advanced 3d carousels, etc, simply put them into js array of the target
 skin. Be sure to add proper weight, if you are acting on existing slick events,
-normally < 0 (slick.load.min.js) is the one.
+normally < 0 (`slick.load.min.js`) is the one.
 
 See [**slick.api.php**](https://git.drupalcode.org/project/slick/blob/8.x-2.x/slick.api.php#L337)
 for more info on skins, including registering skins.
 
 Other skins are available at
 [Slick Extras](https://drupal.org/project/slick_extras).
-Some extra skins are WIP which may not work as expected. Use them as starters,
-not final products.
+Some extra skins are WIP which may not work as expected.
+Use them as starters, not final products!
 
 
 ## GRID
@@ -144,14 +145,15 @@ To create Slick grid or multiple rows carousel, there are 3 options:
 
 1. **One row grid managed by library:**
 
-   Visit [/admin/config/media/slick](/admin/config/media/slick),
-   Edit current optionset, and set
+   [/admin/config/media/slick](/admin/config/media/slick)
+
+   Edit the current optionset, and set
 
    `slidesToShow > 1, and Rows and slidesperRow = 1`
 
 2. **Multiple rows grid managed by library:**
 
-   Visit [/admin/config/media/slick](/admin/config/media/slick)
+   [/admin/config/media/slick](/admin/config/media/slick)
 
    Edit current optionset, and set
 
@@ -159,19 +161,20 @@ To create Slick grid or multiple rows carousel, there are 3 options:
 
 3. **Multiple rows grid managed by module:**
 
-   Visit [Grid sample](/admin/structure/views/view/slick_x/edit/block_grid)
-   from slick_example. Be sure to install the Slick example sub-module first.
-   Requires skin "Grid", and
+   [Grid sample](/admin/structure/views/view/slick_x/edit/block_grid)
+   from `slick_example`. Be sure to install the Slick example sub-module first.
+   Requires:
 
-   `slidesToShow, Rows and slidesPerRow = 1`
+   + skin **Grid**
+   + `slidesToShow, Rows and slidesPerRow = 1`
 
 The first 2 are supported by core library using pure JS approach.
-The last is the Module feature using pure CSS Foundation block-grid.
+The last is the Module feature using pure `CSS Foundation` block-grid.
 
 **The key is:**
 
-The total amount of Views results must be bigger than Visible slides, otherwise
-broken Grid, see skin Grid above for more details.
+The total amount of Views results must be bigger than `Visible slides`,
+otherwise broken Grid, see skin Grid above for more details.
 
 
 ## <a name="html-structure"></a>HTML STRUCTURE
@@ -190,14 +193,15 @@ Note, non-BEM classes are added by JS.
 
 
 ## CURRENT DEVELOPMENT STATUS
-A full release should be reasonable after proper feedbacks from the community,
+A full release should be reasonable after proper feedback from the community,
 some code cleanup, and optimization where needed. Patches are very much welcome.
 
 Alpha, Beta, DEV releases are for developers only. Beware of possible breakage.
 
 However if it is broken, unless an update is explicitly required, clearing cache
 should fix most issues during DEV phases. Prior to any update, always visit:
-**/admin/config/development/performance**
+
+**[/admin/config/development/performance](/admin/config/development/performance)**
 
 And hit **Clear all caches** button once the new Slick is in place.
 Regenerate CSS and JS as the latest fixes may contain changes to the assets.

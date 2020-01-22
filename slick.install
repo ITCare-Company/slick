@@ -13,22 +13,22 @@ function slick_requirements($phase) {
     return [];
   }
 
-  $path = DRUPAL_ROOT . '/libraries/slick/slick/slick.min.js';
+  $path = DRUPAL_ROOT . '/libraries/slick/slick';
 
   if (slick_libraries_get_path('slick') || slick_libraries_get_path('slick-carousel')) {
     $library_path = slick_libraries_get_path('slick') ?: slick_libraries_get_path('slick-carousel');
 
     if ($library_path) {
-      $path = $library_path . '/slick/slick.min.js';
+      $path = $library_path . '/slick';
     }
   }
 
-  $exists = is_file($path);
+  $exists = is_file($path . '/slick.min.js');
 
   return [
     'slick_library' => [
       'title'       => t('Slick library'),
-      'description' => $exists ? '' : t('The <a href=":url">Slick library</a> should be installed at <strong>/libraries/slick/slick/slick.min.js</strong>, or any path supported by libraries.module if installed.', [':url' => 'https://github.com/kenwheeler/slick/']),
+      'description' => $exists ? '' : t('The <a href=":url">Slick library</a> should be installed at <strong>/libraries/slick/slick/slick.min.js</strong>, or any path supported by libraries.module if installed. Check out file or folder permissions if troubled.', [':url' => 'https://github.com/kenwheeler/slick/']),
       'severity'    => $exists ? REQUIREMENT_OK : REQUIREMENT_ERROR,
       'value'       => $exists ? t('Installed') : t('Not installed'),
     ],

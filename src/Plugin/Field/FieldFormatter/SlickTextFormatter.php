@@ -7,10 +7,10 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\slick\SlickFormatterInterface;
 use Drupal\slick\SlickManagerInterface;
 use Drupal\slick\SlickDefault;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Plugin implementation of the 'Slick Text' formatter.
@@ -28,7 +28,10 @@ use Drupal\slick\SlickDefault;
  */
 class SlickTextFormatter extends FormatterBase implements ContainerFactoryPluginInterface {
 
-  use SlickFormatterTrait;
+  use SlickFormatterViewTrait;
+  use SlickFormatterTrait {
+    buildSettings as traitBuildSettings;
+  }
 
   /**
    * Constructs a SlickImageFormatter instance.
@@ -67,19 +70,13 @@ class SlickTextFormatter extends FormatterBase implements ContainerFactoryPlugin
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
-    // Early opt-out if the field is empty.
-    if ($items->isEmpty()) {
-      return [];
-    }
+    return $this->commonViewElements($items, $langcode);
+  }
 
-    $settings = $this->buildSettings();
-
-    // Build the settings.
-    $build = ['settings' => $settings];
-
-    // Modifies settings before building elements.
-    $this->formatter->preBuildElements($build, $items);
-
+  /**
+   * Build the slick carousel elements.
+   */
+  public function buildElements(array &$build, $items) {
     // The ProcessedText element already handles cache context & tag bubbling.
     // @see \Drupal\filter\Element\ProcessedText::preRenderText()
     foreach ($items as $key => $item) {
@@ -92,11 +89,6 @@ class SlickTextFormatter extends FormatterBase implements ContainerFactoryPlugin
       $build['items'][$key] = $element;
       unset($element);
     }
-
-    // Modifies settings post building elements.
-    $this->formatter->postBuildElements($build, $items);
-
-    return $this->manager()->build($build);
   }
 
   /**
@@ -114,10 +106,7 @@ class SlickTextFormatter extends FormatterBase implements ContainerFactoryPlugin
    * Builds the settings.
    */
   public function buildSettings() {
-    $settings              = $this->getSettings();
-    $settings['plugin_id'] = $this->getPluginId();
-    $settings['vanilla']   = TRUE;
-    return $settings;
+    return ['vanilla' => TRUE] + $this->traitBuildSettings();
   }
 
   /**
@@ -125,14 +114,11 @@ class SlickTextFormatter extends FormatterBase implements ContainerFactoryPlugin
    */
   public function getScopedFormElements() {
     return [
-      'current_view_mode' => $this->viewMode,
-      'no_image_style'    => TRUE,
-      'no_layouts'        => TRUE,
-      'responsive_image'  => FALSE,
-      'style'             => TRUE,
-      'plugin_id'         => $this->getPluginId(),
-      'settings'          => $this->getSettings(),
-    ];
+      'no_image_style'   => TRUE,
+      'no_layouts'       => TRUE,
+      'responsive_image' => FALSE,
+      'style'            => TRUE,
+    ] + $this->getCommonScopedFormElements();
   }
 
 }

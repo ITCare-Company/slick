@@ -294,9 +294,11 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
         }
       }
       else {
-        $easing_path = DRUPAL_ROOT . '/libraries/easing/jquery.easing.min.js';
+        if (defined('DRUPAL_ROOT') && is_file(DRUPAL_ROOT . '/libraries/easing/jquery.easing.min.js')) {
+          $easing_path = 'libraries/easing/jquery.easing.min.js';
+        }
       }
-      $this->easingPath = isset($easing_path) && is_file($easing_path) ? $easing_path : FALSE;
+      $this->easingPath = isset($easing_path) ? $easing_path : FALSE;
     }
     return $this->easingPath;
   }
@@ -312,8 +314,8 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
       $libraries['slick.css']['css']['theme'] = ['/' . $library_path . '/slick/slick-theme.css' => ['weight' => -2]];
     }
 
-    if ($easing_path = $this->getEasingPath()) {
-      $libraries['slick.easing']['js'] = ['/' . $easing_path => ['weight' => -4]];
+    if ($library_easing = $this->getEasingPath()) {
+      $libraries['slick.easing']['js'] = ['/' . $library_easing => ['weight' => -4]];
     }
 
     $library_mousewheel = slick_libraries_get_path('mousewheel') ?: slick_libraries_get_path('jquery-mousewheel');

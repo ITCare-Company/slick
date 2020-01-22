@@ -4,6 +4,7 @@
  * [Introduction](#introduction)
  * [Requirements](#requirements)
  * [Recommended modules](#recommended-modules)
+ * [Features](#features)
  * [Installation](#installation)
  * [Configuration](#configuration)
  * [Slick Formatters](#formatters)
@@ -28,7 +29,7 @@ building more complex slideshows.
 
 The module supports Slick 1.6 above until 1.8.1. Versions 1.9.0 and above are
 not currently supported. Slick 2.x is just out 9/21/15, and hasn't been
-officially supported now, Feb 2019.
+officially supported now, Jan 2020.
 
 
 ***
@@ -185,9 +186,9 @@ The Slick module has several sub-modules:
 * [Slick Example](https://drupal.org/project/slick_extras)
   to get up and running Slick quickly.
 
-
-
-## FEATURES
+***
+***
+# <a name="features"></a>FEATURES
 * Fully responsive. Scales with its container.
 * Uses CSS3 when available. Fully functional when not.
 * Swipe enabled. Or disabled, if you prefer.

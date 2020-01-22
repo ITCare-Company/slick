@@ -106,7 +106,8 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
       }
 
       // Provide a context for lightbox, or multimedia galleries, save for grid.
-      if (!empty($settings['media_switch']) && empty($settings['grid'])) {
+      // @todo reenabled if any issue  && empty($settings['grid']).
+      if (!empty($settings['media_switch'])) {
         $switch = str_replace('_', '-', $settings['media_switch']);
         $attributes['data-' . $switch . '-gallery'] = TRUE;
       }
@@ -351,9 +352,18 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   }
 
   /**
+   * Provides skins only if required.
+   *
+   * @todo TBD; deprecate this at slick:8.x-3.0 for slick:9.x-1.0.
+   */
+  public function attachSkin(array &$load, $attach = []) {
+    $this->skinManager->attachSkin($load, $attach);
+  }
+
+  /**
    * Returns slick skins registered via SlickSkin plugin, or defaults.
    *
-   * @todo deprecate this anytime post slick:8.x-2.1, or slick:8.x-3.0.
+   * @todo TBD; deprecate this at slick:8.x-3.0 for slick:9.x-1.0.
    */
   public function getSkins() {
     return $this->skinManager->getSkins();
@@ -362,7 +372,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   /**
    * Returns available slick skins by group.
    *
-   * @todo deprecate this anytime post slick:8.x-2.1, or slick:8.x-3.0.
+   * @todo TBD; deprecate this at slick:8.x-3.0 for slick:9.x-1.0.
    */
   public function getSkinsByGroup($group = '', $option = FALSE) {
     return $this->skinManager->getSkinsByGroup($group, $option);
@@ -379,19 +389,6 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    */
   public function libraryInfoBuild() {
     return $this->skinManager->libraryInfoBuild();
-  }
-
-  /**
-   * Provides skins only if required.
-   *
-   * @todo put @trigger_error post slick:8.x-2.1, safe to remove before 8.x-3.0.
-   *
-   * @deprecated in slick:8.x-2.1 and is removed from slick:8.x-3.0. Use
-   *   SlickSkinManager::attachSkin() instead.
-   * @see https://www.drupal.org/node/3105648
-   */
-  public function attachSkin(array &$load, $attach = []) {
-    $this->skinManager->attachSkin($load, $attach);
   }
 
   /**

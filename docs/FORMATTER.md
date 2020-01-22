@@ -43,7 +43,7 @@ site building.
 ## OPTIONSET
 To create your option sets, go to:
 
-[Slick UI]("/admin/config/media/slick)
+[Slick UI](/admin/config/media/slick)
 
 
 ## SLIDE LAYOUT

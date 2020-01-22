@@ -57,7 +57,7 @@ class SlickForm extends SlickFormBase {
       '#options'       => $this->admin->getSkinsByGroupOptions(),
       '#empty_option'  => $this->t('- None -'),
       '#default_value' => $slick->getSkin(),
-      '#description'   => $this->t('Skins allow swappable layouts like next/prev links, split image and caption, etc. However a combination of skins and options may lead to unpredictable layouts, get yourself dirty. See main <a href="@url">README</a> for details on Skins. Only useful for custom work, and ignored/overridden by slick formatters or sub-modules.', ['@url' => $readme]),
+      '#description'   => $this->t('Skins allow swappable layouts like next/prev links, split image and caption, etc. However a combination of skins and options may lead to unpredictable layouts, get yourself dirty. See main <a href="@url">README</a> for details on Skins. Only useful for custom work, and ignored/overridden by slick formatters or sub-modules. If you are using Slick Lightbox, this is the only option to change its skin at the Slick Lightbox optionset.', ['@url' => $readme]),
       '#attributes'    => $tooltip,
       '#prefix'        => '<div class="form__header form__half form__half--last has-tooltip clearfix">',
     ];

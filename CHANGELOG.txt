@@ -1,4 +1,9 @@
 
+Slick 8.x-2.0-dev, 2020-01-22
+-----------------------------
+- Added micro optimizations, similarity found -> code reuse, etc.
+- Updated docs, cleanups, minor fixes.
+
 Slick 8.x-2.0-dev, 2020-01-15
 -----------------------------
 - Removed slick_hook_info() for the new skins as plugins.

@@ -20,7 +20,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 abstract class SlickEntityFormatterBase extends BlazyEntityBase implements ContainerFactoryPluginInterface {
 
-  use SlickFormatterTrait;
+  use SlickFormatterViewTrait;
+  use SlickFormatterTrait {
+    buildSettings as traitBuildSettings;
+  }
 
   /**
    * The logger factory.
@@ -68,10 +71,7 @@ abstract class SlickEntityFormatterBase extends BlazyEntityBase implements Conta
    * {@inheritdoc}
    */
   public static function defaultSettings() {
-    $settings = SlickDefault::baseSettings();
-    $settings['view_mode'] = '';
-
-    return $settings;
+    return ['view_mode' => ''] + SlickDefault::baseSettings();
   }
 
   /**
@@ -85,35 +85,16 @@ abstract class SlickEntityFormatterBase extends BlazyEntityBase implements Conta
       return [];
     }
 
-    // Collects specific settings to this formatter.
-    $settings = $this->buildSettings();
-
-    // Asks for Blazy to deal with iFrames, and mobile-optimized lazy loading.
-    $build = ['settings' => $settings];
-
-    // Modifies settings before building elements.
-    $entities = array_values($entities);
-    $this->formatter->preBuildElements($build, $items, $entities);
-
-    // Build the elements.
-    $this->buildElements($build, $entities, $langcode);
-
-    // Modifies settings post building elements.
-    $this->formatter->postBuildElements($build, $items, $entities);
-
-    return $this->manager()->build($build);
+    return $this->commonViewElements($items, $langcode, $entities);
   }
 
   /**
    * Builds the settings.
+   *
+   * @todo inherit and extend parent post Blazy 2.x release.
    */
   public function buildSettings() {
-    $settings              = $this->getSettings();
-    $settings['plugin_id'] = $this->getPluginId();
-    $settings['blazy']     = TRUE;
-    $settings['vanilla']   = TRUE;
-
-    return $settings;
+    return ['blazy' => TRUE, 'vanilla' => TRUE] + $this->traitBuildSettings();
   }
 
   /**

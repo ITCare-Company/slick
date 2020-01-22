@@ -17,6 +17,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
 
+  use SlickFormatterTrait;
+  use SlickFormatterViewTrait;
+
   /**
    * Constructs a SlickFileFormatterBase instance.
    */
@@ -53,30 +56,18 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @todo use $this->commonViewElements() post blazy:2.x release.
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
-    $files = $this->getEntitiesToView($items, $langcode);
+    $entities = $this->getEntitiesToView($items, $langcode);
 
     // Early opt-out if the field is empty.
-    if (empty($files)) {
+    if (empty($entities)) {
       return [];
     }
 
-    // Collects specific settings to this formatter.
-    $settings = $this->buildSettings();
-    $settings['langcode'] = $langcode;
-    $build = ['settings' => $settings];
-
-    // Modifies settings before building elements.
-    $this->formatter->preBuildElements($build, $items, $files);
-
-    // Build the elements.
-    $this->buildElements($build, $files);
-
-    // Modifies settings post building elements.
-    $this->formatter->postBuildElements($build, $items, $files);
-
-    return $this->manager()->build($build);
+    return $this->commonViewElements($items, $langcode, $entities);
   }
 
   /**

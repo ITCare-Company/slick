@@ -77,7 +77,7 @@ class SlickFormatterTest extends BlazyKernelTestBase {
     $this->displayEmpty = $this->setUpFormatterDisplay($bundle, $data);
 
     $this->formatterInstance = $this->getFormatterInstance();
-    $this->skins = $this->slickManager->getSkins();
+    $this->skins = $this->slickManager->skinManager()->getSkins();
 
     $this->setUpContentWithItems($bundle);
     $this->setUpRealImage();
