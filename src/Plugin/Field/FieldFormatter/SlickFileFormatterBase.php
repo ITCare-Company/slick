@@ -14,6 +14,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Base class for slick image and file ER formatters.
+ *
+ * @todo remove no longer in use: ImageFactory at blazy:3.x.
  */
 abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
 

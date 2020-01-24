@@ -19,6 +19,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class SlickFileFormatter extends SlickFileFormatterBase {
 
+  // @@todo remove post blazy:2.x.
   use BlazyVideoTrait;
 
   /**
@@ -55,6 +56,7 @@ class SlickFileFormatter extends SlickFileFormatterBase {
     $settings = $build['settings'];
     /** @var Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem $item */
     // EntityReferenceItem provides $item->entity Drupal\file\Entity\File.
+    // @todo use $this->blazyOembed->getImageItem($entity) post blazy:2.x.
     if ($item = $this->getImageItem($entity)) {
       $build['item'] = $item['item'];
       $build['settings'] = array_merge($settings, $item['settings']);

@@ -18,6 +18,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @see \Drupal\slick_media\Plugin\Field\FieldFormatter
  * @see \Drupal\slick_paragraphs\Plugin\Field\FieldFormatter
+ * @todo remove no longer in use: ImageFactory post blazy:2.x.
  */
 abstract class SlickEntityReferenceFormatterBase extends BlazyEntityReferenceBase implements ContainerFactoryPluginInterface {
 
@@ -38,6 +39,7 @@ abstract class SlickEntityReferenceFormatterBase extends BlazyEntityReferenceBas
   public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, LoggerChannelFactoryInterface $logger_factory, ImageFactory $image_factory, BlazyEntity $blazy_entity, SlickFormatterInterface $formatter, SlickManagerInterface $manager) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
     $this->loggerFactory = $logger_factory;
+    // @todo remove no longer in use: ImageFactory post blazy:2.x.
     $this->imageFactory = $image_factory;
     $this->blazyEntity = $blazy_entity;
     $this->blazyOembed = $blazy_entity->oembed();

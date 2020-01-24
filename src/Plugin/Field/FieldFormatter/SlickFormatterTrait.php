@@ -17,6 +17,28 @@ trait SlickFormatterTrait {
   protected $manager;
 
   /**
+   * The image factory service.
+   *
+   * @var \Drupal\Core\Image\ImageFactory
+   * @todo deprecated in blazy:8.x-2.0 and is removed from blazy:8.x-3.0.
+   */
+  protected $imageFactory = NULL;
+
+  /**
+   * Returns the image factory.
+   *
+   * @todo deprecated in blazy:8.x-2.0 and is removed from blazy:8.x-3.0. Use
+   *   BlazyOEmbed::imageFactory() instead.
+   * @see https://www.drupal.org/node/3103018
+   */
+  public function imageFactory() {
+    if (is_null($this->imageFactory)) {
+      $this->imageFactory = \Drupal::service('image.factory');
+    }
+    return $this->imageFactory;
+  }
+
+  /**
    * Returns the slick field formatter service.
    */
   public function formatter() {
