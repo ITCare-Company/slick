@@ -82,7 +82,7 @@ class SlickFormatter extends BlazyFormatterManager implements SlickFormatterInte
         '#style_name' => empty($settings['thumbnail_style']) ? 'thumbnail' : $settings['thumbnail_style'],
         '#uri'        => $settings['uri'],
         '#item'       => $item,
-        '#alt'        => $item instanceof ImageItem ? $item->getValue()['alt'] : '',
+        '#alt'        => $item && $item instanceof ImageItem ? $item->getValue()['alt'] : '',
       ];
     }
     return [];

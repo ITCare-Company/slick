@@ -16,6 +16,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * This is not 'Slick Media', instead a simple mix of image and optional video.
  *
  * @todo TBD; deprecate for core Media and remove post/ prior to 3.x release.
+ * @todo deprecated in blazy:8.x-2.0 and is removed from blazy:8.x-3.0. Use
+ *   \Drupal\slick\Plugin\Field\FieldFormatter\SlickMediaFormatter instead.
  */
 class SlickFileFormatter extends SlickFileFormatterBase {
 
@@ -54,12 +56,21 @@ class SlickFileFormatter extends SlickFileFormatterBase {
    */
   public function buildElement(array &$build, $entity) {
     $settings = $build['settings'];
+    $item = NULL;
     /** @var Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem $item */
     // EntityReferenceItem provides $item->entity Drupal\file\Entity\File.
-    // @todo use $this->blazyOembed->getImageItem($entity) post blazy:2.x.
-    if ($item = $this->getImageItem($entity)) {
-      $build['item'] = $item['item'];
-      $build['settings'] = array_merge($settings, $item['settings']);
+    if (empty($build['item'])) {
+      if (method_exists('getImageItem', $this->blazyOembed)) {
+        $item = $this->blazyOembed->getImageItem($entity);
+      }
+      elseif (method_exists('getImageItem', $this)) {
+        $item = $this->getImageItem($entity);
+      }
+
+      if ($item) {
+        $build['item'] = $item['item'];
+        $build['settings'] = array_merge($settings, $item['settings']);
+      }
     }
 
     $this->blazyOembed->getMediaItem($build, $entity);

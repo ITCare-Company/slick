@@ -101,6 +101,8 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
       }
 
       // Blazy can still lazyload an unslick.
+      // @todo use Blazy::containerAttributes($attributes, $settings);
+      // Note .blazy class is set at slick.html.twig which can be removed later.
       if ($settings['lazy'] == 'blazy' || !empty($settings['blazy'])) {
         $attributes['data-blazy'] = empty($settings['blazy_data']) ? '' : Json::encode($settings['blazy_data']);
       }

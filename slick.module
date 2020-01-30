@@ -90,6 +90,9 @@ function slick_libraries_get_path($name, $base_path = FALSE) {
  * Implements hook_field_formatter_info_alter().
  *
  * @todo TBD; deprecate for core Media and remove post/ prior to 3.x release.
+ * @todo deprecated in blazy:8.x-2.0 and is removed from blazy:8.x-3.0. Use
+ *   \Drupal\slick\Plugin\Field\FieldFormatter\SlickMediaFormatter instead.
+ * @see https://www.drupal.org/node/3103018
  */
 function slick_field_formatter_info_alter(array &$info) {
   // Supports Media Entity via VEM within VEF if available.

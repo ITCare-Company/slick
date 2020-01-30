@@ -92,7 +92,7 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
 
       $element = ['item' => $item, 'settings' => $settings];
 
-      // If imported Drupal\blazy\Dejavu\BlazyVideoTrait.
+      // @todo remove, no longer file entity/VEF/M for pure Media.
       $this->buildElement($element, $file);
       $settings = $element['settings'];
 
