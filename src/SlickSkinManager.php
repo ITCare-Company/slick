@@ -20,6 +20,13 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
   use StringTranslationTrait;
 
   /**
+   * The app root.
+   *
+   * @var \SplString
+   */
+  protected $root;
+
+  /**
    * The config factory.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
@@ -57,10 +64,12 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
   /**
    * {@inheritdoc}
    */
-  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler, ConfigFactoryInterface $config) {
+  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler, $root, ConfigFactoryInterface $config) {
     parent::__construct('Plugin/slick', $namespaces, $module_handler, SlickSkinPluginInterface::class, 'Drupal\slick\Annotation\SlickSkin');
 
+    $this->root = $root;
     $this->config = $config;
+
     $this->alterInfo('slick_skin_info');
     $this->setCacheBackend($cache_backend, 'slick_skin_plugins');
   }
@@ -93,6 +102,13 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
    */
   public function getCache() {
     return $this->cacheBackend;
+  }
+
+  /**
+   * Returns app root.
+   */
+  public function root() {
+    return $this->root;
   }
 
   /**
@@ -136,7 +152,7 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
         // @todo remove for the new plugin system at slick:8.x-3.0.
         $disabled = $this->config()->get('disable_old_skins');
         if (empty($disabled)) {
-          $slick = \Drupal::service('slick.manager');
+          $slick = slick();
           if (method_exists($slick, 'buildSkins')) {
             // See \Drupal\blazy\BlazyManagerBase::buildSkins().
             if ($old_skins = $slick->buildSkins('slick', '\Drupal\slick\SlickSkin', $methods)) {
@@ -294,7 +310,7 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
         }
       }
       else {
-        if (defined('DRUPAL_ROOT') && is_file(DRUPAL_ROOT . '/libraries/easing/jquery.easing.min.js')) {
+        if (is_file($this->root . '/libraries/easing/jquery.easing.min.js')) {
           $easing_path = 'libraries/easing/jquery.easing.min.js';
         }
       }

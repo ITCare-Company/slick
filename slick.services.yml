@@ -15,4 +15,4 @@ services:
   slick.skin_manager:
     class: Drupal\slick\SlickSkinManager
     parent: default_plugin_manager
-    arguments: ['@config.factory']
+    arguments: ['@app.root', '@config.factory']
