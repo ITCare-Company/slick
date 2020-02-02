@@ -131,7 +131,7 @@ class SlickFormatterTest extends BlazyKernelTestBase {
     $settings = $this->getFormatterSettings() + SlickDefault::extendedSettings();
     $settings['uri'] = empty($uri) ? '' : $this->uri;
 
-    $thumbnail = $this->slickFormatter->getThumbnail($settings, $this->image);
+    $thumbnail = $this->slickFormatter->getThumbnail($settings, $this->testItem);
     $this->assertEquals($expected, !empty($thumbnail));
   }
 

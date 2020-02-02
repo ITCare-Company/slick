@@ -93,8 +93,8 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
   /**
    * Returns slick config shortcut.
    */
-  public function config() {
-    return $this->config->get('slick.settings');
+  public function config($key = '', $settings = 'slick.settings') {
+    return $this->config->get($settings)->get($key);
   }
 
   /**
@@ -150,7 +150,7 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
         }
 
         // @todo remove for the new plugin system at slick:8.x-3.0.
-        $disabled = $this->config()->get('disable_old_skins');
+        $disabled = $this->config('disable_old_skins');
         if (empty($disabled)) {
           $slick = slick();
           if (method_exists($slick, 'buildSkins')) {
@@ -268,11 +268,11 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
    * Provides skins only if required.
    */
   public function attachSkin(array &$load, $attach = []) {
-    if ($this->config()->get('slick_css')) {
+    if ($this->config('slick_css')) {
       $load['library'][] = 'slick/slick.css';
     }
 
-    if ($this->config()->get('module_css', 'slick.settings')) {
+    if ($this->config('module_css', 'slick.settings')) {
       $load['library'][] = 'slick/slick.theme';
     }
 

@@ -230,10 +230,6 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
       $build[$key] = isset($build[$key]) ? $build[$key] : [];
     }
 
-    $settings       = &$build['settings'];
-    $id             = isset($settings['id']) ? $settings['id'] : '';
-    $settings['id'] = Blazy::getHtmlId('slick', $id);
-
     $slick = [
       '#theme'      => 'slick_wrapper',
       '#items'      => [],
@@ -243,7 +239,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
       'items'       => [],
     ];
 
-    $this->moduleHandler->alter('slick_build', $slick, $settings);
+    $this->moduleHandler->alter('slick_build', $slick, $build['settings']);
     return empty($build['items']) ? [] : $slick;
   }
 
@@ -256,10 +252,9 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
     // One slick_theme() to serve multiple displays: main, overlay, thumbnail.
     $settings = array_merge(SlickDefault::htmlSettings(), $build['settings']);
-    $id       = $settings['id'];
+    $id       = $settings['id'] = Blazy::getHtmlId('slick', $settings['id']);
     $thumb_id = $id . '-thumbnail';
     $options  = $build['options'];
-    $switch   = $settings['media_switch'];
     $thumbs   = isset($build['thumb']) ? $build['thumb'] : [];
 
     // Prevents unused thumb going through the main display.
@@ -277,7 +272,6 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     // Additional settings.
     $build['optionset']   = $build['optionset'] ?: Slick::loadWithFallback($settings['optionset']);
     $settings['count']    = empty($settings['count']) ? count($build['items']) : $settings['count'];
-    $settings['id']       = $id;
     $settings['nav']      = $settings['nav'] ?: (!empty($settings['optionset_thumbnail']) && isset($build['items'][1]));
     $settings['navpos']   = $settings['nav'] && !empty($settings['thumbnail_position']);
     $settings['vertical'] = $build['optionset']->getSetting('vertical');
@@ -297,21 +291,19 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
       }
     }
 
-    // Attach libraries.
-    if ($switch && $switch != 'content') {
-      $settings[$switch] = empty($settings[$switch]) ? $switch : $settings[$switch];
-    }
-
     // Supports Blazy multi-breakpoint or lightbox images if provided.
     // Cases: Blazy within Views gallery, or references without direct image.
     if (!empty($settings['check_blazy']) && !empty($settings['first_image'])) {
       $this->isBlazy($settings, $settings['first_image']);
     }
 
+    // Formatters might have checked this, but not views, nor custom works.
+    if (empty($settings['_lazy'])) {
+      $build['optionset']->whichLazy($settings);
+    }
+
     $settings['mousewheel'] = $mousewheel;
     $settings['down_arrow'] = $build['optionset']->getSetting('downArrow');
-    $settings['lazy']       = empty($settings['lazy']) ? $build['optionset']->getSetting('lazyLoad') : $settings['lazy'];
-    $settings['blazy']      = empty($settings['blazy']) ? $settings['lazy'] == 'blazy' : $settings['blazy'];
     $attachments            = $this->attach($settings);
     $build['options']       = $options;
     $build['settings']      = $settings;
@@ -378,45 +370,6 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    */
   public function getSkinsByGroup($group = '', $option = FALSE) {
     return $this->skinManager->getSkinsByGroup($group, $option);
-  }
-
-  /**
-   * Implements hook_library_info_build().
-   *
-   * @todo put @trigger_error post slick:8.x-2.1, safe to remove before 8.x-3.0.
-   *
-   * @deprecated in slick:8.x-2.1 and is removed from slick:8.x-3.0. Use
-   *   SlickSkinManager::libraryInfoBuild() instead.
-   * @see https://www.drupal.org/node/3105648
-   */
-  public function libraryInfoBuild() {
-    return $this->skinManager->libraryInfoBuild();
-  }
-
-  /**
-   * Returns easing library path if available, else FALSE.
-   *
-   * @todo put @trigger_error post slick:8.x-2.1, safe to remove before 8.x-3.0.
-   *
-   * @deprecated in slick:8.x-2.1 and is removed from slick:8.x-3.0. Use
-   *   SlickSkinManager::getEasingPath() instead.
-   * @see https://www.drupal.org/node/3105648
-   */
-  public function getEasingPath() {
-    return $this->skinManager->getEasingPath();
-  }
-
-  /**
-   * Returns the supported skins.
-   *
-   * @todo put @trigger_error post slick:8.x-2.1, safe to remove before 8.x-3.0.
-   *
-   * @deprecated in slick:8.x-2.1 and is removed from slick:8.x-3.0. Use
-   *   SlickSkinManager::getConstantSkins() instead.
-   * @see https://www.drupal.org/node/3105648
-   */
-  public static function getConstantSkins() {
-    return \Drupal::service('slick.skin_manager')->getConstantSkins();
   }
 
 }

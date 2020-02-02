@@ -63,7 +63,7 @@ class SlickMediaFormatter extends SlickEntityReferenceFormatterBase {
     return [
       'grid_form' => $multiple,
       'style'     => $multiple,
-    ] + parent::getScopedFormElements();
+    ] + $this->getCommonScopedFormElements() + parent::getScopedFormElements();
   }
 
   /**

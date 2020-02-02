@@ -103,11 +103,10 @@ abstract class SlickEntityReferenceFormatterBase extends BlazyEntityReferenceBas
     $texts       = $admin->getFieldOptions($bundles, $texts, $target_type);
 
     return [
-      'namespace'       => 'slick',
       'thumb_captions'  => $texts,
       'thumb_positions' => TRUE,
       'nav'             => TRUE,
-    ] + parent::getScopedFormElements();
+    ] + $this->getCommonScopedFormElements() + parent::getScopedFormElements();
   }
 
 }

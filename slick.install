@@ -13,17 +13,12 @@ function slick_requirements($phase) {
     return [];
   }
 
-  $path = DRUPAL_ROOT . '/libraries/slick/slick';
-
+  $path = \Drupal::root() . '/libraries/slick';
   if (slick_libraries_get_path('slick') || slick_libraries_get_path('slick-carousel')) {
-    $library_path = slick_libraries_get_path('slick') ?: slick_libraries_get_path('slick-carousel');
-
-    if ($library_path) {
-      $path = $library_path . '/slick';
-    }
+    $path = slick_libraries_get_path('slick') ?: slick_libraries_get_path('slick-carousel');
   }
 
-  $exists = is_file($path . '/slick.min.js');
+  $exists = is_file($path . '/slick/slick.min.js');
 
   return [
     'slick_library' => [
@@ -68,4 +63,11 @@ function slick_update_8203() {
     }
     $optionset->save(TRUE);
   }
+}
+
+/**
+ * Added app.root service to SlickSkinManager.
+ */
+function slick_update_8204() {
+  // Do nothing to clear cache.
 }

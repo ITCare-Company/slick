@@ -102,9 +102,8 @@ abstract class SlickEntityFormatterBase extends BlazyEntityBase implements Conta
    */
   public function getScopedFormElements() {
     return [
-      'namespace'  => 'slick',
       'no_layouts' => TRUE,
-    ] + parent::getScopedFormElements();
+    ] + $this->getCommonScopedFormElements() + parent::getScopedFormElements();
   }
 
 }

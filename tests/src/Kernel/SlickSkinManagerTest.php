@@ -63,32 +63,30 @@ class SlickSkinManagerTest extends BlazyKernelTestBase {
    * @covers ::libraryInfoBuild
    */
   public function testSlickManagerMethods() {
-    $manager = $this->slickSkinManager;
-    // Tests for skins.
-    $skins = $manager->getSkins();
+    $skins = $this->slickSkinManager->getSkins();
     $this->assertArrayHasKey('skins', $skins);
     $this->assertArrayHasKey('arrows', $skins);
     $this->assertArrayHasKey('dots', $skins);
 
     // Verify we have cached skins.
     $cid = 'slick_skins_data';
-    $cached_skins = $manager->getCache()->get($cid);
+    $cached_skins = $this->slickSkinManager->getCache()->get($cid);
     $this->assertEquals($cid, $cached_skins->cid);
     $this->assertEquals($skins, $cached_skins->data);
 
     // Verify skins has thumbnail constant.
-    $defined_skins = $manager->getConstantSkins();
+    $defined_skins = $this->slickSkinManager->getConstantSkins();
     $this->assertTrue(in_array('thumbnail', $defined_skins));
 
     // Verify libraries.
-    $libraries = $manager->libraryInfoBuild();
+    $libraries = $this->slickSkinManager->libraryInfoBuild();
     $this->assertArrayHasKey('slick.main.default', $libraries);
 
     // Tests for Drupal\slick_test\Plugin\slick\SlickSkin as a plugin.
-    $skins = $manager->getSkinsByGroup('dots');
+    $skins = $this->slickSkinManager->getSkinsByGroup('dots');
     $this->assertArrayHasKey('dots', $skins);
 
-    $skins = $manager->getSkinsByGroup('arrows');
+    $skins = $this->slickSkinManager->getSkinsByGroup('arrows');
     $this->assertArrayHasKey('arrows', $skins);
   }
 

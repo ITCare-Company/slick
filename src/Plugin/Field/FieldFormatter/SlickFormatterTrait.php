@@ -88,6 +88,7 @@ trait SlickFormatterTrait {
   public function getCommonFieldDefinition() {
     $field = $this->fieldDefinition;
     return [
+      'namespace'         => 'slick',
       'current_view_mode' => $this->viewMode,
       'field_name'        => $field->getName(),
       'field_type'        => $field->getType(),

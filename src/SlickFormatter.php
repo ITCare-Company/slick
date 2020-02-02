@@ -46,18 +46,7 @@ class SlickFormatter extends BlazyFormatterManager implements SlickFormatterInte
 
     // Do not bother for SlickTextFormatter, or when vanilla is on.
     if (empty($settings['vanilla'])) {
-      $lazy              = $build['optionset']->getSetting('lazyLoad');
-      $settings['blazy'] = $lazy == 'blazy' || !empty($settings['blazy']);
-      $settings['lazy']  = $settings['blazy'] ? 'blazy' : $lazy;
-
-      // Allows Blazy to take over for advanced features like Responsive image,
-      // CSS background, video, etc.
-      if (empty($settings['blazy'])) {
-        $settings['lazy_class'] = $settings['lazy_attribute'] = 'lazy';
-      }
-
-      // Disable anything lazy-related settings if in preview mode.
-      $settings['lazy'] = empty($settings['is_preview']) ? $settings['lazy'] : '';
+      $build['optionset']->whichLazy($settings);
     }
     else {
       // Nothing to work with Vanilla on, disable the asnavfor, else JS error.

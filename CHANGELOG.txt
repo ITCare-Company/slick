@@ -1,6 +1,8 @@
 
 Slick 8.x-2.0-dev, 2020-01-31
 -----------------------------
+- Removed deprecated methods used mostly internally such as for/in hook_alter:
+  SlickManager::libraryInfoBuild, SlickManager::getEasingPath, etc.
 - Added app.root service to slick.skin_manager, and other fixes.
 
 Slick 8.x-2.0-dev, 2020-01-22

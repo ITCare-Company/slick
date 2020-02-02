@@ -91,7 +91,7 @@ class SlickFileFormatter extends SlickFileFormatterBase {
       'fieldable_form' => TRUE,
       'multimedia'     => TRUE,
       'view_mode'      => $this->viewMode,
-    ] + parent::getScopedFormElements();
+    ] + $this->getCommonScopedFormElements() + parent::getScopedFormElements();
   }
 
   /**

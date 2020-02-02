@@ -131,9 +131,9 @@ class SlickAdmin implements SlickAdminInterface {
     $arrows       = $this->getSkinsByGroupOptions('arrows');
     $dots         = $this->getSkinsByGroupOptions('dots');
 
-    if (!isset($form['optionset'])) {
-      $this->blazyAdmin->openingForm($form, $definition);
+    $this->blazyAdmin->openingForm($form, $definition);
 
+    if (!isset($form['optionset'])) {
       $form['optionset']['#title'] = $this->t('Optionset main');
 
       if ($is_slick_ui) {
@@ -264,7 +264,7 @@ class SlickAdmin implements SlickAdminInterface {
     $definition['thumbnail_style'] = isset($definition['thumbnail_style']) ? $definition['thumbnail_style'] : TRUE;
     $definition['ratios'] = isset($definition['ratios']) ? $definition['ratios'] : TRUE;
 
-    $definition['thumbnail_effect'] = [
+    $definition['thumbnail_effect'] = isset($definition['_thumbnail_effect']) ? $definition['_thumbnail_effect'] : [
       'hover' => $this->t('Hoverable'),
       'grid'  => $this->t('Static grid'),
     ];
