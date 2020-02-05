@@ -133,7 +133,7 @@ class SlickAdmin implements SlickAdminInterface {
 
     $this->blazyAdmin->openingForm($form, $definition);
 
-    if (!isset($form['optionset'])) {
+    if (isset($form['optionset'])) {
       $form['optionset']['#title'] = $this->t('Optionset main');
 
       if ($is_slick_ui) {
@@ -160,7 +160,7 @@ class SlickAdmin implements SlickAdminInterface {
       ];
     }
 
-    if (count($arrows) > 0) {
+    if (count($arrows) > 0 && empty($definition['no_arrows'])) {
       $form['skin_arrows'] = [
         '#type'        => 'select',
         '#title'       => $this->t('Skin arrows'),
@@ -171,7 +171,7 @@ class SlickAdmin implements SlickAdminInterface {
       ];
     }
 
-    if (count($dots) > 0) {
+    if (count($dots) > 0 && empty($definition['no_dots'])) {
       $form['skin_dots'] = [
         '#type'        => 'select',
         '#title'       => $this->t('Skin dots'),

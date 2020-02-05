@@ -88,7 +88,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   /**
    * Prepare attributes for the known module features, not necessarily users'.
    */
-  public function prepareAttributes(array $build = []) {
+  protected function prepareAttributes(array $build = []) {
     $settings = $build['settings'];
     $attributes = isset($build['attributes']) ? $build['attributes'] : [];
     $classes = [];
@@ -244,21 +244,19 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   }
 
   /**
-   * {@inheritdoc}
+   * Prepare settings for the known module features, not necessarily users'.
    */
-  public function preRenderSlickWrapper($element) {
-    $build = $element['#build'];
-    unset($element['#build']);
-
-    // One slick_theme() to serve multiple displays: main, overlay, thumbnail.
+  protected function prepareSettings(array &$element, array &$build) {
     $settings = array_merge(SlickDefault::htmlSettings(), $build['settings']);
     $id       = $settings['id'] = Blazy::getHtmlId('slick', $settings['id']);
     $thumb_id = $id . '-thumbnail';
     $options  = $build['options'];
-    $thumbs   = isset($build['thumb']) ? $build['thumb'] : [];
+    $route    = \Drupal::routeMatch()->getRouteName();
 
-    // Prevents unused thumb going through the main display.
-    unset($build['thumb']);
+    // Disable draggable for Layout Builder UI to not conflict with UI sortable.
+    if (strpos($route, 'layout_builder.') === 0 || !empty($settings['is_preview'])) {
+      $options['draggable'] = FALSE;
+    }
 
     // Supports programmatic options defined within skin definitions to allow
     // addition of options with other libraries integrated with Slick without
@@ -279,7 +277,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
     if ($settings['nav']) {
       $options['asNavFor']     = "#{$thumb_id}-slider";
-      $optionset_thumbnail     = Slick::loadWithFallback($settings['optionset_thumbnail']);
+      $optionset_thumbnail     = $build['optionset_tn'] = Slick::loadWithFallback($settings['optionset_thumbnail']);
       $mousewheel              = $optionset_thumbnail->getSetting('mouseWheel');
       $settings['vertical_tn'] = $optionset_thumbnail->getSetting('vertical');
     }
@@ -304,13 +302,29 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
     $settings['mousewheel'] = $mousewheel;
     $settings['down_arrow'] = $build['optionset']->getSetting('downArrow');
-    $attachments            = $this->attach($settings);
     $build['options']       = $options;
     $build['settings']      = $settings;
+    $attachments            = $this->attach($settings);
+    $element['#settings']   = $settings;
+    $element['#attached']   = empty($build['attached']) ? $attachments : NestedArray::mergeDeep($build['attached'], $attachments);
+  }
 
-    // Build the Slick wrapper elements.
-    $element['#settings'] = $settings;
-    $element['#attached'] = empty($build['attached']) ? $attachments : NestedArray::mergeDeep($build['attached'], $attachments);
+  /**
+   * One slick_theme() to serve multiple displays: main, overlay, thumbnail.
+   */
+  public function preRenderSlickWrapper($element) {
+    $build = $element['#build'];
+    unset($element['#build']);
+
+    // Prepare settings and assets.
+    $this->prepareSettings($element, $build);
+
+    // Checks if we have thumbnail navigation.
+    $thumbs   = isset($build['thumb']) ? $build['thumb'] : [];
+    $settings = $build['settings'];
+
+    // Prevents unused thumb going through the main display.
+    unset($build['thumb']);
 
     // Build the main Slick.
     $slick[0] = $this->slick($build);
@@ -325,10 +339,12 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
       $settings['optionset']        = $settings['optionset_thumbnail'];
       $settings['skin']             = isset($settings['skin_thumbnail']) ? $settings['skin_thumbnail'] : '';
       $settings['display']          = 'thumbnail';
-      $build['optionset']           = $optionset_thumbnail;
+      $build['optionset']           = $build['optionset_tn'];
       $build['settings']            = $settings;
-      $build['options']['asNavFor'] = "#{$id}-slider";
+      $build['options']['asNavFor'] = "#" . $settings['id'] . '-slider';
 
+      // The slick thumbnail navigation has the same structure as the main one.
+      unset($build['optionset_tn']);
       $slick[1] = $this->slick($build);
     }
 
