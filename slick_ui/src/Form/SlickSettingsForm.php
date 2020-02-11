@@ -21,21 +21,15 @@ class SlickSettingsForm extends ConfigFormBase {
   protected $libraryDiscovery;
 
   /**
-   * Class constructor.
-   */
-  public function __construct(ConfigFactoryInterface $config_factory, LibraryDiscoveryInterface $library_discovery) {
-    parent::__construct($config_factory);
-    $this->libraryDiscovery = $library_discovery;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('config.factory'),
-      $container->get('library.discovery')
-    );
+    /**
+     * @var \Drupal\slick_ui\Form\SlickSettingsForm
+     */
+    $instance = parent::create($container);
+    $instance->libraryDiscovery = $container->get('library.discovery');
+    return $instance;
   }
 
   /**

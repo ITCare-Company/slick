@@ -50,10 +50,7 @@ class SlickSettingsFormTest extends KernelTestBase {
 
     $this->slickManager = $this->container->get('slick.manager');
 
-    $this->slickSettingsForm = new SlickSettingsForm(
-      $this->slickManager->getConfigFactory(),
-      $this->container->get('library.discovery')
-    );
+    $this->slickSettingsForm = SlickSettingsForm::create($this->container);
   }
 
   /**
