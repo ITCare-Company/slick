@@ -83,7 +83,13 @@ function slick_library_info_alter(&$libraries, $extension) {
  */
 function slick_libraries_get_path($name, $base_path = FALSE) {
   $function = 'libraries_get_path';
-  return is_callable($function) ? $function($name, $base_path) : FALSE;
+  if (\Drupal::hasService('library.libraries_directory_file_finder')) {
+    return \Drupal::service('library.libraries_directory_file_finder')->find($name);
+  }
+  elseif (is_callable($function)) {
+    return $function($name, $base_path);
+  }
+  return FALSE;
 }
 
 /**
