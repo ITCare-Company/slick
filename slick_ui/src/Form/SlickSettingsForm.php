@@ -2,8 +2,6 @@
 
 namespace Drupal\slick_ui\Form;
 
-use Drupal\Core\Asset\LibraryDiscoveryInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
