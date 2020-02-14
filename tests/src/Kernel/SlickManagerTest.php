@@ -63,11 +63,7 @@ class SlickManagerTest extends BlazyKernelTestBase {
     $this->slickFormatter = $this->container->get('slick.formatter');
     $this->slickManager = $this->container->get('slick.manager');
 
-    $this->slickForm = new SlickForm(
-      $this->messenger,
-      $this->slickAdmin,
-      $this->slickManager
-    );
+    $this->slickForm = SlickForm::create($this->container);
 
     $this->testPluginId  = 'slick_image';
     $this->testFieldName = 'field_slick_image';
