@@ -34,7 +34,15 @@ class SlickTextFormatter extends FormatterBase implements ContainerFactoryPlugin
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
+    $instance = new static(
+      $plugin_id,
+      $plugin_definition,
+      $configuration['field_definition'],
+      $configuration['settings'],
+      $configuration['label'],
+      $configuration['view_mode'],
+      $configuration['third_party_settings']
+    );
     return self::injectServices($instance, $container, 'text');
   }
 

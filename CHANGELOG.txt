@@ -1,6 +1,8 @@
 
 Slick 8.x-2.0-dev, 2020-02-14
 -----------------------------
+- Issue #3112913 by thalles, gausarts: Fix subclassing and stop overriding
+  constructors in slick\SlickManager.
 - Issue #3113224 by thalles, gausarts: Fix subclassing and stop overriding
   constructors in slick\Plugin\Field\FieldFormatter\SlickTextFormatter.
 - Issue #3113230 by thalles, gausarts: Fix subclassing and stop overriding

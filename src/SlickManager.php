@@ -4,12 +4,6 @@ namespace Drupal\slick;
 
 use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\NestedArray;
-use Drupal\Core\Cache\CacheBackendInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Entity\EntityRepositoryInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\Render\RendererInterface;
 use Drupal\slick\Entity\Slick;
 use Drupal\blazy\Blazy;
 use Drupal\blazy\BlazyManagerBase;
@@ -30,24 +24,10 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   /**
    * {@inheritdoc}
    */
-  public function __construct(EntityRepositoryInterface $entity_repository, EntityTypeManagerInterface $entity_type_manager, ModuleHandlerInterface $module_handler, RendererInterface $renderer, ConfigFactoryInterface $config_factory, CacheBackendInterface $cache, SlickSkinManagerInterface $skin_manager) {
-    parent::__construct($entity_repository, $entity_type_manager, $module_handler, $renderer, $config_factory, $cache);
-    $this->skinManager = $skin_manager;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('entity.repository'),
-      $container->get('entity_type.manager'),
-      $container->get('module_handler'),
-      $container->get('renderer'),
-      $container->get('config.factory'),
-      $container->get('cache.default'),
-      $container->get('slick.skin_manager')
-    );
+    $instance = parent::create($container);
+    $instance->setSkinManager($container->get('slick.skin_manager'));
+    return $instance;
   }
 
   /**
@@ -55,6 +35,14 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    */
   public function skinManager() {
     return $this->skinManager;
+  }
+
+  /**
+   * Sets slick skin manager service.
+   */
+  public function setSkinManager(SlickSkinManagerInterface $skin_manager) {
+    $this->skinManager = $skin_manager;
+    return $this;
   }
 
   /**
@@ -251,9 +239,10 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $id       = $settings['id'] = Blazy::getHtmlId('slick', $settings['id']);
     $thumb_id = $id . '-thumbnail';
     $options  = $build['options'];
-    $route    = \Drupal::routeMatch()->getRouteName();
 
     // Disable draggable for Layout Builder UI to not conflict with UI sortable.
+    // @todo remove service call for settings post blazy:2.x.
+    $route = empty($settings['route_name']) ? \Drupal::routeMatch()->getRouteName() : $settings['route_name'];
     if (strpos($route, 'layout_builder.') === 0 || !empty($settings['is_preview'])) {
       $options['draggable'] = FALSE;
     }

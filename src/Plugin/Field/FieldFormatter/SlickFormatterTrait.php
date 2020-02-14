@@ -21,7 +21,6 @@ trait SlickFormatterTrait {
    * The image factory service.
    *
    * @var \Drupal\Core\Image\ImageFactory
-   * @todo deprecated in blazy:8.x-2.0 and is removed from blazy:8.x-3.0.
    */
   protected $imageFactory = NULL;
 
