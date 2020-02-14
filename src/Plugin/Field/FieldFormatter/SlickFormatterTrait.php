@@ -3,6 +3,7 @@
 namespace Drupal\slick\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FieldDefinitionInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * A Trait common for slick formatters.
@@ -57,6 +58,26 @@ trait SlickFormatterTrait {
    */
   public function admin() {
     return \Drupal::service('slick.admin');
+  }
+
+  /**
+   * Injects DI services.
+   */
+  protected static function injectServices($instance, ContainerInterface $container, $type = '') {
+    $instance->formatter = $instance->blazyManager = $container->get('slick.formatter');
+    $instance->manager = $container->get('slick.manager');
+
+    // Blazy:2.x+ might already set these, provides a failsafe.
+    if ($type == 'image' || $type == 'entity') {
+      $instance->imageFactory = isset($instance->imageFactory) ? $instance->imageFactory : $container->get('image.factory');
+      if ($type == 'entity') {
+        $instance->loggerFactory = isset($instance->loggerFactory) ? $instance->loggerFactory : $container->get('logger.factory');
+        $instance->blazyEntity = isset($instance->blazyEntity) ? $instance->blazyEntity : $container->get('blazy.entity');
+        $instance->blazyOembed = isset($instance->blazyOembed) ? $instance->blazyOembed : $instance->blazyEntity->oembed();
+      }
+    }
+
+    return $instance;
   }
 
   /**
