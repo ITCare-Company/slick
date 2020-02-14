@@ -1,9 +1,11 @@
 
 Slick 8.x-2.0-dev, 2020-02-14
 -----------------------------
+- Issue #3113230 by thalles, gausarts: Fix subclassing and stop overriding
+  constructors in slick\Plugin\Field\FieldFormatter\SlickEntityFormatterBase.
 - Issue #3113227 by thalles, gausarts: Fix subclassing and stop overriding
   constructors in
-  slick\Plugin\Field\FieldFormatter\SlickEntityReferenceFormatterBase
+  slick\Plugin\Field\FieldFormatter\SlickEntityReferenceFormatterBase.
 - Issue #3113159 by thalles, gausarts: Fix subclassing and stop overriding
   constructors in slick\Plugin\Field\FieldFormatter\SlickFileFormatter.
 
