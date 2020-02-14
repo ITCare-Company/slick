@@ -876,7 +876,7 @@ class SlickForm extends SlickFormBase {
       $form_state->setValue('breakpoints_count', $form_state->getValue('breakpoints'));
       if ($form_state->getValue('breakpoints') >= 6) {
         $message = $this->t('You are trying to load too many Breakpoints. Try reducing it to reasonable numbers say, between 1 to 5.');
-        $this->messenger->addMessage($message, 'warning');
+        $this->messenger()->addMessage($message, 'warning');
       }
     }
 
