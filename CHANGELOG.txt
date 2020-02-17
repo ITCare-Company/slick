@@ -1,6 +1,7 @@
 
 Slick 8.x-2.0-dev, 2020-02-17
 -----------------------------
+- Removed and cleaned up deprecated custom breakpoints, wish me luck.
 - Issue #3079155 by nashkrammer: Fix deprecation reported by drupal-check and
   deprecation errors from test results.
 
