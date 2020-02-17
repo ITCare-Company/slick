@@ -31,6 +31,13 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public static function trustedCallbacks() {
+    return ['preRenderSlick', 'preRenderSlickWrapper'];
+  }
+
+  /**
    * Returns slick skin manager service.
    */
   public function skinManager() {

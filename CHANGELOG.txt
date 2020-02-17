@@ -1,4 +1,9 @@
 
+Slick 8.x-2.0-dev, 2020-02-17
+-----------------------------
+- Issue #3079155 by nashkrammer: Fix deprecation reported by drupal-check and
+  deprecation errors from test results.
+
 Slick 8.x-2.0-dev, 2020-02-14
 -----------------------------
 - Issue #3112913 by thalles, gausarts: Fix subclassing and stop overriding
