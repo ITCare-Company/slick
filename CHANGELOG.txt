@@ -1,4 +1,15 @@
 
+Slick 8.x-2.0-dev, 2020-02-23
+-----------------------------
+- Updated blazy.formatter.manager to blazy.formatter for blazy:rc7+.
+- Updated to the latest Blazy to re-use method Blazy::containerAttributes, etc.
+- Added SlickManager::buildNavigation for code readability.
+- Added SlickSkinManager::getSlickPath for re-use, and prioritized composer.
+- Re-enabled BC for slick_hook_info() till slick:3.x, or 9.x.
+- Ported BC BlazyManager::buildSkins so that Blazy can remove it safely.
+- Fixed for Vanilla leak with optionset thumbnail.
+- Fixed for default value regression.
+
 Slick 8.x-2.0-dev, 2020-02-17
 -----------------------------
 - Removed and cleaned up deprecated custom breakpoints, wish me luck.
