@@ -89,8 +89,8 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     if ($settings['display'] == 'main') {
       // Sniffs for Views to allow block__no_wrapper, views__no_wrapper, etc.
       if ($settings['view_name'] && $settings['current_view_mode']) {
-        $attributes[] = 'slick--view--' . str_replace('_', '-', $settings['view_name']);
-        $attributes[] = 'slick--view--' . str_replace('_', '-', $settings['view_name'] . '--' . $settings['current_view_mode']);
+        $attributes['class'][] = 'slick--view--' . str_replace('_', '-', $settings['view_name']);
+        $attributes['class'][] = 'slick--view--' . str_replace('_', '-', $settings['view_name'] . '--' . $settings['current_view_mode']);
       }
 
       // Blazy can still lazyload an unslick.
@@ -285,7 +285,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   }
 
   /**
-   * Returns lory navigation.
+   * Returns slick navigation with the structured array similar to main display.
    */
   protected function buildNavigation(array &$build, array $thumbs) {
     $settings = $build['settings'];
@@ -345,9 +345,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   }
 
   /**
-   * Provides skins only if required.
-   *
-   * @todo TBD; deprecate this at slick:8.x-3.0 for slick:9.x-1.0.
+   * Provides a shortcut to attach skins only if required.
    */
   public function attachSkin(array &$load, $attach = []) {
     $this->skinManager->attachSkin($load, $attach);
