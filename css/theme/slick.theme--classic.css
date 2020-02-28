@@ -10,6 +10,7 @@
 }
 
 .slick--skin--classic .slide__caption {
+  box-sizing: border-box; /* dups due to csslint ignoring inheritance */
   background-color: #000;
   background-color: rgba(0, 0, 0, 0.8);
   color: #fff;
