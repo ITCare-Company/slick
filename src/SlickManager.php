@@ -87,13 +87,6 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $attributes = isset($build['attributes']) ? $build['attributes'] : [];
 
     if ($settings['display'] == 'main') {
-      // Sniffs for Views to allow block__no_wrapper, views__no_wrapper, etc.
-      if ($settings['view_name'] && $settings['current_view_mode']) {
-        $attributes['class'][] = 'slick--view--' . str_replace('_', '-', $settings['view_name']);
-        $attributes['class'][] = 'slick--view--' . str_replace('_', '-', $settings['view_name'] . '--' . $settings['current_view_mode']);
-      }
-
-      // Blazy can still lazyload an unslick.
       Blazy::containerAttributes($attributes, $settings);
     }
     return $attributes;
