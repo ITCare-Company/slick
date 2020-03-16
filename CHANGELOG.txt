@@ -1,4 +1,9 @@
 
+Slick 8.x-2.0-dev, 2020-03-16
+-----------------------------
+- Issue #3116234 by sasanikolic: Width recalculation issue after closing
+  colorbox modal.
+
 Slick 8.x-2.0-dev, 2020-02-23
 -----------------------------
 - Updated blazy.formatter.manager to blazy.formatter for blazy:rc7+.
