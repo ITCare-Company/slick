@@ -7,7 +7,7 @@
   "homepage": "https://drupal.org/project/slick",
   "support": {
     "issues": "https://drupal.org/project/issues/slick",
-    "source": "http://cgit.drupalcode.org/slick"
+    "source": "https://git.drupalcode.org/project/slick"
   },
   "require": {
     "drupal/blazy": "~2.0"
