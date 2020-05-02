@@ -1,6 +1,8 @@
 
 Slick 8.x-2.0-dev, 2020-05-02
 -----------------------------
+- Issue #3132905 by hunterbuchanan: Remove Libraries API dependency from project
+  page for Slick 8.x-2.0+.
 - Issue #3132875 by lolandese: License "GPL-2.0+" is a deprecated SPDX license
   identifier.
 
