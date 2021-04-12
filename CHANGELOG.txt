@@ -1,4 +1,8 @@
 
+Slick 8.x-2.0-dev, 2021-04-12
+-----------------------------
+- Fixed for Colorbox numbering at first launch and deprecated .media--loading.
+
 Slick 8.x-2.0-dev, 2020-05-02
 -----------------------------
 - Issue #3132905 by hunterbuchanan: Remove Libraries API dependency from project
