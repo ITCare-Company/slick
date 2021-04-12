@@ -1,6 +1,8 @@
 
 Slick 8.x-2.0-dev, 2021-04-12
 -----------------------------
+- Issue #3137067 by YahyaAlHamad, _kom__: Extra thumbnail after upgrade 8.x-2.1
+  >> 8.x-2.2
 - Fixed for Colorbox numbering at first launch and deprecated .media--loading.
 
 Slick 8.x-2.0-dev, 2020-05-02
