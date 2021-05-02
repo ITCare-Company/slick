@@ -1,4 +1,9 @@
 
+Slick 8.x-2.0-dev, 2021-05-03
+-----------------------------
+- Issue #3211873 by gausarts: Provide options to load Slick anywhere, except
+  admin pages.
+
 Slick 8.x-2.0-dev, 2021-04-12
 -----------------------------
 - Issue #3123787 by thomas.frobieter, gausarts: Fix ROWS setting default value

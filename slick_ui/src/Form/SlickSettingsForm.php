@@ -72,6 +72,22 @@ class SlickSettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('disable_old_skins'),
     ];
 
+    $form['sitewide'] = [
+      '#type'         => 'select',
+      '#title'        => $this->t('Load slick globally'),
+      '#empty_option' => $this->t('- None -'),
+      '#options'      => [
+        1 => $this->t('With default initializer'),
+        2 => $this->t('With vanilla initializer'),
+        3 => $this->t('Without initializer'),
+      ],
+      '#description' => $this->t('Warning! Not compatible with BigPipe module due to assets re-ordering issue, see https://drupal.org/node/3211873. Meaning may break any stylings provided by this module.<ol><li><b>With default initializer</b> will include the module slick.load.min.js as the initializer normally used by the module formatters or views identified by <code>.slick</code> selector. Only if you need consistent styling/ skins, classes, media player, lightboxes, and markups. Works immediately at body texts.</li><li><b>With vanilla initializer</b> will include the module slick.vanilla.min.js as the minimal initializer identified by <code>.slick-vanilla</code> selector. Default skins, media player, lightboxes are unusable. Be sure to add CSS class <code>.slick-vanilla</code> to your Slick. Recommended to not interfere or co-exist with module formatters/ views. Works immediately at body texts.</li><li><b>Without initializer</b> will load only the main libraries. No module skins, no module JS. It is all yours -- broken unless you initialize it.</li></ol> This will include Slick anywhere except admin pages. Only do this if you need Slick where PHP or Twig is not available such as at body texts. Otherwise use the provided API instead. Implements <code>hook_slick_attach_alter</code> to include additional libraries such as skins, mousewheel, colorbox, etc. At any rate, you can inject options via <code>data-slick</code> attribute, or custom JavaScript. You can also include them at your theme, it is just a convenient way to avoid hard-coding at every theme changes. Check out slick.html.twig for more markups.'),
+      '#default_value' => $config->get('sitewide'),
+    ];
+
+    $default = $config->get('sitewide') == 0 || $config->get('sitewide') == 1;
+    $form['preview'] = $default ? $this->withInitializer() : $this->withoutInitializer();
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -84,6 +100,7 @@ class SlickSettingsForm extends ConfigFormBase {
       ->set('slick_css', $form_state->getValue('slick_css'))
       ->set('module_css', $form_state->getValue('module_css'))
       ->set('disable_old_skins', $form_state->getValue('disable_old_skins'))
+      ->set('sitewide', $form_state->getValue('sitewide'))
       ->save();
 
     // Invalidate the library discovery cache to update new assets.
@@ -91,6 +108,92 @@ class SlickSettingsForm extends ConfigFormBase {
     $this->configFactory->clearStaticCache();
 
     parent::submitForm($form, $form_state);
+  }
+
+  /**
+   * Provides sample with default Slick markups.
+   */
+  private function withInitializer() {
+    $items = [];
+
+    foreach (['One', 'Two', 'Three'] as $key) {
+      $img = '<img src="https://drupal.org/files/' . $key . '.gif" />';
+      $items[] = [
+        'slide'   => ['#markup' => $img],
+        'caption' => ['title' => $key],
+      ];
+    }
+
+    $build = [
+      'items' => $items,
+      'settings' => ['skin' => 'classic', 'layout' => 'bottom'],
+      'options' => ['arrows' => TRUE, 'dots' => TRUE],
+    ];
+
+    $content = \slick()->build($build);
+    return $this->preview($content);
+  }
+
+  /**
+   * Provides sample without default Slick markups.
+   */
+  private function withoutInitializer() {
+    $config  = $this->config('slick.settings');
+    $vanilla = $config->get('sitewide') == 2;
+    $items   = [];
+
+    foreach (['One', 'Two', 'Three'] as $key) {
+      $items[] = [
+        '#type' => 'html_tag',
+        '#tag' => 'div',
+        '#value' => '<img src="https://drupal.org/files/' . $key . '.gif" />',
+      ];
+    }
+
+    $class  = $vanilla ? 'vanilla' : 'whatever';
+    $config = "{'arrows': true, 'dots': true}";
+    $prefix = 'class="slick-' . $class . '" data-slick="' . $config . '"';
+    $suffix = "<blockquote><pre>&lt;div class=&quot;slick-" . $class . "&quot; data-slick=&quot;{'arrows': true, 'dots': true}&quot;&gt;
+    &lt;div&gt;&lt;img src=&quot;https://drupal.org/files/One.gif&quot; /&gt;&lt;/div&gt;
+    &lt;div&gt;&lt;img src=&quot;https://drupal.org/files/Two.gif&quot; /&gt;&lt;/div&gt;
+    &lt;div&gt;&lt;img src=&quot;https://drupal.org/files/Three.gif&quot; /&gt;&lt;/div&gt;
+&lt;/div&gt;</pre></blockquote>";
+
+    return $this->preview($items, $prefix, $suffix);
+  }
+
+  /**
+   * Provides sample w/o default Slick markups.
+   */
+  private function preview($content, $prefix = '', $suffix = '') {
+    $config = $this->config('slick.settings');
+    $unload = $config->get('sitewide') == 2 || $config->get('sitewide') == 3;
+    $attach = \slick()->attach([
+      '_unload'  => $unload,
+      '_vanilla' => $config->get('sitewide') == 2,
+    ]);
+
+    if (empty($suffix)) {
+      $suffix = "<blockquote><pre>&lt;div class=&quot;slick&quot; data-slick=&quot;{'arrows': true, 'dots': true}&quot;&gt;
+  &lt;div class=&quot;slick__slider&quot;&gt;
+    &lt;div class=&quot;slick__slide&quot;&gt;&lt;img src=&quot;https://drupal.org/files/One.gif&quot; /&gt;&lt;/div&gt;
+    &lt;div class=&quot;slick__slide&quot;&gt;&lt;img src=&quot;https://drupal.org/files/Two.gif&quot; /&gt;&lt;/div&gt;
+    &lt;div class=&quot;slick__slide&quot;&gt;&lt;img src=&quot;https://drupal.org/files/Three.gif&quot; /&gt;&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;nav class=&quot;slick__arrow&quot; &gt; &lt;/nav&gt;
+&lt;/div&gt;</pre></blockquote>";
+    }
+
+    return [
+      '#type'     => 'inline_template',
+      '#template' => '{{ prefix | raw }}{{ stage }}{{ suffix | raw }}',
+      '#context'  => [
+        'stage'  => $content,
+        'prefix' => '<div style="background: rgb(52, 152, 219);"><div style="margin: 30px auto; max-width: 350px; min-height: 240px; text-align: center;" ' . $prefix . '>',
+        'suffix' => '</div></div>' . $suffix,
+      ],
+      '#attached' => $attach,
+    ];
   }
 
 }

@@ -13,7 +13,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\slick\Entity\Slick;
 
 /**
- * Implements SlickSkinManagerInterface.
+ * Provides Slick skin manager.
  */
 class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerInterface, MapperInterface {
 
@@ -248,7 +248,19 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
       $load['library'][] = 'slick/slick.easing';
     }
 
-    $load['library'][] = 'slick/slick.load';
+    if (!empty($attach['_vanilla'])) {
+      $load['library'][] = 'slick/vanilla';
+    }
+
+    // Allows Slick initializer to be disabled by a special flag _unload.
+    if (empty($attach['_unload'])) {
+      $load['library'][] = 'slick/slick.load';
+    }
+    else {
+      if ($this->config('slick_css')) {
+        $load['library'][] = 'slick/slick.css';
+      }
+    }
 
     foreach (['colorbox', 'mousewheel'] as $component) {
       if (!empty($attach[$component])) {

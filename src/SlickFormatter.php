@@ -7,7 +7,7 @@ use Drupal\blazy\BlazyFormatter;
 use Drupal\image\Plugin\Field\FieldType\ImageItem;
 
 /**
- * Implements SlickFormatterInterface.
+ * Provides Slick field formatters utilities.
  */
 class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
 
@@ -20,6 +20,7 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
     // Prepare integration with Blazy.
     $settings['item_id']   = 'slide';
     $settings['namespace'] = 'slick';
+    $settings['_unload']   = FALSE;
 
     // Pass basic info to parent::buildSettings().
     parent::buildSettings($build, $items);

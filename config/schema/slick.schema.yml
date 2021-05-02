@@ -14,6 +14,9 @@ slick.settings:
     disable_old_skins:
       type: boolean
       label: 'Disable old skins'
+    sitewide:
+      type: integer
+      label: 'Load slick globally'
 
 # Slick JS settings managed by UI.
 slick_optionset:

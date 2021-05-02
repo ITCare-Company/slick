@@ -92,3 +92,10 @@ slick.colorbox:
   dependencies:
     - blazy/colorbox
     - slick/slick
+
+vanilla:
+  version: VERSION
+  js:
+    js/slick.vanilla.min.js: { weight: -1, minified: true }
+  dependencies:
+    - slick/slick
