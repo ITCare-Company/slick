@@ -1,4 +1,8 @@
 
+Slick 8.x-2.0-dev, 2021-06-10
+-----------------------------
+- Fixed for Colorbox duplicate clones, ported from Splide.
+
 Slick 8.x-2.0-dev, 2021-05-03
 -----------------------------
 - Issue #3211873 by gausarts: Provide options to load Slick anywhere, except

@@ -100,7 +100,7 @@ class SlickSettingsForm extends ConfigFormBase {
       ->set('slick_css', $form_state->getValue('slick_css'))
       ->set('module_css', $form_state->getValue('module_css'))
       ->set('disable_old_skins', $form_state->getValue('disable_old_skins'))
-      ->set('sitewide', $form_state->getValue('sitewide'))
+      ->set('sitewide', (int) $form_state->getValue('sitewide'))
       ->save();
 
     // Invalidate the library discovery cache to update new assets.

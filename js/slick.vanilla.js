@@ -26,7 +26,12 @@
    */
   Drupal.behaviors.slickVanilla = {
     attach: function (context) {
-      $('.slick-vanilla', context).once('slick-vanilla').each(doSlickVanilla);
+
+      // Prevents potential missing due to the newly added sitewide option.
+      var $slick = $('.slick-vanilla', context);
+      if ($slick && $slick.length) {
+        $slick.once('slick-vanilla').each(doSlickVanilla);
+      }
     }
   };
 
