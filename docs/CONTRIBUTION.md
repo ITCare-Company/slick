@@ -46,7 +46,6 @@ In order for you to help, or buy, us successfully, please consider:
 You must speak like human to human, and help us respect you, and your time.
 Dumping patches with empty body text will be disregarded, till the above is met.
 
-Thank you for your kind consideration, cooperation, and contribution!
 
 ## BUG REPORTS OR SUPPORT REQUESTS
 A basic knowledge of Drupal site building is required. If you get stuck:
@@ -74,3 +73,25 @@ You can create a fiddle to isolate the bug if reproduceable outside the module:
 For the support requests, a screenshot of the output and Slick form are helpful.
 Shortly, you should kindly help the maintainers with detailed info to help you.
 Thanks.
+
+## CONSTRUCTIVE VS. DESTRUCTIVE PROJECT ISSUES
+1. We appreciate regular constructive project issues:  
+   + `Support/ Feature` requests,
+   + `Bug` reports,
+   + `Meta`, `Task` or `Plan`.  
+   It is perfectly fine to be negative as long as backed by data, or info. In
+   fact, your name will be credited where credit's due with gratitude and
+   respect at CHANGELOG.txt or
+   [here](https://www.drupal.org/node/2232779/committers). If we forgot yours,
+   do not hesitate to remind us.
+2. Starting from 2021, officially, we no longer appreciate destructive issues:  
+   + strikes identified by a dictate, slap, intimidation, attack, plain insult.
+   + wrong negativity or gossips identified by 100% negative yet lacking of
+     backed data, or at least a homework like `I have read docs (RTFM), but...`.
+   + dumping patches without explanations.  
+
+We want to keep this project useful and friendly to all, we would truly
+appreciate if you could kindly consider the above before submitting an issue.
+Be sure to read the project home for the latest info, or directions.
+
+Thank you for your kind consideration, cooperation, and contribution!
