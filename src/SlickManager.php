@@ -101,6 +101,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
     $settings = &$build['settings'];
     $settings += SlickDefault::htmlSettings();
+    $defaults = Slick::defaultSettings();
 
     // Adds helper class if thumbnail on dots hover provided.
     if (!empty($settings['thumbnail_effect']) && (!empty($settings['thumbnail_style']) || !empty($settings['thumbnail']))) {
@@ -115,6 +116,18 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     if (isset($dots_class) && !empty($build['optionset'])) {
       $dots_class[] = $build['optionset']->getSetting('dotsClass') ?: 'slick-dots';
       $js['dotsClass'] = implode(" ", $dots_class);
+    }
+
+    // Handle some accessible-slick options.
+    if ($this->skinManager->config('library') == 'accessible-slick' && $build['optionset']->getSetting('autoplay') && $build['optionset']->getSetting('useAutoplayToggleButton')) {
+      foreach (['pauseIcon', 'playIcon'] as $setting) {
+        if ($classes = trim(strip_tags($build['optionset']->getSetting($setting)))) {
+          if ($classes != $defaults[$setting]) {
+            $icon = $this->t('<span class="@classes" aria-hidden="true"></span>', ['@classes' => $classes])->__toString();
+            $js[$setting] = $icon;
+          }
+        }
+      }
     }
 
     // Overrides common options to re-use an optionset.

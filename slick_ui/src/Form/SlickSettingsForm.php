@@ -50,6 +50,20 @@ class SlickSettingsForm extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('slick.settings');
 
+    $form['library'] = [
+      '#type'          => 'select',
+      '#title'         => $this->t('Library to use'),
+      '#description'   => $this->t('<a href=":url1">Slick</a> is the original library by Ken Wheeler. <a href=":url2">Accessible Slick</a> is a forked library with accessibility enhancements from Accessibility360. Be sure to clear cache if things broken when changing this.', [
+        ':url1' => 'https://kenwheeler.github.io/slick/',
+        ':url2' => 'https://accessible360.github.io/accessible-slick/',
+      ]),
+      '#options'       => [
+        'slick' => $this->t('Slick'),
+        'accessible-slick' => $this->t('Accessible Slick'),
+      ],
+      '#default_value' => $config->get('library'),
+    ];
+
     $form['module_css'] = [
       '#type'          => 'checkbox',
       '#title'         => $this->t('Enable Slick module slick.theme.css'),
@@ -97,6 +111,7 @@ class SlickSettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
 
     $this->configFactory->getEditable('slick.settings')
+      ->set('library', $form_state->getValue('library'))
       ->set('slick_css', $form_state->getValue('slick_css'))
       ->set('module_css', $form_state->getValue('module_css'))
       ->set('disable_old_skins', $form_state->getValue('disable_old_skins'))

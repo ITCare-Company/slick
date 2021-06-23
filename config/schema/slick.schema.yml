@@ -5,6 +5,9 @@ slick.settings:
   type: config_object
   label: 'Slick settings'
   mapping:
+    library:
+      type: string
+      label: 'Library'
     module_css:
       type: boolean
       label: 'Enable Slick module slick.theme.css'
@@ -32,12 +35,30 @@ slick_optionset:
     accessibility:
       type: boolean
       label: 'Accessibility'
+    regionLabel:
+      type: string
+      label: 'ARIA label'
+    useGroupRole:
+      type: boolean
+      label: Use group role
+    instructionsText:
+      type: text
+      label: 'Screen reader instructions'
     adaptiveHeight:
       type: boolean
       label: 'Adaptive height'
     autoplay:
       type: boolean
       label: 'Autoplay'
+    useAutoplayToggleButton:
+      type: boolean
+      label: 'Use autoplay toggle button'
+    pauseIcon:
+      type: string
+      label: 'Pause icon classes'
+    playIcon:
+      type: string
+      label: 'Play icon classes'
     pauseOnHover:
       type: boolean
       label: 'Pause on hover'
@@ -59,6 +80,9 @@ slick_optionset:
     nextArrow:
       type: text
       label: 'Next arrow'
+    arrowsPlacement:
+      type: text
+      label: 'Arrows placement'
     downArrow:
       type: boolean
       label: 'Use arrow down'

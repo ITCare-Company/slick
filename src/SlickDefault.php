@@ -95,6 +95,8 @@ class SlickDefault extends BlazyDefault {
       'lazyLoad'        => 'ondemand',
       'prevArrow'       => 'Previous',
       'nextArrow'       => 'Next',
+      'pauseIcon'       => 'slick-pause-icon',
+      'playIcon'        => 'slick-play-icon',
       'rows'            => 1,
       'slidesPerRow'    => 1,
       'slide'           => '',

@@ -101,7 +101,30 @@ abstract class SlickBase extends ConfigEntityBase implements SlickBaseInterface 
    * {@inheritdoc}
    */
   public static function defaultSettings($group = 'settings') {
-    return self::load('default')->options[$group];
+    $settings = self::load('default')->options[$group];
+    self::removeUnsupportedSettings($settings);
+    return $settings;
+  }
+
+  /**
+   * Remove settings that aren't supported by the active library.
+   */
+  public static function removeUnsupportedSettings(array &$settings = []) {
+    $library = \Drupal::config('slick.settings')->get('library');
+    if ($library == 'accessible-slick') {
+      unset($settings['accessibility']);
+      unset($settings['focusOnChange']);
+      unset($settings['focusOnSelect']);
+    }
+    else {
+      unset($settings['regionLabel']);
+      unset($settings['useGroupRole']);
+      unset($settings['instructionsText']);
+      unset($settings['useAutoplayToggleButton']);
+      unset($settings['pauseIcon']);
+      unset($settings['playIcon']);
+      unset($settings['arrowsPlacement']);
+    }
   }
 
   /**

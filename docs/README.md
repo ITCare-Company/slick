@@ -36,6 +36,9 @@ officially supported now, Jan 2020.
 ***
 # <a name="requirements"> </a>REQUIREMENTS
 1. Slick library:
+
+   **Standard version**
+
    * Download Slick archive **>= 1.6 && <= 1.8.1** from
      [Slick releases](https://github.com/kenwheeler/slick/releases)
    * Master branch (1.9.0) is not supported. Instead download, rename one of the
@@ -44,6 +47,17 @@ officially supported now, Jan 2020.
      + **/libraries/slick/slick/slick.css**
      + **/libraries/slick/slick/slick-theme.css** (optional)
      + **/libraries/slick/slick/slick.min.js**
+     + Or any path supported by core library finder as per Drupal 8.9+.
+
+   **Accessible version**
+
+   * Download the Accessible Slick archive **>= 1.0.1** from
+     [Accessible Slick releases](https://github.com/Accessible360/accessible-slick/releases)
+   * Extract and rename the folder to "accessible-slick", so the
+     assets are at:
+     + **/libraries/accessible-slick/slick/slick.css**
+     + **/libraries/accessible-slick/slick/slick-theme.css** (optional)
+     + **/libraries/accessible-slick/slick/slick.min.js**
      + Or any path supported by core library finder as per Drupal 8.9+.
 
 2. [Download jqeasing](https://github.com/gdsmith/jquery.easing), so available:
@@ -155,8 +169,8 @@ Slick supports enhancements and more complex layouts.
 * [Picture](https://drupal.org/project/picture) for more robust responsive
   image. Included in core as Responsive Image since D8.
 * [Paragraphs](https://drupal.org/project/paragraphs), to get more complex
-  slides at field level.  
-* [Field Collection](https://drupal.org/project/field_collection), idem ditto.    
+  slides at field level.
+* [Field Collection](https://drupal.org/project/field_collection), idem ditto.
 * [Mousewheel](https://github.com/brandonaaron/jquery-mousewheel) at:
   + **/libraries/mousewheel/jquery.mousewheel.min.js**
 
@@ -180,7 +194,7 @@ The Slick module has several sub-modules:
   to get Slick for entityreference and entityreference revisions.
 
 * [ElevateZoom Plus](https://drupal.org/project/elevatezoomplus)
-  to get ElevateZoom Plus with Slick Carousel and lightboxes, commerce ready.  
+  to get ElevateZoom Plus with Slick Carousel and lightboxes, commerce ready.
 
 * [Slick Example](https://drupal.org/project/slick_extras)
   to get up and running Slick quickly.

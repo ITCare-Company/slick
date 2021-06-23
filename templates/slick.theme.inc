@@ -54,6 +54,9 @@ function template_preprocess_slick(&$variables) {
     $js['rtl'] = $language->getDirection() ? TRUE : FALSE;
   }
 
+  // Remove settings that aren't supported by the active library.
+  Slick::removeUnsupportedSettings($js);
+
   // Prevents broken slick when only one item given, or an enforced unslick.
   if (!$settings['unslick']) {
     $content_attributes->setAttribute('id', $attributes['id'] . '-slider');
