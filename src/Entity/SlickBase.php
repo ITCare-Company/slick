@@ -111,10 +111,11 @@ abstract class SlickBase extends ConfigEntityBase implements SlickBaseInterface 
    */
   public static function removeUnsupportedSettings(array &$settings = []) {
     $library = \Drupal::config('slick.settings')->get('library');
+    // The `focusOnSelect`is required to sync asNavFor, but removed. Here must
+    // be kept for future fix, or less breaking changes due to different logic.
     if ($library == 'accessible-slick') {
       unset($settings['accessibility']);
       unset($settings['focusOnChange']);
-      unset($settings['focusOnSelect']);
     }
     else {
       unset($settings['regionLabel']);

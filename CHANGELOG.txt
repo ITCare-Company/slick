@@ -1,6 +1,8 @@
 
 Slick 8.x-2.0-dev, 2021-06-23
 -----------------------------
+- Issue #3220308 by gausarts: [Accessible Slick] Thumbnail navigation no longer
+  navigate slides.
 - Issue #3220286 by gausarts: [Accessible Slick] Provide a check for breaking
   changes with Accessible Slick.
 - Issue #3196529 by wrd, HeikkiY, galactus86: Support Accessible Slick.

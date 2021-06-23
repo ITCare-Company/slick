@@ -69,8 +69,21 @@ function template_preprocess_slick(&$variables) {
 
     // focusOnSelect won't work with empty slide value, so add proper selector.
     // Respects core Grid markups which may wrap .slick__slide within anon DIV.
+    // Unfortunately focusOnSelect is removed by Accessible Slick. We kept it
+    // here for just in case it will be re-enacted due to being overlooked.
     if (empty($js['slide']) && !empty($js['focusOnSelect'])) {
-      $js['slide'] = ($js['rows'] == 1 && $js['slidesPerRow'] == 1) ? '.slick__slide' : $js['slide'];
+      // Different versions have different logic causing breaking changes.
+      // Basically the fundamental issue: `rows > 0` vs `rows > 1`. This is
+      // enough to break slides with duplicate slide markups + anonymous DIV.
+      // What we do here is to accommodate both versions.
+      $add = ($js['rows'] < 2 && $js['slidesPerRow'] < 2);
+
+      // Fix for breaking changes with Slick 1.8.1/1.9.0 and Accessible Slick.
+      // This is no use for Accessible Slick due to no-synching w/ thumbnail.
+      if (!empty($settings['breaking'])) {
+        $add = $js['rows'] < 2;
+      }
+      $js['slide'] = $add ? '.slick__slide' : $js['slide'];
     }
 
     // Add the configuration as JSON object into the slick container.
