@@ -119,14 +119,21 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     }
 
     // Handle some accessible-slick options.
-    if ($this->skinManager->config('library') == 'accessible-slick' && $build['optionset']->getSetting('autoplay') && $build['optionset']->getSetting('useAutoplayToggleButton')) {
+    if ($settings['library'] == 'accessible-slick' && $build['optionset']->getSetting('autoplay') && $build['optionset']->getSetting('useAutoplayToggleButton')) {
       foreach (['pauseIcon', 'playIcon'] as $setting) {
         if ($classes = trim(strip_tags($build['optionset']->getSetting($setting)))) {
           if ($classes != $defaults[$setting]) {
-            $icon = $this->t('<span class="@classes" aria-hidden="true"></span>', ['@classes' => $classes])->__toString();
-            $js[$setting] = $icon;
+            $js[$setting] = '<span class="' . $classes . '" aria-hidden="true"></span>';
           }
         }
+      }
+    }
+
+    // Checks for breaking changes: Slick 1.8.1 - 1.9.0 / Accessible Slick.
+    // @todo Remove this once the library has permanent solutions.
+    if (!empty($settings['breaking'])) {
+      if ($build['optionset']->getSetting('rows') == 1) {
+        $js['rows'] = 0;
       }
     }
 
@@ -249,6 +256,8 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
     // Additional settings.
     $build['optionset']   = $build['optionset'] ?: Slick::loadWithFallback($settings['optionset']);
+    $settings['library']  = $this->configLoad('library', 'slick.settings');
+    $settings['breaking'] = $this->skinManager->isBreaking();
     $settings['count']    = empty($settings['count']) ? count($build['items']) : $settings['count'];
     $settings['nav']      = $settings['nav'] ?: (empty($settings['vanilla']) && !empty($settings['optionset_thumbnail']) && isset($build['items'][1]));
     $settings['navpos']   = $settings['nav'] && !empty($settings['thumbnail_position']);

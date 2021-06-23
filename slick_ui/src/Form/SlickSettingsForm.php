@@ -53,9 +53,10 @@ class SlickSettingsForm extends ConfigFormBase {
     $form['library'] = [
       '#type'          => 'select',
       '#title'         => $this->t('Library to use'),
-      '#description'   => $this->t('<a href=":url1">Slick</a> is the original library by Ken Wheeler. <a href=":url2">Accessible Slick</a> is a forked library with accessibility enhancements from Accessibility360. Be sure to clear cache if things broken when changing this.', [
+      '#description'   => $this->t('<a href=":url1">Slick</a> is the original library by Ken Wheeler. <a href=":url2">Accessible Slick</a> is a forked library with accessibility enhancements from Accessibility360. Be sure to clear cache if things broken when changing this. <b>Warning</b>! Accessible Slick has breaking changes, <a href=":url3">read more</a>.', [
         ':url1' => 'https://kenwheeler.github.io/slick/',
         ':url2' => 'https://accessible360.github.io/accessible-slick/',
+        ':url3' => 'https://www.drupal.org/project/slick/issues/3196529',
       ]),
       '#options'       => [
         'slick' => $this->t('Slick'),

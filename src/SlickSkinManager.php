@@ -69,6 +69,13 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
   protected $slickPath;
 
   /**
+   * The breaking change: Slick 1.9.0, or Accessible Slick.
+   *
+   * @var bool
+   */
+  protected $isBreaking;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler, $root, ConfigFactoryInterface $config) {
@@ -406,6 +413,30 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
     if ($library_mousewheel) {
       $libraries['slick.mousewheel']['js'] = ['/' . $library_mousewheel . '/jquery.mousewheel.min.js' => ['weight' => -4]];
     }
+  }
+
+  /**
+   * Check for breaking libraries: Slick 1.9.0, or Accessible Slick.
+   */
+  public function isBreaking() {
+    if (!isset($this->isBreaking)) {
+      $this->isBreaking = FALSE;
+      if ($this->config('library') == 'accessible-slick') {
+        $this->isBreaking = TRUE;
+      }
+      else {
+        // The master reverted from 1.8.1 - 1.9.0 to 1.8.0. This is for old
+        // downloads. See https://github.com/kenwheeler/slick/pull/3688
+        // @todo Remove after another check.
+        if ($path = $this->getSlickPath()) {
+          if ($content = \file_get_contents($this->root . '/' . $path . '/package.json')) {
+            $this->isBreaking = strpos($content, '"version": "1.9.0"') !== FALSE
+              || strpos($content, '"version": "1.8.1"') !== FALSE;
+          }
+        }
+      }
+    }
+    return $this->isBreaking;
   }
 
   /**

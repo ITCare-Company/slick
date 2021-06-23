@@ -67,10 +67,12 @@ class SlickDefault extends BlazyDefault {
    */
   public static function htmlSettings() {
     return [
+      'breaking'      => FALSE,
       'display'       => 'main',
       'grid'          => 0,
       'id'            => '',
       'lazy'          => '',
+      'library'       => 'slick',
       'namespace'     => 'slick',
       'nav'           => FALSE,
       'navpos'        => FALSE,
