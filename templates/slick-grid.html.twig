@@ -13,10 +13,6 @@
   set classes = [
     settings.unslick ? 'slick__grid' : 'slide__content',
     'block-columngrid',
-    'block-' ~ grid_id,
-    settings.grid_small ? 'small-block-' ~ grid_id ~ '-' ~ settings.grid_small,
-    settings.grid_medium ? 'medium-block-' ~ grid_id ~ '-' ~ settings.grid_medium,
-    settings.grid ? 'large-block-' ~ grid_id ~ '-' ~ settings.grid
   ]
 %}
 {%
@@ -38,4 +34,3 @@
     </li>
   {% endfor %}
 </ul>
-

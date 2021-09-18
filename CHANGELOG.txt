@@ -1,4 +1,8 @@
 
+Slick 8.x-2.0-dev, 2021-09-18
+-----------------------------
+- Issue #3236487 by gausarts: Update to Flexbox and Native Grid
+
 Slick 8.x-2.0-dev, 2021-06-23
 -----------------------------
 - Issue #3220308 by gausarts: [Accessible Slick] Thumbnail navigation no longer

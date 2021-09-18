@@ -107,9 +107,8 @@ Slick to avoid headaches for just ~15-minute read.
    Slick has different namespace: `slick` as in github, and `slick-carousel` at
    bower/ npm.
 
-   If using Composer with https://github.com/fxpio/composer-asset-plugin and via
-   bower-asset.
-   Watch out dots and dashes:
+   If using Composer 1 with https://github.com/fxpio/composer-asset-plugin and
+   bower (depreciated). Watch out dots and dashes:
 
    ```
    $ composer require bower-asset/blazy \
@@ -127,7 +126,9 @@ Slick to avoid headaches for just ~15-minute read.
    **Important! Use regular constraints (^ or ~) if any issue with versioning.**
 
    And setup the required config first:
-   [2907371](https://drupal.org/project/slick/issues/2907371#comment-12882235)
+   [2907371](https://drupal.org/node/2907371#comment-12882235)
+   For Composer 2, check out https://github.com/fxpio/foxy instead. Or
+   non-plugin solutions as found at the above links.
 
 
 ***

@@ -186,17 +186,21 @@ function template_preprocess_slick_slide(&$variables) {
  * Prepares variables for slick-grid.html.twig templates.
  */
 function template_preprocess_slick_grid(&$variables) {
-  $variables['settings'] = $variables['element']['#settings'];
-  $variables['delta']    = isset($variables['element']['#delta']) ? $variables['element']['#delta'] : 0;
-  $variables['grid_id']  = 'grid';
-
-  $settings = $variables['settings'];
+  $element                 = $variables['element'];
+  $variables['settings']   = $settings = $element['#settings'];
+  $variables['delta']      = isset($element['#delta']) ? $element['#delta'] : 0;
+  $variables['grid_id']    = 'grid';
+  $variables['attributes'] = isset($variables['attributes']) ? $variables['attributes'] : [];
 
   // By default Slick only supports Grid Foundation, adds relevant grid_id for
   // optional Style: CSS3 Columns, and probably future flexbox.
   if (!empty($settings['style']) && $settings['style'] != 'slick') {
     $variables['grid_id'] = $settings['style'];
   }
+
+  // Provides grid container attributes.
+  // @todo Replace by BlazyGrid::gridContainerAttributes() post Blazy 2.5+
+  _slick_grid_container_attributes($variables['attributes'], $settings);
 
   if (!empty($settings['media_switch'])) {
     $switch = str_replace('_', '-', $settings['media_switch']);
@@ -207,9 +211,14 @@ function template_preprocess_slick_grid(&$variables) {
   foreach ($variables['element']['#items'] as $delta => $item) {
     $settings = isset($item['settings']) ? array_merge($settings, $item['settings']) : $settings;
     $settings['current_item'] = 'grid';
+    $settings['delta'] = $delta;
 
-    $item_attributes = empty($item['attributes']) ? [] : $item['attributes'];
+    $attrs = empty($item['attributes']) ? [] : $item['attributes'];
     unset($item['settings'], $item['attributes']);
+
+    // Provides grid item attributes.
+    // @todo Replace by BlazyGrid::gridItemAttributes() post Blazy 2.5+
+    _slick_grid_item_attributes($attrs, $settings);
 
     $slide['content'] = [
       '#theme'    => empty($settings['vanilla']) ? 'slick_slide' : 'slick_vanilla',
@@ -218,8 +227,51 @@ function template_preprocess_slick_grid(&$variables) {
       '#settings' => $settings,
     ];
 
-    $slide['attributes'] = new Attribute($item_attributes);
+    $slide['attributes'] = new Attribute($attrs);
     $variables['items'][$delta] = $slide;
     unset($slide);
+  }
+}
+
+/**
+ * Limit to grid only, so to be usable for plain list.
+ */
+function _slick_grid_container_attributes(array &$attributes, array $settings = []) {
+  $style = empty($settings['style']) ? '' : $settings['style'];
+  $is_grid = isset($settings['_grid']) ? $settings['_grid'] : ($style && !empty($settings['grid']));
+
+  if ($is_grid) {
+    $attributes['class'][] = 'blazy--grid block-' . $style . ' block-count-' . $settings['count'];
+
+    // If Native Grid style with numeric grid, assumed non-two-dimensional.
+    if ($style == 'nativegrid') {
+      $attributes['class'][] = empty($settings['nativegrid.masonry']) ? 'is-b-native' : 'is-b-masonry';
+    }
+
+    // Adds common grid attributes for CSS3 column, Foundation, etc.
+    // Only if using the plain grid column numbers (1 - 12).
+    if ($settings['grid_large'] = $settings['grid']) {
+      foreach (['small', 'medium', 'large'] as $key) {
+        $value = empty($settings['grid_' . $key]) ? NULL : $settings['grid_' . $key];
+        if ($value && is_numeric($value)) {
+          $attributes['class'][] = $key . '-block-' . $style . '-' . $value;
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Limit to grid only, so to be usable for plain list.
+ */
+function _slick_grid_item_attributes(array &$attributes, array $settings = []) {
+  if (isset($settings['grid_large_dimensions']) && $dim = $settings['grid_large_dimensions']) {
+    $key = $settings['delta'];
+    if (isset($dim[$key])) {
+      $attributes['data-b-w'] = $dim[$key]['width'];
+      if (!empty($dim[$key]['height'])) {
+        $attributes['data-b-h'] = $dim[$key]['height'];
+      }
+    }
   }
 }
