@@ -8,6 +8,7 @@ use Drupal\Component\Utility\Xss;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\filter\FilterProcessResult;
 use Drupal\blazy\Blazy;
+use Drupal\blazy\BlazyUtil;
 use Drupal\blazy\Plugin\Filter\BlazyFilter;
 use Drupal\slick\SlickDefault;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -269,6 +270,10 @@ class SlickFilter extends BlazyFilter {
         $element['slide'] = $this->blazyManager->getBlazy($element);
       }
     }
+
+    if ($attributes = self::getAttribute($node)) {
+      $element['attributes'] = $attributes;
+    }
   }
 
   /**
@@ -391,6 +396,7 @@ class SlickFilter extends BlazyFilter {
         <p><br><b>Tips</b>, if any issues:</p>
         <ul>
           <li>Attributes <code>data, settings, options</code> can be put together into one <code>[slick]</code>.</li>
+          <li><code>[slide]</code> can have any valid attributes, e.g.: <br><code>[slide class=\"slide--custom-class\"]...[/slide]</code>. And these will be retained in the actual slide element.</li>
           <li>Except for self-closing one-liner <code>data</code> attribute, be sure slide items are stacked, separated by line breaks, or any relevant HTML tags, and wrapped each with <code>[slide]</code>:<br>
             <code>
               [slick]<br>
@@ -402,7 +408,6 @@ class SlickFilter extends BlazyFilter {
             <code>IMG/ IFRAME</code>, or other HTML as slide contents can be wrapped with any relevant tags, no problem.
             </li>
           <li>Except for <code>[slide]</code>, avoid using the reserved square bracket characters <code>[</code> and <code>]</code> or other inner shortcodes inside <code>[slick]...[/slick]</code> blocks till we support nested slicks.</li>
-          <li>Not tested against, nor dependent on, Shortcode module. Be sure to place Slick filter before any other Shortcode if installed.</li>
         </ul>");
     }
     else {
@@ -434,7 +439,7 @@ class SlickFilter extends BlazyFilter {
     }
 
     if (isset($element['closing'])) {
-      $element['closing']['#suffix'] = $this->t('Best after Blazy, Align / Caption images filters.');
+      $element['closing']['#suffix'] = $this->t('Best after Blazy, Align / Caption images filters -- all are not required to function. Not tested against, nor dependent on, Shortcode module. Be sure to place Slick filter before any other Shortcode if installed.');
     }
 
     return $element;
@@ -445,24 +450,24 @@ class SlickFilter extends BlazyFilter {
    *
    * @todo remove/ replace all methods below by BlazyFilterUtil post Blazy 2.5+.
    */
-  private static function unwrap($string, $delimiter = 'slick', $item = 'slide') {
-    $closing = ["/\[\/$delimiter\]/smi"];
-    $pattern = "/\[$delimiter(.*?)\]/";
+  private static function unwrap($string, $container = 'slick', $item = 'slide') {
+    $closing = ["/\[\/$container\]/smi"];
+    $pattern = "/\[$container(.*?)\]/";
 
-    if (mb_strpos($string, "$delimiter]</p>") !== FALSE) {
-      $closing = ["/<p\>\[\/$delimiter\]<\/p>/smi"];
-      $pattern = "/<p>\[$delimiter(.*?)\]<\/p>/";
+    if (mb_strpos($string, "$container]</p>") !== FALSE) {
+      $closing = ["/<p\>\[\/$container\]<\/p>/smi"];
+      $pattern = "/<p>\[$container(.*?)\]<\/p>/";
     }
 
     if (mb_strpos($string, "[$item") !== FALSE) {
-      $slides = ["/\[\/$item\]/smi", "/\[$item(.*?)\]/"];
+      $items = ["/\[\/$item\]/smi", "/\[$item(.*?)\]/"];
       $replace = ["</$item>", "<$item$1>"];
 
       if (mb_strpos($string, "$item]</p>") !== FALSE) {
-        $slides = ["/<p\>\[\/$item\]<\/p>/smi", "/<p\>\[$item(.*?)\]<\/p>/"];
+        $items = ["/<p\>\[\/$item\]<\/p>/smi", "/<p\>\[$item(.*?)\]<\/p>/"];
       }
 
-      $string = preg_replace($slides, $replace, $string);
+      $string = preg_replace($items, $replace, $string);
     }
 
     preg_match_all($pattern, $string, $matches);
@@ -477,7 +482,7 @@ class SlickFilter extends BlazyFilter {
       }
     }
 
-    return preg_replace($closing, ["</$delimiter>"], $string);
+    return preg_replace($closing, ["</$container>"], $string);
   }
 
   /**
@@ -527,6 +532,24 @@ class SlickFilter extends BlazyFilter {
       }
     }
     return $valid_nodes;
+  }
+
+  /**
+   * Returns attributes extracted from a DOMElement if any.
+   */
+  private static function getAttribute($node, array $excludes = []) {
+    $attributes = [];
+    if ($node && $node->attributes->length) {
+      foreach ($node->attributes as $attribute) {
+        $name = $attribute->nodeName;
+        $value = $attribute->nodeValue;
+        if ($excludes && in_array($name, $excludes)) {
+          continue;
+        }
+        $attributes[$name] = ($name == 'class') ? [$value] : $value;
+      }
+    }
+    return $attributes ? BlazyUtil::sanitize($attributes) : [];
   }
 
 }

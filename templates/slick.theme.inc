@@ -137,6 +137,11 @@ function _slick_preprocess_slick_item(&$variables) {
     $default = $key == 'delta' ? NULL : [];
     $variables[$key] = isset($variables['element']["#$key"]) ? $variables['element']["#$key"] : $default;
   }
+
+  // Because Twig prepends new classes, not appends as expected by BEM.
+  $attributes = &$variables['attributes'];
+  $classes = empty($attributes['class']) ? [] : (array) $attributes['class'];
+  $attributes['class'] = array_merge(['slick__slide', 'slide'], $classes);
 }
 
 /**
