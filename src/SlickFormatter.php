@@ -2,6 +2,7 @@
 
 namespace Drupal\slick;
 
+use Drupal\Component\Utility\UrlHelper;
 use Drupal\slick\Entity\Slick;
 use Drupal\blazy\BlazyFormatter;
 use Drupal\image\Plugin\Field\FieldType\ImageItem;
@@ -62,11 +63,14 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
 
   /**
    * {@inheritdoc}
+   *
+   * @todo Remove post Blazy 2.5+.
    */
   public function getThumbnail(array $settings = [], $item = NULL) {
     if (!empty($settings['uri'])) {
+      $external = UrlHelper::isExternal($settings['uri']);
       return [
-        '#theme'      => 'image_style',
+        '#theme'      => $external ? 'image' : 'image_style',
         '#style_name' => empty($settings['thumbnail_style']) ? 'thumbnail' : $settings['thumbnail_style'],
         '#uri'        => $settings['uri'],
         '#item'       => $item,

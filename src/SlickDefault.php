@@ -60,6 +60,24 @@ class SlickDefault extends BlazyDefault {
   }
 
   /**
+   * Returns filter settings.
+   */
+  public static function filterSettings() {
+    $settings = self::imageSettings();
+    $unused = self::gridSettings() + [
+      'breakpoints' => [],
+      'sizes'       => '',
+      'grid_header' => '',
+    ];
+    foreach ($unused as $key => $value) {
+      if (isset($settings[$key])) {
+        unset($settings[$key]);
+      }
+    }
+    return $settings;
+  }
+
+  /**
    * Returns HTML or layout related settings to shut up notices.
    *
    * @return array

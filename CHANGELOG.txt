@@ -1,4 +1,9 @@
 
+Slick 8.x-2.0-dev, 2021-09-26
+-----------------------------
+- Issue #3239256 by gausarts: Provides Slick filter to have shortcodes for
+  WYSIWYG editors.
+
 Slick 8.x-2.0-dev, 2021-09-18
 -----------------------------
 - Issue #3236487 by gausarts: Update to Flexbox and Native Grid

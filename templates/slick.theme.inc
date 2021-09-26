@@ -220,6 +220,7 @@ function template_preprocess_slick_grid(&$variables) {
     // @todo Replace by BlazyGrid::gridItemAttributes() post Blazy 2.5+
     _slick_grid_item_attributes($attrs, $settings);
 
+    $slide = [];
     $slide['content'] = [
       '#theme'    => empty($settings['vanilla']) ? 'slick_slide' : 'slick_vanilla',
       '#item'     => $item,

@@ -306,3 +306,14 @@ slick_media:
 field.formatter.settings.slick_media:
   type: slick_media
   label: 'Slick media display format settings'
+
+filter_settings.slick_filter:
+  type: slick_base
+  label: 'Slick filter'
+  mapping:
+    overridables:
+      type: sequence
+      label: Overridables
+      sequence:
+        - type: string
+          label: override

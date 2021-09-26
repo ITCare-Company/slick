@@ -260,7 +260,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $settings['breaking'] = $this->skinManager->isBreaking();
     $settings['count']    = empty($settings['count']) ? count($build['items']) : $settings['count'];
     $settings['nav']      = $settings['nav'] ?: (empty($settings['vanilla']) && !empty($settings['optionset_thumbnail']) && isset($build['items'][1]));
-    $settings['navpos']   = $settings['nav'] && !empty($settings['thumbnail_position']);
+    $settings['navpos']   = ($settings['nav'] && !empty($settings['thumbnail_position'])) ? $settings['thumbnail_position'] : '';
     $settings['vertical'] = $build['optionset']->getSetting('vertical');
     $mousewheel           = $build['optionset']->getSetting('mouseWheel');
 
