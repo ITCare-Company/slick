@@ -134,7 +134,7 @@ class SlickFilter extends BlazyFilter {
     $settings['id'] = $settings['gallery_id'] = Blazy::getHtmlId(str_replace('_', '-', $settings['plugin_id']));
 
     if (!empty($attribute) && mb_strpos($attribute, ":") !== FALSE) {
-      return $this->byEntity($attribute, $settings);
+      return $this->byEntity($object, $settings, $attribute);
     }
 
     return $this->byDom($object, $settings);
@@ -143,7 +143,7 @@ class SlickFilter extends BlazyFilter {
   /**
    * Build the slick using the node ID and field_name.
    */
-  private function byEntity($attribute, array $settings) {
+  private function byEntity($object, array $settings, $attribute) {
     list($entity_type, $id, $field_name, $field_image) = array_pad(array_map('trim', explode(":", $attribute, 4)), 4, NULL);
     if (empty($field_name)) {
       return [];
@@ -157,6 +157,9 @@ class SlickFilter extends BlazyFilter {
 
     if ($entity && $entity->hasField($field_name)) {
       $settings['bundle'] = $entity->bundle();
+      $build = ['settings' => $settings];
+      $this->prepareBuild($build, $object);
+      $settings = $build['settings'];
       $list = $entity->get($field_name);
 
       if ($list) {
@@ -168,7 +171,7 @@ class SlickFilter extends BlazyFilter {
 
         $formatter = NULL;
         // @todo refine for main stage, etc.
-        if ($field_type == 'entity_reference') {
+        if ($field_type == 'entity_reference' || $field_type == 'entity_reference_revisions') {
           if ($handler == 'default:media') {
             $formatter = 'slick_media';
           }
@@ -215,7 +218,7 @@ class SlickFilter extends BlazyFilter {
     }
 
     $dom = Html::load($text);
-    $nodes = $this->getNodes($dom);
+    $nodes = self::getNodes($dom);
     if ($nodes->length == 0) {
       return [];
     }
@@ -234,7 +237,7 @@ class SlickFilter extends BlazyFilter {
       $sets = $build['settings'];
       $sets['delta'] = $delta;
       $sets['thumbnail_uri'] = $node->getAttribute('data-thumb');
-      $element = ['caption' => NULL, 'item' => NULL, 'settings' => $sets];
+      $element = ['caption' => [], 'item' => NULL, 'settings' => $sets];
 
       $this->buildItem($element, $node);
 
@@ -257,12 +260,17 @@ class SlickFilter extends BlazyFilter {
    * Build the slide item.
    */
   private function buildItem(array &$element, $node) {
-    $children = $node->getElementsByTagName('img');
-    if ($children->length == 0) {
-      $children = $node->getElementsByTagName('iframe');
+    $text = self::getHtml($node);
+    if (empty($text)) {
+      return;
     }
 
+    $dom = Html::load($text);
+    $xpath = new \DOMXPath($dom);
+    $children = $xpath->query("//iframe | //img");
+
     if ($children->length > 0) {
+      // Can only have the first found for the main slide stage.
       $child = $children->item(0);
 
       // Provides individual item settings.
@@ -305,12 +313,16 @@ class SlickFilter extends BlazyFilter {
     $options = [];
     if ($check = $object->getAttribute('options')) {
       $check = str_replace("'", '"', $check);
-      $options = Json::decode($check);
+      if ($check) {
+        $options = Json::decode($check);
+      }
     }
     if ($check = $object->getAttribute('settings')) {
       $check = str_replace("'", '"', $check);
       $check = Json::decode($check);
-      $settings = array_merge($settings, $check);
+      if ($check) {
+        $settings = array_merge($settings, $check);
+      }
     }
 
     $build['options'] = $options;
@@ -335,15 +347,6 @@ class SlickFilter extends BlazyFilter {
 
     $build['thumb']['items'][$delta] = $thumb;
     unset($thumb);
-  }
-
-  /**
-   * Returns DOMElement nodes expected to be slide items.
-   */
-  private function getNodes($dom) {
-    $xpath = new \DOMXPath($dom);
-
-    return $xpath->query("//slide");
   }
 
   /**
@@ -386,37 +389,7 @@ class SlickFilter extends BlazyFilter {
    */
   public function tips($long = FALSE) {
     if ($long) {
-      return $this->t("
-        <p><b>Slick</b>: Create a slideshow/ carousel with a shortcode. Pay attention to attributes, slashes, single and double quotes:</p>
-        <ol>
-          <li><b>Basic</b>, with inline HTML: <br><code>[slick]...[slide]...[/slide]...[/slick]</code></li>
-          <li><b>With self-closing <code>data=ENTITY_TYPE:ID:FIELD_NAME:FIELD_IMAGE</code></b>, without inline HTML: <br><code>[slick data=\"node:44:field_media\" /]</code><br>
-          <code>[slick data=\"node:44:field_media:field_media_image\" /]</code><br>
-          <b>Required</b>: <code>ENTITY_TYPE:ID:FIELD_NAME</code>, where <code>ENTITY_TYPE</code> is <b>node</b> -- only tested with node and Media module, <code>ID</code> is <b>node ID</b>, <code>FIELD_NAME</code> can be field Media, Entityreference, Image, Text (long or with summary), must be multi-value, or unlimited. <br><b>Optional</b>: <code>FIELD_IMAGE</code> named <code>field_media_image</code> as found at Media Image/ Video for hires poster image, must be similar and single-value field image for all media entities to have mixed media correctly. This is not field image at Node, it is at Media.</li>
-          <li><b>With settings and or options</b>, to override Slick filter settings: <br><code>[slick settings=\"{}\" options=\"{}\"]...[slide]...[/slide]...[/slick]</code><br>Where <code>settings</code> is HTML settings as seen at Filter, Field or Views UI forms, and <code>options</code> is JavaScript options as seen at Optionset UI forms.</li>
-          <li><b>Options only</b>: any JavaScript options relevant from <code>slick/config/install/slick.optionset.default.yml</code>:<br>
-            <code>[slick options=\"{'type':  'loop', 'arrows': false, 'pagination': true}\"]...[/slick]</code>
-          </li>
-          <li><b>HTML settings only</b>: any HTML settings relevant from <code>SlickDefault/ BlazyDefault</code> methods:<br>
-             <code>[slick settings=\"{'optionset': 'x_main', 'skin': 'classic', 'layout': 'bottom'}\"]...[/slick]</code>
-          </li>
-        </ol>
-        <p><br><b>Tips</b>, if any issues:</p>
-        <ul>
-          <li>Attributes <code>data, settings, options</code> can be put together into one <code>[slick]</code>.</li>
-          <li><code>[slide]</code> can have any valid attributes, e.g.: <br><code>[slide class=\"slide--custom-class\"]...[/slide]</code>. And these will be retained in the actual slide element.</li>
-          <li>Except for self-closing one-liner <code>data</code> attribute, be sure slide items are stacked, separated by line breaks, or any relevant HTML tags, and wrapped each with <code>[slide]</code>:<br>
-            <code>
-              [slick]<br>
-                &nbsp;&nbsp;[slide]<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;IMG&gt;<br>&nbsp;&nbsp;[/slide]<br>
-                &nbsp;&nbsp;[slide]<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;IFRAME&gt;<br>&nbsp;&nbsp;[/slide]<br>
-                &nbsp;&nbsp;[slide]<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;p&gt;Any non-media HTML content&lt;/p&gt;<br>&nbsp;&nbsp;[/slide]<br>
-              [/slick]
-            </code><br>
-            <code>IMG/ IFRAME</code>, or other HTML as slide contents can be wrapped with any relevant tags, no problem.
-            </li>
-          <li>Except for <code>[slide]</code>, avoid using the reserved square bracket characters <code>[</code> and <code>]</code> or other inner shortcodes inside <code>[slick]...[/slick]</code> blocks till we support nested slicks.</li>
-        </ul>");
+      return file_get_contents(dirname(__FILE__) . "/FILTER_TIPS.txt");
     }
     else {
       return $this->t('<b>Slick</b>: Create a slideshow/ carousel: <br><ul><li><b>With self-closing using data entity, <code>data=ENTITY_TYPE:ID:FIELD_NAME:FIELD_IMAGE</code></b>:<br><code>[slick data="node:44:field_media" /]</code>. <code>FIELD_IMAGE</code> is optional.</li><li><b>With any HTML</b>: <br><code>[slick settings="{}" options="{}"]...[slide]...[/slide]...[/slick]</li></code></ul>');
@@ -558,6 +531,15 @@ class SlickFilter extends BlazyFilter {
       }
     }
     return $attributes ? BlazyUtil::sanitize($attributes) : [];
+  }
+
+  /**
+   * Returns DOMElement nodes expected to be slide items.
+   */
+  private static function getNodes($dom, $tag = '//slide') {
+    $xpath = new \DOMXPath($dom);
+
+    return $xpath->query($tag);
   }
 
 }

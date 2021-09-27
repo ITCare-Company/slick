@@ -279,5 +279,16 @@ function _slick_grid_item_attributes(array &$attributes, array $settings = []) {
         $attributes['data-b-h'] = $dim[$key]['height'];
       }
     }
+    else {
+      // Supports a grid repeat for the lazy.
+      $count = empty($settings['count']) ? 0 : $settings['count'];
+      $height = $dim[0]['height'];
+      if ($count > count($dim)) {
+        $attributes['data-b-w'] = $dim[0]['width'];
+        if (!empty($height)) {
+          $attributes['data-b-h'] = $height;
+        }
+      }
+    }
   }
 }
