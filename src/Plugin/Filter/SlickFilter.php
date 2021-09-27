@@ -174,8 +174,16 @@ class SlickFilter extends BlazyFilter {
           }
           else {
             // @todo refine for Paragraphs, etc.
-            $settings['vanilla'] = TRUE;
-            $formatter = 'slick_entityreference';
+            if ($field_type == 'entity_reference_revisions') {
+              $formatter = 'slick_paragraphs_media';
+            }
+            else {
+              $settings['vanilla'] = TRUE;
+              $exists = $this->manager->getModuleHandler()->moduleExists('slick_entityreference');
+              if ($exists) {
+                $formatter = 'slick_entityreference';
+              }
+            }
           }
         }
         elseif ($field_type == 'image') {
@@ -379,12 +387,12 @@ class SlickFilter extends BlazyFilter {
   public function tips($long = FALSE) {
     if ($long) {
       return $this->t("
-        <p><b>Slick</b>: Create a slideshow/ carousel with a shortcode. Pay attention to attributes, backslash, single and double quotes:</p>
+        <p><b>Slick</b>: Create a slideshow/ carousel with a shortcode. Pay attention to attributes, slashes, single and double quotes:</p>
         <ol>
           <li><b>Basic</b>, with inline HTML: <br><code>[slick]...[slide]...[/slide]...[/slick]</code></li>
           <li><b>With self-closing <code>data=ENTITY_TYPE:ID:FIELD_NAME:FIELD_IMAGE</code></b>, without inline HTML: <br><code>[slick data=\"node:44:field_media\" /]</code><br>
           <code>[slick data=\"node:44:field_media:field_media_image\" /]</code><br>
-          <b>Required</b>: <code>ENTITY_TYPE:ID:FIELD_NAME</code>, where <code>ENTITY_TYPE</code> is <b>node</b> -- only tested with node, <code>ID</code> is <b>node ID</b>, <code>FIELD_NAME</code> can be field Media, Entityreference, Image, Text (long or with summary), must be multi-value, or unlimited. <br><b>Optional</b>: <code>FIELD_IMAGE</code> named <code>field_media_image</code> as found at Media Image/ Video for hires poster image, must be similar and single-value field image for all media entities to have mixed media correctly.</li>
+          <b>Required</b>: <code>ENTITY_TYPE:ID:FIELD_NAME</code>, where <code>ENTITY_TYPE</code> is <b>node</b> -- only tested with node and Media module, <code>ID</code> is <b>node ID</b>, <code>FIELD_NAME</code> can be field Media, Entityreference, Image, Text (long or with summary), must be multi-value, or unlimited. <br><b>Optional</b>: <code>FIELD_IMAGE</code> named <code>field_media_image</code> as found at Media Image/ Video for hires poster image, must be similar and single-value field image for all media entities to have mixed media correctly. This is not field image at Node, it is at Media.</li>
           <li><b>With settings and or options</b>, to override Slick filter settings: <br><code>[slick settings=\"{}\" options=\"{}\"]...[slide]...[/slide]...[/slick]</code><br>Where <code>settings</code> is HTML settings as seen at Filter, Field or Views UI forms, and <code>options</code> is JavaScript options as seen at Optionset UI forms.</li>
           <li><b>Options only</b>: any JavaScript options relevant from <code>slick/config/install/slick.optionset.default.yml</code>:<br>
             <code>[slick options=\"{'type':  'loop', 'arrows': false, 'pagination': true}\"]...[/slick]</code>
