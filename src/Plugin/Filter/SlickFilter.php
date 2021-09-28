@@ -308,16 +308,16 @@ class SlickFilter extends BlazyFilter {
   /**
    * Prepares the slick.
    */
-  private function prepareBuild(array &$build, $object) {
+  private function prepareBuild(array &$build, $node) {
     $settings = &$build['settings'];
     $options = [];
-    if ($check = $object->getAttribute('options')) {
+    if ($check = $node->getAttribute('options')) {
       $check = str_replace("'", '"', $check);
       if ($check) {
         $options = Json::decode($check);
       }
     }
-    if ($check = $object->getAttribute('settings')) {
+    if ($check = $node->getAttribute('settings')) {
       $check = str_replace("'", '"', $check);
       $check = Json::decode($check);
       if ($check) {
@@ -325,7 +325,11 @@ class SlickFilter extends BlazyFilter {
       }
     }
 
-    $settings['nav'] = (!empty($settings['optionset_thumbnail']) && $settings['count'] > 1);
+    if (!isset($settings['nav'])) {
+      $settings['nav'] = (!empty($settings['optionset_thumbnail']) && $settings['count'] > 1);
+    }
+
+    self::toGrid($node, $settings);
     $build['options'] = $options;
   }
 
@@ -453,7 +457,7 @@ class SlickFilter extends BlazyFilter {
       // <p>[TAG settings="BLAH"]</p>.
       // <p>[/TAG]</p>.
       "~(<p\>)\[(/)?$item(.*?)\](<\/p>)~",
-      // Abnormal non-WYSIWYG editor outputs:<p>[/TAG]<br />.
+      // Abnormal non-WYSIWYG editor outputs: <p>[/TAG]<br />.
       "~(<p\>)\[(/)?$item(.*?)\](<br \/>)~",
       // Abnormal non-WYSIWYG editor outputs, letfovers: [TAG]</p>.
       "~\[(/)?$item(.*?)\](<\/p>)~",
@@ -543,6 +547,26 @@ class SlickFilter extends BlazyFilter {
     $xpath = new \DOMXPath($dom);
 
     return $xpath->query($tag);
+  }
+
+  /**
+   * Extract grids from the node attribute.
+   */
+  private static function toGrid(\DOMElement $node, array &$settings) {
+    if ($check = $node->getAttribute('grid')) {
+      list($settings['style'], $grid, $settings['visible_items']) = array_pad(array_map('trim', explode(":", $check, 3)), 3, NULL);
+
+      if ($grid) {
+        list(
+          $settings['grid_small'],
+          $settings['grid_medium'],
+          $settings['grid']
+        ) = array_pad(array_map('trim', explode("-", $grid, 3)), 3, NULL);
+
+        $settings['_grid'] = !empty($settings['style']) && !empty($settings['grid']);
+        $settings['visible_items'] = $settings['_grid'] && empty($settings['visible_items']) ? 6 : $settings['visible_items'];
+      }
+    }
   }
 
   /**
