@@ -59,7 +59,8 @@ class SlickFilter extends BlazyFilter {
    * {@inheritdoc}
    */
   public function process($text, $langcode) {
-    $result = new FilterProcessResult($text);
+    $this->result = $result = new FilterProcessResult($text);
+    $this->langcode = $langcode;
 
     if (empty($text) || stristr($text, '[slick') === FALSE) {
       return $result;
@@ -73,34 +74,13 @@ class SlickFilter extends BlazyFilter {
 
     if (count($nodes) > 0) {
       foreach ($nodes as $node) {
-        $output = $this->build($node, $settings);
-
-        if (empty($output)) {
-          continue;
-        }
-
-        $altered_html = $this->manager->getRenderer()->render($output);
-
-        // Load the altered HTML into a new DOMDocument, retrieve element.
-        $updated_nodes = Html::load($altered_html)->getElementsByTagName('body')
-          ->item(0)
-          ->childNodes;
-
-        foreach ($updated_nodes as $updated_node) {
-          // Import the updated from the new DOMDocument into the original
-          // one, importing also the child nodes of the updated node.
-          $updated_node = $dom->importNode($updated_node, TRUE);
-          $node->parentNode->insertBefore($updated_node, $node);
-        }
-
-        // Finally, remove the original node.
-        if ($node->parentNode) {
-          $node->parentNode->removeChild($node);
+        if ($output = $this->build($node, $settings)) {
+          $this->renderNode($node, $output);
         }
       }
 
-      $all = self::attach($settings);
-      $attachments = $this->manager->attach($all);
+      $attach = self::attach($settings);
+      $attachments = $this->manager->attach($attach);
     }
 
     // Attach Blazy component libraries.
@@ -117,6 +97,7 @@ class SlickFilter extends BlazyFilter {
     $this->settings['no_item_container'] = TRUE;
     $settings = parent::buildSettings($text);
 
+    // @todo remove post Blazy 2.5+.
     $settings['plugin_id'] = $this->getPluginId();
 
     // Provides alter like formatters to modify at one go, even clumsy here.
@@ -143,7 +124,7 @@ class SlickFilter extends BlazyFilter {
   /**
    * Build the slick using the node ID and field_name.
    */
-  private function byEntity($object, array $settings, $attribute) {
+  private function byEntity(\DOMElement $object, array $settings, $attribute) {
     list($entity_type, $id, $field_name, $field_image) = array_pad(array_map('trim', explode(":", $attribute, 4)), 4, NULL);
     if (empty($field_name)) {
       return [];
@@ -156,15 +137,17 @@ class SlickFilter extends BlazyFilter {
     $settings['image'] = $field_image;
 
     if ($entity && $entity->hasField($field_name)) {
+      $list = $entity->get($field_name);
       $settings['bundle'] = $entity->bundle();
+      $settings['count'] = count($list);
       $build = ['settings' => $settings];
+
       $this->prepareBuild($build, $object);
       $settings = $build['settings'];
-      $list = $entity->get($field_name);
 
       if ($list) {
         $definition = $list->getFieldDefinition();
-        $field_type = $definition->get('field_type');
+        $field_type = $settings['field_type'] = $definition->get('field_type');
         $field_settings = $definition->get('settings');
         $handler = isset($field_settings['handler']) ? $field_settings['handler'] : NULL;
         $texts = ['text', 'text_long', 'text_with_summary'];
@@ -211,7 +194,7 @@ class SlickFilter extends BlazyFilter {
   /**
    * Build the slick using the DOM lookups.
    */
-  private function byDom($object, array $settings) {
+  private function byDom(\DOMElement $object, array $settings) {
     $text = self::getHtml($object);
     if (empty($text)) {
       return [];
@@ -223,11 +206,9 @@ class SlickFilter extends BlazyFilter {
       return [];
     }
 
+    $settings['count'] = $nodes->length;
     $build = ['settings' => $settings];
     $this->prepareBuild($build, $object);
-    if (!isset($settings['nav'])) {
-      $build['settings']['nav'] = !empty($settings['optionset_thumbnail']) && $nodes->length > 1;
-    }
 
     foreach ($nodes as $delta => $node) {
       if (!($node instanceof \DOMElement)) {
@@ -259,7 +240,7 @@ class SlickFilter extends BlazyFilter {
   /**
    * Build the slide item.
    */
-  private function buildItem(array &$element, $node) {
+  private function buildItem(array &$build, $node) {
     $text = self::getHtml($node);
     if (empty($text)) {
       return;
@@ -269,26 +250,45 @@ class SlickFilter extends BlazyFilter {
     $xpath = new \DOMXPath($dom);
     $children = $xpath->query("//iframe | //img");
 
+    $this->buildItemAttributes($build, $node);
+
     if ($children->length > 0) {
       // Can only have the first found for the main slide stage.
       $child = $children->item(0);
 
       // Provides individual item settings.
-      $this->buildItemSettings($element, $child);
+      $this->buildItemSettings($build, $child);
 
       // Extracts image item from SRC attribute.
-      $this->buildImageItem($element, $child);
+      $this->buildImageItem($build, $child);
 
       // Extracts image caption if available.
-      $this->buildImageCaption($element, $child);
+      $this->buildImageCaption($build, $child);
 
-      if (!empty($element['settings']['uri'])) {
-        $element['slide'] = $this->blazyManager->getBlazy($element);
+      if (!empty($build['settings']['uri'])) {
+        $build['slide'] = $this->blazyManager->getBlazy($build);
       }
+    }
+  }
+
+  /**
+   * Build the slide item attributes.
+   */
+  private function buildItemAttributes(array &$build, $node) {
+    $settings = &$build['settings'];
+    if ($caption = $node->getAttribute('caption')) {
+      // @todo remove check post Blazy 2.5+.
+      if (method_exists(get_parent_class($this), 'filterHtml')) {
+        $safe_caption = parent::filterHtml($caption);
+        $build['captions']['alt'] = ['#markup' => $safe_caption];
+      }
+      $node->removeAttribute('caption');
     }
 
     if ($attributes = self::getAttribute($node)) {
-      $element['attributes'] = $attributes;
+      // Move it to .slide__content for better displays like .well/ .card.
+      $key = empty($settings['grid']) ? 'content_attributes' : 'attributes';
+      $build[$key] = $attributes;
     }
   }
 
@@ -325,6 +325,7 @@ class SlickFilter extends BlazyFilter {
       }
     }
 
+    $settings['nav'] = (!empty($settings['optionset_thumbnail']) && $settings['count'] > 1);
     $build['options'] = $options;
   }
 
@@ -432,38 +433,40 @@ class SlickFilter extends BlazyFilter {
    * @todo remove/ replace all methods below by BlazyFilterUtil post Blazy 2.5+.
    */
   private static function unwrap($string, $container = 'slick', $item = 'slide') {
-    $closing = ["/\[\/$container\]/smi"];
-    $pattern = "/\[$container(.*?)\]/";
-
-    if (mb_strpos($string, "$container]</p>") !== FALSE) {
-      $closing = ["/<p\>\[\/$container\]<\/p>/smi"];
-      $pattern = "/<p>\[$container(.*?)\]<\/p>/";
-    }
-
+    // Might not be available with self-closing [TAG data="BLAH" /].
     if (mb_strpos($string, "[$item") !== FALSE) {
-      $items = ["/\[\/$item\]/smi", "/\[$item(.*?)\]/"];
-      $replace = ["</$item>", "<$item$1>"];
-
-      if (mb_strpos($string, "$item]</p>") !== FALSE) {
-        $items = ["/<p\>\[\/$item\]<\/p>/smi", "/<p\>\[$item(.*?)\]<\/p>/"];
-      }
-
-      $string = preg_replace($items, $replace, $string);
+      $string = self::unwrapItem($string, $item);
     }
 
-    preg_match_all($pattern, $string, $matches);
+    return self::unwrapItem($string, $container);
+  }
 
-    // Temporarily converts to HTML tags for easy DOMXPath queries.
-    if ($matches) {
-      foreach ($matches[0] as $match) {
-        $value = strip_tags($match);
-        $value = str_replace("[", "<", $value);
-        $value = str_replace("]", ">", $value);
-        $string = str_replace($match, $value, $string);
-      }
-    }
+  /**
+   * Unwrap the enclosing tags.
+   */
+  private static function unwrapItem($string, $item) {
+    $patterns = [
+      // Not supported, but for completion [TAG data="BLAH"]A.B.C[/TAG].
+      "~(<p\>)\[$item?(.*?)\](.*?)\[/$item\](<\/p>)~",
+      // Normal WYSIWYG editor outputs with HTML correction filter enabled:
+      // <p>[TAG data="BLAH" /]</p>.
+      // <p>[TAG settings="BLAH"]</p>.
+      // <p>[/TAG]</p>.
+      "~(<p\>)\[(/)?$item(.*?)\](<\/p>)~",
+      // Abnormal non-WYSIWYG editor outputs:<p>[/TAG]<br />.
+      "~(<p\>)\[(/)?$item(.*?)\](<br \/>)~",
+      // Abnormal non-WYSIWYG editor outputs, letfovers: [TAG]</p>.
+      "~\[(/)?$item(.*?)\](<\/p>)~",
+    ];
 
-    return preg_replace($closing, ["</$container>"], $string);
+    $replacements = [
+      "<$item$2>$3</$item>",
+      "<$2$item$3>",
+      "<$2$item$3>",
+      "<$1$item$2>",
+    ];
+
+    return preg_replace($patterns, $replacements, $string);
   }
 
   /**
@@ -540,6 +543,33 @@ class SlickFilter extends BlazyFilter {
     $xpath = new \DOMXPath($dom);
 
     return $xpath->query($tag);
+  }
+
+  /**
+   * Render the output.
+   *
+   * @todo remove for parent::render() method post Blazy 2.5+/
+   */
+  private function renderNode(\DOMElement $node, array $output) {
+    $dom = $node->ownerDocument;
+    $altered_html = $this->blazyManager->getRenderer()->render($output);
+
+    // Load the altered HTML into a new DOMDocument, retrieve element.
+    $updated_nodes = Html::load($altered_html)->getElementsByTagName('body')
+      ->item(0)
+      ->childNodes;
+
+    foreach ($updated_nodes as $updated_node) {
+      // Import the updated from the new DOMDocument into the original
+      // one, importing also the child nodes of the updated node.
+      $updated_node = $dom->importNode($updated_node, TRUE);
+      $node->parentNode->insertBefore($updated_node, $node);
+    }
+
+    // Finally, remove the original blazy node.
+    if ($node->parentNode) {
+      $node->parentNode->removeChild($node);
+    }
   }
 
 }

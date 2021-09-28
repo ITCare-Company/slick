@@ -48,7 +48,7 @@
 
 {% if settings.wrapper %}
   <div{{ attributes.addClass(classes) }}>
-  {% if settings.grid is empty %}<div{{ content_attributes.addClass(content_classes) }}>{% endif %}
+  {% if settings.use_ca %}<div{{ content_attributes.addClass(content_classes) }}>{% endif %}
 {% endif %}
 
   {% if item.slide %}

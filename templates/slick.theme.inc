@@ -102,18 +102,20 @@ function template_preprocess_slick(&$variables) {
   $variables['items'] = [];
   foreach ($element['#items'] as $delta => $item) {
     $item_settings = isset($item['settings']) ? array_merge($settings, $item['settings']) : $settings;
-    $item_attributes = isset($item['attributes']) ? $item['attributes'] : [];
+    $item_attrs = isset($item['attributes']) ? $item['attributes'] : [];
+    $content_attrs = isset($item['content_attributes']) ? $item['content_attributes'] : [];
     $item_settings['current_item'] = $display;
 
-    unset($item['settings'], $item['attributes'], $item['item']);
+    unset($item['settings'], $item['attributes'], $item['content_attributes'], $item['item']);
 
     $theme = $settings['vanilla'] ? 'vanilla' : ($display == 'thumbnail' ? 'thumbnail' : 'slide');
     $slide = [
-      '#theme'      => 'slick_' . $theme,
-      '#item'       => $item,
-      '#delta'      => $delta,
-      '#settings'   => $item_settings,
-      '#attributes' => $item_attributes,
+      '#theme' => 'slick_' . $theme,
+      '#item' => $item,
+      '#delta' => $delta,
+      '#settings' => $item_settings,
+      '#attributes' => $item_attrs,
+      '#content_attributes' => $content_attrs,
     ];
     $variables['items'][$delta] = $slide;
     unset($slide);
@@ -133,9 +135,10 @@ function template_preprocess_slick_wrapper(&$variables) {
  * Prepares common variables for slick item templates.
  */
 function _slick_preprocess_slick_item(&$variables) {
-  foreach (['attributes', 'delta', 'item', 'settings'] as $key) {
+  $element = $variables['element'];
+  foreach (['attributes', 'content_attributes', 'delta', 'item', 'settings'] as $key) {
     $default = $key == 'delta' ? NULL : [];
-    $variables[$key] = isset($variables['element']["#$key"]) ? $variables['element']["#$key"] : $default;
+    $variables[$key] = isset($element["#$key"]) ? $element["#$key"] : $default;
   }
 
   // Because Twig prepends new classes, not appends as expected by BEM.
@@ -170,21 +173,22 @@ function template_preprocess_slick_slide(&$variables) {
   }
 
   $item = &$variables['item'];
-  $settings = &$variables['settings'];
+  $sets = &$variables['settings'];
   $variables['caption_attributes'] = new Attribute();
 
   // split: Split image from captions if we do have captions, and main image.
   // fullwidth: If full skins, add wrappers to hold caption and overlay.
   // detroy: Remove .slide__content if it is an enforced unslick grid.
   // wrapper: Don't add divities for a single item to have clean markups.
-  $item['slide']         = isset($item['slide']) ? $item['slide'] : [];
-  $item['caption']       = array_filter($item['caption']);
-  $settings['split']     = !empty($item) && (!empty($settings['caption']) || !empty($settings['title']));
-  $settings['data']      = !empty($item['caption']['alt']) || !empty($item['caption']['title']) || !empty($item['caption']['data']);
-  $settings['fullwidth'] = !empty($settings['skin']) && strpos($settings['skin'], 'full') !== FALSE;
-  $settings['grid']      = empty($settings['grid']) ? FALSE : $settings['grid'];
-  $settings['detroy']    = $settings['current_item'] == 'main' && !empty($settings['grid']) && !empty($settings['unslick']);
-  $settings['wrapper']   = $settings['count'] > 1 && $settings['current_item'] != 'grid';
+  $item['slide']     = isset($item['slide']) ? $item['slide'] : [];
+  $item['caption']   = array_filter($item['caption']);
+  $sets['split']     = !empty($item) && (!empty($sets['caption']) || !empty($sets['title']));
+  $sets['data']      = !empty($item['caption']['alt']) || !empty($item['caption']['title']) || !empty($item['caption']['data']);
+  $sets['fullwidth'] = !empty($sets['skin']) && strpos($sets['skin'], 'full') !== FALSE;
+  $sets['grid']      = empty($sets['grid']) ? FALSE : $sets['grid'];
+  $sets['detroy']    = $sets['current_item'] == 'main' && !empty($sets['grid']) && !empty($sets['unslick']);
+  $sets['wrapper']   = $sets['count'] > 1 && $sets['current_item'] != 'grid';
+  $sets['use_ca']    = empty($sets['grid']) || !empty($variables['content_attributes']);
 }
 
 /**
@@ -192,45 +196,45 @@ function template_preprocess_slick_slide(&$variables) {
  */
 function template_preprocess_slick_grid(&$variables) {
   $element                 = $variables['element'];
-  $variables['settings']   = $settings = $element['#settings'];
+  $variables['settings']   = $sets = $element['#settings'];
   $variables['delta']      = isset($element['#delta']) ? $element['#delta'] : 0;
   $variables['grid_id']    = 'grid';
   $variables['attributes'] = isset($variables['attributes']) ? $variables['attributes'] : [];
 
   // By default Slick only supports Grid Foundation, adds relevant grid_id for
   // optional Style: CSS3 Columns, and probably future flexbox.
-  if (!empty($settings['style']) && $settings['style'] != 'slick') {
-    $variables['grid_id'] = $settings['style'];
+  if (!empty($sets['style']) && $sets['style'] != 'slick') {
+    $variables['grid_id'] = $sets['style'];
   }
 
   // Provides grid container attributes.
   // @todo Replace by BlazyGrid::gridContainerAttributes() post Blazy 2.5+
-  _slick_grid_container_attributes($variables['attributes'], $settings);
+  _slick_grid_container_attributes($variables['attributes'], $sets);
 
-  if (!empty($settings['media_switch'])) {
-    $switch = str_replace('_', '-', $settings['media_switch']);
+  if (!empty($sets['media_switch'])) {
+    $switch = str_replace('_', '-', $sets['media_switch']);
     $variables['attributes']['data-' . $switch . '-gallery'] = TRUE;
   }
 
   $variables['items'] = [];
   foreach ($variables['element']['#items'] as $delta => $item) {
-    $settings = isset($item['settings']) ? array_merge($settings, $item['settings']) : $settings;
-    $settings['current_item'] = 'grid';
-    $settings['delta'] = $delta;
+    $sets = isset($item['settings']) ? array_merge($sets, $item['settings']) : $sets;
+    $sets['current_item'] = 'grid';
+    $sets['delta'] = $delta;
 
     $attrs = empty($item['attributes']) ? [] : $item['attributes'];
     unset($item['settings'], $item['attributes']);
 
     // Provides grid item attributes.
     // @todo Replace by BlazyGrid::gridItemAttributes() post Blazy 2.5+
-    _slick_grid_item_attributes($attrs, $settings);
+    _slick_grid_item_attributes($attrs, $sets);
 
     $slide = [];
     $slide['content'] = [
-      '#theme'    => empty($settings['vanilla']) ? 'slick_slide' : 'slick_vanilla',
+      '#theme'    => empty($sets['vanilla']) ? 'slick_slide' : 'slick_vanilla',
       '#item'     => $item,
       '#delta'    => $delta,
-      '#settings' => $settings,
+      '#settings' => $sets,
     ];
 
     $slide['attributes'] = new Attribute($attrs);
