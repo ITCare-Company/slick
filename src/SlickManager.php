@@ -212,7 +212,6 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
       $sets['delta'] = $delta;
 
       unset($item['settings'], $item['attributes'], $item['content_attributes']);
-      $theme = empty($settings['vanilla']) ? 'slide' : 'vanilla';
 
       if (empty($settings['unslick'])) {
         $attrs['class'][] = 'slide__grid';
@@ -229,6 +228,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
         }
       }
 
+      $theme = empty($settings['vanilla']) ? 'slide' : 'vanilla';
       $content = [
         '#theme' => 'slick_' . $theme,
         '#item' => $item,
@@ -248,7 +248,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     }
 
     $result = BlazyGrid::build($output, $settings);
-    $result['#attributes']['class'][] = empty($settings['unslick']) ? 'slide__content' : 'splide__grid';
+    $result['#attributes']['class'][] = empty($settings['unslick']) ? 'slide__content' : 'slick__grid';
 
     $build = ['slide' => $result, 'settings' => $settings];
 
