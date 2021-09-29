@@ -99,6 +99,8 @@ class SlickFilter extends BlazyFilter {
 
     // @todo remove post Blazy 2.5+.
     $settings['plugin_id'] = $this->getPluginId();
+    $settings['item_id'] = 'slide';
+    $settings['namespace'] = 'slick';
     $settings['visible_items'] = 0;
 
     // Provides alter like formatters to modify at one go, even clumsy here.
@@ -297,19 +299,26 @@ class SlickFilter extends BlazyFilter {
         $options = Json::decode($check);
       }
     }
-    if ($check = $node->getAttribute('settings')) {
-      $check = str_replace("'", '"', $check);
-      $check = Json::decode($check);
-      if ($check) {
-        $settings = array_merge($settings, $check);
+
+    // @todo remove check post Blazy 2.5+.
+    if (method_exists(get_parent_class($this), 'prepareSettings')) {
+      parent::prepareSettings($node, $settings);
+    }
+    else {
+      if ($check = $node->getAttribute('settings')) {
+        $check = str_replace("'", '"', $check);
+        $check = Json::decode($check);
+        if ($check) {
+          $settings = array_merge($settings, $check);
+        }
       }
+
+      self::toGrid($node, $settings);
     }
 
     if (!isset($settings['nav'])) {
       $settings['nav'] = (!empty($settings['optionset_thumbnail']) && $settings['count'] > 1);
     }
-
-    self::toGrid($node, $settings);
 
     $settings['_grid'] = !empty($settings['style']) && !empty($settings['grid']);
     $settings['visible_items'] = $settings['_grid'] && empty($settings['visible_items']) ? 6 : $settings['visible_items'];
@@ -583,9 +592,7 @@ class SlickFilter extends BlazyFilter {
    * @todo remove for parent::buildItemAttributes() method post Blazy 2.5+.
    */
   private function buildNodeItemAttributes(array &$build, $node) {
-    $settings = &$build['settings'];
     if ($caption = $node->getAttribute('caption')) {
-      // @todo remove check post Blazy 2.5+.
       if (method_exists(get_parent_class($this), 'filterHtml')) {
         $safe_caption = parent::filterHtml($caption);
         $build['captions']['alt'] = ['#markup' => $safe_caption];
@@ -596,10 +603,10 @@ class SlickFilter extends BlazyFilter {
     if ($attributes = self::getAttribute($node)) {
       // Move it to .slide__content for better displays like .well/ .card.
       if (!empty($attributes['class'])) {
-        $settings['grid_content_class'] = $attributes['class'];
+        $build['content_attributes']['class'] = $attributes['class'];
         unset($attributes['class']);
       }
-      $build['content_attributes'] = $attributes;
+      $build['attributes'] = $attributes;
     }
   }
 

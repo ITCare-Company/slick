@@ -193,6 +193,15 @@ function template_preprocess_slick_slide(&$variables) {
 
 /**
  * Prepares variables for slick-grid.html.twig templates.
+ *
+ * Slick now uses core theme_item_list via BlazyGrid instead. This function is
+ * no longer functional, nor called. Should you need to modify its output, use
+ * hook_slick_grid_item_alter instead, see SlickManager::buildGridItem().
+ * This is still kept to avoid WSOD during careless update.
+ *
+ * @deprecated in slick:8.x-2.3 and is removed from slick:8.x-3.0. Use
+ *   hook_slick_grid_item_alter if necessary instead.
+ * @see https://www.drupal.org/node/3239708
  */
 function template_preprocess_slick_grid(&$variables) {
   $element                 = $variables['element'];
@@ -201,98 +210,9 @@ function template_preprocess_slick_grid(&$variables) {
   $variables['grid_id']    = 'grid';
   $variables['attributes'] = isset($variables['attributes']) ? $variables['attributes'] : [];
 
-  // By default Slick only supports Grid Foundation, adds relevant grid_id for
-  // optional Style: CSS3 Columns, and probably future flexbox.
-  if (!empty($sets['style']) && $sets['style'] != 'slick') {
-    $variables['grid_id'] = $sets['style'];
-  }
-
-  // Provides grid container attributes.
-  // @todo Replace by BlazyGrid::gridContainerAttributes() post Blazy 2.5+
-  _slick_grid_container_attributes($variables['attributes'], $sets);
-
-  if (!empty($sets['media_switch'])) {
-    $switch = str_replace('_', '-', $sets['media_switch']);
-    $variables['attributes']['data-' . $switch . '-gallery'] = TRUE;
-  }
-
   $variables['items'] = [];
   foreach ($variables['element']['#items'] as $delta => $item) {
-    $sets = isset($item['settings']) ? array_merge($sets, $item['settings']) : $sets;
-    $sets['current_item'] = 'grid';
-    $sets['delta'] = $delta;
-
-    $attrs = empty($item['attributes']) ? [] : $item['attributes'];
-    unset($item['settings'], $item['attributes']);
-
-    // Provides grid item attributes.
-    // @todo Replace by BlazyGrid::gridItemAttributes() post Blazy 2.5+
-    _slick_grid_item_attributes($attrs, $sets);
-
-    $slide = [];
-    $slide['content'] = [
-      '#theme'    => empty($sets['vanilla']) ? 'slick_slide' : 'slick_vanilla',
-      '#item'     => $item,
-      '#delta'    => $delta,
-      '#settings' => $sets,
-    ];
-
-    $slide['attributes'] = new Attribute($attrs);
+    $slide = ['content' => [], 'attributes' => []];
     $variables['items'][$delta] = $slide;
-    unset($slide);
-  }
-}
-
-/**
- * Limit to grid only, so to be usable for plain list.
- */
-function _slick_grid_container_attributes(array &$attributes, array $settings = []) {
-  $style = empty($settings['style']) ? '' : $settings['style'];
-  $is_grid = isset($settings['_grid']) ? $settings['_grid'] : ($style && !empty($settings['grid']));
-
-  if ($is_grid) {
-    $attributes['class'][] = 'blazy--grid block-' . $style . ' block-count-' . $settings['count'];
-
-    // If Native Grid style with numeric grid, assumed non-two-dimensional.
-    if ($style == 'nativegrid') {
-      $attributes['class'][] = empty($settings['nativegrid.masonry']) ? 'is-b-native' : 'is-b-masonry';
-    }
-
-    // Adds common grid attributes for CSS3 column, Foundation, etc.
-    // Only if using the plain grid column numbers (1 - 12).
-    if ($settings['grid_large'] = $settings['grid']) {
-      foreach (['small', 'medium', 'large'] as $key) {
-        $value = empty($settings['grid_' . $key]) ? NULL : $settings['grid_' . $key];
-        if ($value && is_numeric($value)) {
-          $attributes['class'][] = $key . '-block-' . $style . '-' . $value;
-        }
-      }
-    }
-  }
-}
-
-/**
- * Limit to grid only, so to be usable for plain list.
- */
-function _slick_grid_item_attributes(array &$attributes, array $settings = []) {
-  if (isset($settings['grid_large_dimensions']) && $dim = $settings['grid_large_dimensions']) {
-    $key = $settings['delta'];
-    if (isset($dim[$key])) {
-      $attributes['data-b-w'] = $dim[$key]['width'];
-      if (!empty($dim[$key]['height'])) {
-        $attributes['data-b-h'] = $dim[$key]['height'];
-      }
-    }
-    else {
-      // Supports a grid repeat for the lazy.
-      $count = empty($settings['count']) ? 0 : $settings['count'];
-      $height = $dim[0]['height'];
-      if ($count > count($dim)) {
-        $attributes['data-b-w'] = $dim[0]['width'];
-        if (!empty($height)) {
-          $attributes['data-b-h'] = $height;
-        }
-      }
-    }
   }
 }

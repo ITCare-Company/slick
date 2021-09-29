@@ -5,6 +5,7 @@ namespace Drupal\slick;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\slick\Entity\Slick;
 use Drupal\blazy\Blazy;
+use Drupal\blazy\BlazyGrid;
 use Drupal\blazy\BlazyManagerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -201,13 +202,58 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    * Returns items as a grid item display.
    */
   public function buildGridItem(array $items, $delta, array $settings = []) {
-    $slide = [
-      '#theme'    => 'slick_grid',
-      '#items'    => $items,
-      '#delta'    => $delta,
-      '#settings' => $settings,
-    ];
-    return ['slide' => $slide, 'settings' => $settings];
+    $output = [];
+
+    foreach ($items as $delta => $item) {
+      $sets = isset($item['settings']) ? array_merge($settings, $item['settings']) : $settings;
+      $attrs = empty($item['attributes']) ? [] : $item['attributes'];
+      $content_attrs = isset($item['content_attributes']) ? $item['content_attributes'] : [];
+      $sets['current_item'] = 'grid';
+      $sets['delta'] = $delta;
+
+      unset($item['settings'], $item['attributes'], $item['content_attributes']);
+      $theme = empty($settings['vanilla']) ? 'slide' : 'vanilla';
+
+      if (empty($settings['unslick'])) {
+        $attrs['class'][] = 'slide__grid';
+      }
+
+      $attrs['class'][] = 'grid--' . $delta;
+      foreach (['type', 'media_switch'] as $key) {
+        if (!empty($sets[$key])) {
+          $value = $sets[$key];
+          $attrs['class'][] = 'grid--' . str_replace('_', '-', $value);
+          if ($key == 'media_switch' && mb_strpos($value, 'box') !== FALSE) {
+            $attrs['class'][] = 'grid--litebox';
+          }
+        }
+      }
+
+      $content = [
+        '#theme' => 'slick_' . $theme,
+        '#item' => $item,
+        '#delta' => $delta,
+        '#settings' => $sets,
+      ];
+
+      $slide = [
+        'content' => $content,
+        'attributes' => $attrs,
+        'content_attributes' => $content_attrs,
+        'settings' => $sets,
+      ];
+
+      $output[$delta] = $slide;
+      unset($slide);
+    }
+
+    $result = BlazyGrid::build($output, $settings);
+    $result['#attributes']['class'][] = empty($settings['unslick']) ? 'slide__content' : 'splide__grid';
+
+    $build = ['slide' => $result, 'settings' => $settings];
+
+    $this->moduleHandler->alter('slick_grid_item', $build, $settings);
+    return $build;
   }
 
   /**
