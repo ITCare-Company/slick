@@ -99,6 +99,7 @@ class SlickFilter extends BlazyFilter {
 
     // @todo remove post Blazy 2.5+.
     $settings['plugin_id'] = $this->getPluginId();
+    $settings['visible_items'] = 0;
 
     // Provides alter like formatters to modify at one go, even clumsy here.
     $build = ['settings' => $settings];
@@ -250,7 +251,7 @@ class SlickFilter extends BlazyFilter {
     $xpath = new \DOMXPath($dom);
     $children = $xpath->query("//iframe | //img");
 
-    $this->buildItemAttributes($build, $node);
+    $this->buildNodeItemAttributes($build, $node);
 
     if ($children->length > 0) {
       // Can only have the first found for the main slide stage.
@@ -268,27 +269,6 @@ class SlickFilter extends BlazyFilter {
       if (!empty($build['settings']['uri'])) {
         $build['slide'] = $this->blazyManager->getBlazy($build);
       }
-    }
-  }
-
-  /**
-   * Build the slide item attributes.
-   */
-  private function buildItemAttributes(array &$build, $node) {
-    $settings = &$build['settings'];
-    if ($caption = $node->getAttribute('caption')) {
-      // @todo remove check post Blazy 2.5+.
-      if (method_exists(get_parent_class($this), 'filterHtml')) {
-        $safe_caption = parent::filterHtml($caption);
-        $build['captions']['alt'] = ['#markup' => $safe_caption];
-      }
-      $node->removeAttribute('caption');
-    }
-
-    if ($attributes = self::getAttribute($node)) {
-      // Move it to .slide__content for better displays like .well/ .card.
-      $key = empty($settings['grid']) ? 'content_attributes' : 'attributes';
-      $build[$key] = $attributes;
     }
   }
 
@@ -330,6 +310,10 @@ class SlickFilter extends BlazyFilter {
     }
 
     self::toGrid($node, $settings);
+
+    $settings['_grid'] = !empty($settings['style']) && !empty($settings['grid']);
+    $settings['visible_items'] = $settings['_grid'] && empty($settings['visible_items']) ? 6 : $settings['visible_items'];
+
     $build['options'] = $options;
   }
 
@@ -562,9 +546,6 @@ class SlickFilter extends BlazyFilter {
           $settings['grid_medium'],
           $settings['grid']
         ) = array_pad(array_map('trim', explode("-", $grid, 3)), 3, NULL);
-
-        $settings['_grid'] = !empty($settings['style']) && !empty($settings['grid']);
-        $settings['visible_items'] = $settings['_grid'] && empty($settings['visible_items']) ? 6 : $settings['visible_items'];
       }
     }
   }
@@ -593,6 +574,32 @@ class SlickFilter extends BlazyFilter {
     // Finally, remove the original blazy node.
     if ($node->parentNode) {
       $node->parentNode->removeChild($node);
+    }
+  }
+
+  /**
+   * Build the slide item attributes.
+   *
+   * @todo remove for parent::buildItemAttributes() method post Blazy 2.5+.
+   */
+  private function buildNodeItemAttributes(array &$build, $node) {
+    $settings = &$build['settings'];
+    if ($caption = $node->getAttribute('caption')) {
+      // @todo remove check post Blazy 2.5+.
+      if (method_exists(get_parent_class($this), 'filterHtml')) {
+        $safe_caption = parent::filterHtml($caption);
+        $build['captions']['alt'] = ['#markup' => $safe_caption];
+      }
+      $node->removeAttribute('caption');
+    }
+
+    if ($attributes = self::getAttribute($node)) {
+      // Move it to .slide__content for better displays like .well/ .card.
+      if (!empty($attributes['class'])) {
+        $settings['grid_content_class'] = $attributes['class'];
+        unset($attributes['class']);
+      }
+      $build['content_attributes'] = $attributes;
     }
   }
 
