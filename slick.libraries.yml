@@ -60,7 +60,7 @@ slick.load:
   dependencies:
     - core/drupal
     - core/drupalSettings
-    - core/jquery.once
+    - core/once
     - slick/slick
 
 slick.theme:
@@ -105,6 +105,8 @@ slick.colorbox:
   js:
     js/slick.colorbox.min.js: { weight: -0.04, minified: true }
   dependencies:
+    - core/drupal
+    - core/once
     - blazy/colorbox
     - slick/slick
 
@@ -113,4 +115,6 @@ vanilla:
   js:
     js/slick.vanilla.min.js: { weight: -1, minified: true }
   dependencies:
+    - core/drupal
+    - core/once
     - slick/slick

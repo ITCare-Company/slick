@@ -3,7 +3,7 @@
  * Provides Colorbox integration.
  */
 
-(function ($, Drupal) {
+(function ($, Drupal, once) {
 
   'use strict';
 
@@ -85,12 +85,10 @@
   /**
    * Adds each slide a reliable ordinal to get correct current with clones.
    *
-   * @param {int} i
-   *   The index of the current element.
    * @param {HTMLElement} elm
    *   The slick HTML element.
    */
-  function doSlickColorbox(i, elm) {
+  function doSlickColorbox(elm) {
     $('.slick__slide', elm).each(function (j, el) {
       $(el).attr('data-delta', j);
     });
@@ -123,9 +121,9 @@
 
       var $slick = $('.slick--colorbox', context);
       if ($slick && $slick.length) {
-        $slick.once('slick-colorbox').each(doSlickColorbox);
+        once('slick-colorbox', '.slick--colorbox', context).forEach(doSlickColorbox);
       }
     }
   };
 
-}(jQuery, Drupal));
+}(jQuery, Drupal, once));

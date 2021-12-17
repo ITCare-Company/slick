@@ -1,6 +1,7 @@
 
 Slick 8.x-2.0-dev, 2021-12-17
 -----------------------------
+- Issue #3254667 by gausarts: Update to use the new vanilla once for 9.3 compat.
 - Issue #3246544 by tanmayk, PCate, joelpittet: Error displayed if package.json is not in the JS library folder
 - Added Drupal ^10.
 

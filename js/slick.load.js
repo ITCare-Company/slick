@@ -3,19 +3,17 @@
  * Provides Slick loader.
  */
 
-(function ($, Drupal, drupalSettings) {
+(function ($, Drupal, drupalSettings, once) {
 
   'use strict';
 
   /**
    * Slick utility functions.
    *
-   * @param {int} i
-   *   The index of the current element.
    * @param {HTMLElement} elm
    *   The slick HTML element.
    */
-  function doSlick(i, elm) {
+  function doSlick(elm) {
     var t = $('> .slick__slider', elm).length ? $('> .slick__slider', elm) : $(elm);
     var a = $('> .slick__arrow', elm);
     var o = t.data('slick') ? $.extend({}, drupalSettings.slick, t.data('slick')) : $.extend({}, drupalSettings.slick);
@@ -302,9 +300,9 @@
       // Prevents potential missing due to the newly added sitewide option.
       var $slick = $('.slick', context);
       if ($slick && $slick.length) {
-        $('.slick', context).once('slick').each(doSlick);
+        once('slick', '.slick', context).forEach(doSlick);
       }
     }
   };
 
-})(jQuery, Drupal, drupalSettings);
+})(jQuery, Drupal, drupalSettings, once);

@@ -3,19 +3,17 @@
  * Provides Slick vanilla where options can be directly injected via data-slick.
  */
 
-(function ($, Drupal) {
+(function ($, Drupal, once) {
 
   'use strict';
 
   /**
    * Slick utility functions.
    *
-   * @param {int} i
-   *   The index of the current element.
    * @param {HTMLElement} elm
    *   The slick HTML element.
    */
-  function doSlickVanilla(i, elm) {
+  function doSlickVanilla(elm) {
     $(elm).slick();
   }
 
@@ -30,9 +28,9 @@
       // Prevents potential missing due to the newly added sitewide option.
       var $slick = $('.slick-vanilla', context);
       if ($slick && $slick.length) {
-        $slick.once('slick-vanilla').each(doSlickVanilla);
+        once('slick-vanilla', '.slick-vanilla', context).forEach(doSlickVanilla);
       }
     }
   };
 
-})(jQuery, Drupal);
+})(jQuery, Drupal, once);
