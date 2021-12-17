@@ -3,7 +3,7 @@ description: 'Testing Slick.'
 type: module
 hidden: true
 package: Testing
-core_version_requirement: ^8.8 || ^9
+core_version_requirement: ^9 || ^10
 dependencies:
   - blazy:blazy_test (>= 2.x)
   - slick:slick (>= 2.x)
