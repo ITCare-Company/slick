@@ -6,6 +6,7 @@ use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\slick\Entity\Slick;
+use Drupal\slick\SlickDefault;
 
 /**
  * Extends base form for slick instance configuration form.
@@ -17,7 +18,7 @@ class SlickForm extends SlickFormBase {
    */
   public function form(array $form, FormStateInterface $form_state) {
     $form      = parent::form($form, $form_state);
-    $path      = drupal_get_path('module', 'slick');
+    $path      = SlickDefault::pathResolver()->getPath('module', 'slick');
     $slick     = $this->entity;
     $options   = $slick->getOptions() ?: [];
     $tooltip   = ['class' => ['is-tooltip']];

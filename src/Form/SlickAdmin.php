@@ -9,6 +9,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\blazy\Dejavu\BlazyAdminExtended;
 use Drupal\slick\SlickManagerInterface;
+use Drupal\slick\SlickDefault;
 
 /**
  * Provides resusable admin functions, or form elements.
@@ -118,7 +119,7 @@ class SlickAdmin implements SlickAdminInterface {
    * Returns the opening form elements.
    */
   public function openingForm(array &$form, &$definition = []) {
-    $path         = drupal_get_path('module', 'slick');
+    $path         = SlickDefault::pathResolver()->getPath('module', 'slick');
     $is_slick_ui  = $this->manager()->getModuleHandler()->moduleExists('slick_ui');
     $is_help      = $this->manager()->getModuleHandler()->moduleExists('help');
     $route_name   = ['name' => 'slick_ui'];

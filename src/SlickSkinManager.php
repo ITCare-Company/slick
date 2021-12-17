@@ -357,24 +357,11 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
   public function getSlickPath() {
     if (!isset($this->slickPath)) {
       if ($this->config('library') == 'accessible-slick') {
-        $library_path = slick_libraries_get_path('accessible-slick');
-        if (!$library_path) {
-          $path = 'libraries/accessible-slick';
-        }
+        $this->slickPath = slick_libraries_get_path('accessible-slick');
       }
       else {
-        $library_path = slick_libraries_get_path('slick-carousel') ?: slick_libraries_get_path('slick');
-        if (!$library_path) {
-          $path = 'libraries/slick-carousel';
-          if (!is_file($this->root . '/' . $path . '/slick/slick.min.js')) {
-            $path = 'libraries/slick';
-          }
-        }
+        $this->slickPath = slick_libraries_get_path('slick-carousel') ?: slick_libraries_get_path('slick');
       }
-      if (isset($path) && is_file($this->root . '/' . $path . '/slick/slick.min.js')) {
-        $library_path = $path;
-      }
-      $this->slickPath = $library_path;
     }
     return $this->slickPath;
   }

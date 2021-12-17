@@ -139,4 +139,13 @@ class SlickDefault extends BlazyDefault {
     ];
   }
 
+  /**
+   * Returns a wrapper to pass tests, or DI where adding params is troublesome.
+   *
+   * @todo remove for Blazy::pathResolver() post Blazy:2.6+.
+   */
+  public static function pathResolver() {
+    return \Drupal::hasService('extension.path.resolver') ? \Drupal::service('extension.path.resolver') : NULL;
+  }
+
 }
