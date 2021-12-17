@@ -424,17 +424,6 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
       if ($this->config('library') == 'accessible-slick') {
         $this->isBreaking = TRUE;
       }
-      else {
-        // The master reverted from 1.8.1 - 1.9.0 to 1.8.0. This is for old
-        // downloads. See https://github.com/kenwheeler/slick/pull/3688
-        // @todo Remove after another check.
-        if ($path = $this->getSlickPath()) {
-          if ($content = \file_get_contents($this->root . '/' . $path . '/package.json')) {
-            $this->isBreaking = strpos($content, '"version": "1.9.0"') !== FALSE
-              || strpos($content, '"version": "1.8.1"') !== FALSE;
-          }
-        }
-      }
     }
     return $this->isBreaking;
   }
