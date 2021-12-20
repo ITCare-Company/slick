@@ -7,6 +7,9 @@
 
   'use strict';
 
+  var _id = 'slickColorbox';
+  var _element = '.slick--colorbox';
+
   /**
    * Slick Colorbox utility functions.
    *
@@ -103,6 +106,13 @@
     attach: function (context) {
       var me = Drupal.slickColorbox;
 
+      // Weirdo: context may be null after Colorbox close.
+      context = context || document;
+
+      // jQuery may pass its object as non-expected context identified by length.
+      context = 'length' in context ? context[0] : context;
+      context = context instanceof HTMLDocument ? context : document;
+
       $(context).on('cbox_open', function () {
         me.set('slickPause');
       });
@@ -119,9 +129,13 @@
         me.set('cbox_closed');
       });
 
-      var $slick = $('.slick--colorbox', context);
-      if ($slick && $slick.length) {
-        once('slick-colorbox', '.slick--colorbox', context).forEach(doSlickColorbox);
+      once(_id, _element, context).forEach(doSlickColorbox);
+    },
+    detach: function (context, setting, trigger) {
+      if (trigger === 'unload') {
+        if (once.find(_id, context).length) {
+          once.remove(_id, _element, context);
+        }
       }
     }
   };

@@ -7,6 +7,9 @@
 
   'use strict';
 
+  var _id = 'slick';
+  var _element = '.' + _id;
+
   /**
    * Slick utility functions.
    *
@@ -297,10 +300,21 @@
   Drupal.behaviors.slick = {
     attach: function (context) {
 
+      // Weirdo: context may be null after Colorbox close.
+      context = context || document;
+
+      // jQuery may pass its object as non-expected context identified by length.
+      context = 'length' in context ? context[0] : context;
+      context = context instanceof HTMLDocument ? context : document;
+
       // Prevents potential missing due to the newly added sitewide option.
-      var $slick = $('.slick', context);
-      if ($slick && $slick.length) {
-        once('slick', '.slick', context).forEach(doSlick);
+      once(_id, _element, context).forEach(doSlick);
+    },
+    detach: function (context, setting, trigger) {
+      if (trigger === 'unload') {
+        if (once.find(_id, context).length) {
+          once.remove(_id, _element, context);
+        }
       }
     }
   };

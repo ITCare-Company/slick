@@ -7,6 +7,10 @@
 
   'use strict';
 
+  var _id = 'slickVanilla';
+  // @fixme typo at 3.x, should be BEM modifier: .slick--vanilla.
+  var _element = '.slick-vanilla';
+
   /**
    * Slick utility functions.
    *
@@ -25,10 +29,21 @@
   Drupal.behaviors.slickVanilla = {
     attach: function (context) {
 
+      // Weirdo: context may be null after Colorbox close.
+      context = context || document;
+
+      // jQuery may pass its object as non-expected context identified by length.
+      context = 'length' in context ? context[0] : context;
+      context = context instanceof HTMLDocument ? context : document;
+
       // Prevents potential missing due to the newly added sitewide option.
-      var $slick = $('.slick-vanilla', context);
-      if ($slick && $slick.length) {
-        once('slick-vanilla', '.slick-vanilla', context).forEach(doSlickVanilla);
+      once(_id, _element, context).forEach(doSlickVanilla);
+    },
+    detach: function (context, setting, trigger) {
+      if (trigger === 'unload') {
+        if (once.find(_id, context).length) {
+          once.remove(_id, _element, context);
+        }
       }
     }
   };
