@@ -1,4 +1,9 @@
 
+Slick 8.x-2.0-dev, 2021-12-21
+-----------------------------
+- Issue #3255266 by alexpott: Fix Slick entity information so entity doesn't not
+  change after install.
+
 Slick 8.x-2.0-dev, 2021-12-17
 -----------------------------
 - Issue #3253013 by gausarts: [Slick] Drupal 10.
