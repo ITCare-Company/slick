@@ -24,7 +24,7 @@ class SlickSkinTest extends SlickSkinPluginBase {
     // If you copy this file, be sure to add base_path() before any asset path
     // (css or js) as otherwise failing to load the assets. Your module can
     // register paths pointing to a theme. Check out slick.api.php for details.
-    $path = base_path() . SlickDefault::pathResolver()->getPath('module', 'slick_test');
+    $path = base_path() . SlickDefault::getPath('module', 'slick_test');
     $skins = [
       'test' => [
         'name' => 'Test',
@@ -51,7 +51,7 @@ class SlickSkinTest extends SlickSkinPluginBase {
    * @inheritdoc
    */
   protected function setArrows() {
-    $path = base_path() . SlickDefault::pathResolver()->getPath('module', 'slick_test');
+    $path = base_path() . SlickDefault::getPath('module', 'slick_test');
     $skins = [
       'arrows' => [
         'name' => 'Arrows',
@@ -75,7 +75,7 @@ class SlickSkinTest extends SlickSkinPluginBase {
    * @inheritdoc
    */
   protected function setDots() {
-    $path = base_path() . SlickDefault::pathResolver()->getPath('module', 'slick_test');
+    $path = base_path() . SlickDefault::getPath('module', 'slick_test');
     $skins = [
       'dots' => [
         'name' => 'Dots',

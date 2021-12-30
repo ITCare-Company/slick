@@ -3,12 +3,13 @@
  * Provides Colorbox integration.
  */
 
-(function ($, Drupal, once) {
+(function ($, Drupal, _d) {
 
   'use strict';
 
-  var _id = 'slickColorbox';
-  var _element = '.slick--colorbox';
+  var _id = 'slick--colorbox';
+  var _mounted = _id + '--on';
+  var _element = '.' + _id + ':not(.' + _mounted + ')';
 
   /**
    * Slick Colorbox utility functions.
@@ -95,6 +96,7 @@
     $('.slick__slide', elm).each(function (j, el) {
       $(el).attr('data-delta', j);
     });
+    $(elm).addClass(_mounted);
   }
 
   /**
@@ -112,32 +114,29 @@
       // jQuery may pass its object as non-expected context identified by length.
       context = 'length' in context ? context[0] : context;
       context = context instanceof HTMLDocument ? context : document;
+      var $context = $(context);
 
-      $(context).on('cbox_open', function () {
+      $context.on('cbox_open', function () {
         me.set('slickPause');
       });
 
-      $(context).on('cbox_load', function () {
+      $context.on('cbox_load', function () {
         me.set('cbox_load');
       });
 
-      $(context).on('cbox_complete', function () {
+      $context.on('cbox_complete', function () {
         me.set('cbox_complete');
       });
 
-      $(context).on('cbox_closed', function () {
+      $context.on('cbox_closed', function () {
         me.set('cbox_closed');
       });
 
-      once(_id, _element, context).forEach(doSlickColorbox);
-    },
-    detach: function (context, setting, trigger) {
-      if (trigger === 'unload') {
-        if (once.find(_id, context).length) {
-          once.remove(_id, _element, context);
-        }
+      var elms = context.querySelectorAll(_element);
+      if (elms.length) {
+        _d.once(_d.forEach(elms, doSlickColorbox));
       }
     }
   };
 
-}(jQuery, Drupal, once));
+}(jQuery, Drupal, dBlazy));

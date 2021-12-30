@@ -3,13 +3,14 @@
  * Provides Slick vanilla where options can be directly injected via data-slick.
  */
 
-(function ($, Drupal, once) {
+(function ($, Drupal, _d) {
 
   'use strict';
 
-  var _id = 'slickVanilla';
+  var _id = 'slick-vanilla';
+  var _mounted = _id + '--on';
   // @fixme typo at 3.x, should be BEM modifier: .slick--vanilla.
-  var _element = '.slick-vanilla';
+  var _element = '.' + _id + ':not(.' + _mounted + ')';
 
   /**
    * Slick utility functions.
@@ -18,7 +19,9 @@
    *   The slick HTML element.
    */
   function doSlickVanilla(elm) {
-    $(elm).slick();
+    var $elm = $(elm);
+    $elm.slick();
+    $elm.addClass(_mounted);
   }
 
   /**
@@ -37,15 +40,11 @@
       context = context instanceof HTMLDocument ? context : document;
 
       // Prevents potential missing due to the newly added sitewide option.
-      once(_id, _element, context).forEach(doSlickVanilla);
-    },
-    detach: function (context, setting, trigger) {
-      if (trigger === 'unload') {
-        if (once.find(_id, context).length) {
-          once.remove(_id, _element, context);
-        }
+      var elms = context.querySelectorAll(_element);
+      if (elms.length) {
+        _d.once(_d.forEach(elms, doSlickVanilla));
       }
     }
   };
 
-})(jQuery, Drupal, once);
+})(jQuery, Drupal, dBlazy);

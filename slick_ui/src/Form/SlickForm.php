@@ -18,7 +18,7 @@ class SlickForm extends SlickFormBase {
    */
   public function form(array $form, FormStateInterface $form_state) {
     $form      = parent::form($form, $form_state);
-    $path      = SlickDefault::pathResolver()->getPath('module', 'slick');
+    $path      = SlickDefault::getPath('module', 'slick');
     $slick     = $this->entity;
     $options   = $slick->getOptions() ?: [];
     $tooltip   = ['class' => ['is-tooltip']];

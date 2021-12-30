@@ -3,12 +3,13 @@
  * Provides Slick loader.
  */
 
-(function ($, Drupal, drupalSettings, once) {
+(function ($, Drupal, drupalSettings, _d) {
 
   'use strict';
 
   var _id = 'slick';
-  var _element = '.' + _id;
+  var _mounted = _id + '--initialized';
+  var _element = '.' + _id + ':not(.' + _mounted + ')';
 
   /**
    * Slick utility functions.
@@ -289,7 +290,7 @@
     }
 
     // Add helper class for arrow visibility as they are outside slider.
-    $(elm).addClass('slick--initialized');
+    $(elm).addClass(_mounted);
   }
 
   /**
@@ -308,15 +309,11 @@
       context = context instanceof HTMLDocument ? context : document;
 
       // Prevents potential missing due to the newly added sitewide option.
-      once(_id, _element, context).forEach(doSlick);
-    },
-    detach: function (context, setting, trigger) {
-      if (trigger === 'unload') {
-        if (once.find(_id, context).length) {
-          once.remove(_id, _element, context);
-        }
+      var elms = context.querySelectorAll(_element);
+      if (elms.length) {
+        _d.once(_d.forEach(elms, doSlick));
       }
     }
   };
 
-})(jQuery, Drupal, drupalSettings, once);
+})(jQuery, Drupal, drupalSettings, dBlazy);

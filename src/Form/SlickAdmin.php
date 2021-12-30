@@ -119,7 +119,7 @@ class SlickAdmin implements SlickAdminInterface {
    * Modifies the opening form elements.
    */
   public function openingForm(array &$form, &$definition = []): void {
-    $path         = SlickDefault::pathResolver()->getPath('module', 'slick');
+    $path         = SlickDefault::getPath('module', 'slick');
     $is_slick_ui  = $this->manager()->getModuleHandler()->moduleExists('slick_ui');
     $is_help      = $this->manager()->getModuleHandler()->moduleExists('help');
     $route_name   = ['name' => 'slick_ui'];

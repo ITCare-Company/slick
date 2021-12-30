@@ -5,7 +5,8 @@
   "extends": "../../../core/.eslintrc.legacy.json",
   "globals": {
     "once": true,
-    "Blazy": true
+    "Blazy": true,
+    "dBlazy": true
   },
   "rules": {
     "consistent-this": [0, "me"],
