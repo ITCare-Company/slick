@@ -11,8 +11,6 @@
   var _mounted = _id + '--on';
   var _element = '.' + _id + ':not(.' + _mounted + ')';
 
-  Drupal.blazy = Drupal.blazy || {}
-
   /**
    * Slick Colorbox utility functions.
    *
