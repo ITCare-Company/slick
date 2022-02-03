@@ -75,7 +75,7 @@
         });
       }
       else {
-        // Useful to hide caption during loading, but watch out setBackground().
+        // Useful to hide caption during loading, but watch out unloading().
         $('.media', t).closest('.slide__content').addClass('is-loading');
       }
 
@@ -140,7 +140,7 @@
 
       if (!isBlazy) {
         t.on('lazyLoaded lazyLoadError', function (e, slick, img) {
-          setBackground(img);
+          unloading(img);
         });
       }
 
@@ -154,12 +154,12 @@
     }
 
     /**
-     * Turns images into CSS background if so configured.
+     * Remove loadinbg classes if any.
      *
      * @param {HTMLElement} img
      *   The image HTML element.
      */
-    function setBackground(img) {
+    function unloading(img) {
       var $img = $(img);
       var p = $img.closest('.slide') || $img.closest('.unslick');
 
@@ -167,14 +167,6 @@
       $img.parentsUntil(p).removeClass(function (index, css) {
         return (css.match(/(\S+)loading/g) || []).join(' ');
       });
-
-      // @deprecated to be removed for Blazy background.
-      var $bg = $img.closest('.media--background');
-      if ($bg.length && $bg.find('> img').length) {
-        $bg.css('background-image', 'url(' + $img.attr('src') + ')');
-        $bg.find('> img').remove();
-        $bg.removeAttr('data-lazy');
-      }
     }
 
     /**

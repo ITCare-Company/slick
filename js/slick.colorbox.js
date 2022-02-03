@@ -11,12 +11,16 @@
   var _mounted = _id + '--on';
   var _element = '.' + _id + ':not(.' + _mounted + ')';
 
+  Drupal.blazy = Drupal.blazy || {}
+
   /**
    * Slick Colorbox utility functions.
    *
    * @namespace
    */
   Drupal.slickColorbox = Drupal.slickColorbox || {
+
+    context: null,
 
     /**
      * Sets method related to Slick methods.
@@ -28,9 +32,10 @@
      */
     set: function (method) {
       var $box = $.colorbox.element();
-      var $slider = $box.closest('.slick__slider');
+      var $slick = $box.closest('.slick');
+      var $slider = $slick.find('> .slick__slider');
       var $clone = $slider.find('.slick-cloned .litebox');
-      var total = $slider.find('.slick__slide:not(.slick-cloned) .litebox').length;
+      var total = parseInt($slick.data('slickCount'), 10);
       var $counter = $('#cboxCurrent');
       var curr;
 
@@ -74,10 +79,10 @@
       else if (method === 'cbox_closed') {
         // DOM fix randomly weird messed up DOM (blank slides) after closing.
         window.setTimeout(function () {
-          attach(true);
-
+          // Not consistent. This issue is somewhere, but not everywhere.
           // Fixes Firefox, IE width recalculation after closing the colorbox.
           $slider.slick('refresh');
+          attach(true);
         }, 10);
       }
       else if (method === 'slickPause') {
@@ -93,14 +98,41 @@
    *   The slick HTML element.
    */
   function doSlickColorbox(elm) {
-    $('.slick__slide', elm).each(function (j, el) {
+    var me = this;
+    var $elm = $(elm);
+    var $slide = $('.slick__slide:not(.slick-cloned)', elm);
+
+    $slide.each(function (j, el) {
       $(el).attr('data-delta', j);
     });
-    $(elm).addClass(_mounted);
+
+    var $context = $(me.context);
+
+    $context.on('cbox_open', function () {
+      me.set('slickPause');
+    });
+
+    $context.on('cbox_load', function () {
+      me.set('cbox_load');
+    });
+
+    $context.on('cbox_complete', function () {
+      me.set('cbox_complete');
+    });
+
+    $context.on('cbox_closed', function () {
+      me.set('cbox_closed');
+    });
+
+    $elm.attr('data-slick-count', $slide.length);
+    $elm.addClass(_mounted);
   }
 
   /**
    * Attaches slick behavior to HTML element identified by .slick--colorbox.
+   *
+   * This is only relevant for when Infinite enabled identified by clones which
+   * mess up Colorbox counter. Aside from Firefox, IE width recalculation issue.
    *
    * @type {Drupal~behavior}
    */
@@ -114,27 +146,12 @@
       // jQuery may pass its object as non-expected context identified by length.
       context = 'length' in context ? context[0] : context;
       context = context instanceof HTMLDocument ? context : document;
-      var $context = $(context);
 
-      $context.on('cbox_open', function () {
-        me.set('slickPause');
-      });
-
-      $context.on('cbox_load', function () {
-        me.set('cbox_load');
-      });
-
-      $context.on('cbox_complete', function () {
-        me.set('cbox_complete');
-      });
-
-      $context.on('cbox_closed', function () {
-        me.set('cbox_closed');
-      });
+      me.context = context;
 
       var elms = context.querySelectorAll(_element);
       if (elms.length) {
-        _d.once(_d.forEach(elms, doSlickColorbox));
+        _d.once(_d.forEach(elms, doSlickColorbox.bind(me)));
       }
     }
   };

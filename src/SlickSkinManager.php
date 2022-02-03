@@ -235,7 +235,7 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
       foreach ($this->getConstantSkins() as $group) {
         if ($skins = $this->getSkinsByGroup($group)) {
           foreach ($skins as $key => $skin) {
-            $provider = isset($skin['provider']) ? $skin['provider'] : 'slick';
+            $provider = $skin['provider'] ?? 'slick';
             $id = $provider . '.' . $group . '.' . $key;
 
             foreach (['css', 'js', 'dependencies'] as $property) {
@@ -317,10 +317,10 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
     }
 
     foreach ($this->getConstantSkins() as $group) {
-      $skin = $group == 'main' ? $attach['skin'] : (isset($attach['skin_' . $group]) ? $attach['skin_' . $group] : '');
+      $skin = $group == 'main' ? $attach['skin'] : ($attach['skin_' . $group] ?? '');
       if (!empty($skin)) {
         $skins = $this->getSkinsByGroup($group);
-        $provider = isset($skins[$skin]['provider']) ? $skins[$skin]['provider'] : 'slick';
+        $provider = $skins[$skin]['provider'] ?? 'slick';
         $load['library'][] = 'slick/' . $provider . '.' . $group . '.' . $skin;
       }
     }
@@ -346,7 +346,7 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
           $easing_path = 'libraries/easing/jquery.easing.min.js';
         }
       }
-      $this->easingPath = isset($easing_path) ? $easing_path : FALSE;
+      $this->easingPath = $easing_path ?? FALSE;
     }
     return $this->easingPath;
   }

@@ -73,11 +73,11 @@ class SlickAdmin implements SlickAdminInterface {
    * Modifies the main form elements.
    */
   public function buildSettingsForm(array &$form, $definition = []): void {
-    $definition['caches']           = isset($definition['caches']) ? $definition['caches'] : TRUE;
+    $definition['caches']           = $definition['caches'] ?? TRUE;
     $definition['namespace']        = 'slick';
-    $definition['optionsets']       = isset($definition['optionsets']) ? $definition['optionsets'] : $this->getOptionsetsByGroupOptions('main');
-    $definition['skins']            = isset($definition['skins']) ? $definition['skins'] : $this->getSkinsByGroupOptions('main');
-    $definition['responsive_image'] = isset($definition['responsive_image']) ? $definition['responsive_image'] : TRUE;
+    $definition['optionsets']       = $definition['optionsets'] ?? $this->getOptionsetsByGroupOptions('main');
+    $definition['skins']            = $definition['skins'] ?? $this->getSkinsByGroupOptions('main');
+    $definition['responsive_image'] = $definition['responsive_image'] ?? TRUE;
 
     foreach (['optionsets', 'skins'] as $key) {
       if (isset($definition[$key]['default'])) {
@@ -264,10 +264,10 @@ class SlickAdmin implements SlickAdminInterface {
    * Modifies the image formatter form elements.
    */
   public function imageStyleForm(array &$form, $definition = []): void {
-    $definition['thumbnail_style'] = isset($definition['thumbnail_style']) ? $definition['thumbnail_style'] : TRUE;
-    $definition['ratios'] = isset($definition['ratios']) ? $definition['ratios'] : TRUE;
+    $definition['thumbnail_style'] = $definition['thumbnail_style'] ?? TRUE;
+    $definition['ratios'] = $definition['ratios'] ?? TRUE;
 
-    $definition['thumbnail_effect'] = isset($definition['_thumbnail_effect']) ? $definition['_thumbnail_effect'] : [
+    $definition['thumbnail_effect'] = $definition['_thumbnail_effect'] ?? [
       'hover' => $this->t('Hoverable'),
       'grid'  => $this->t('Static grid'),
     ];
