@@ -1,4 +1,9 @@
 
+Slick 8.x-2.0-dev, 2022-02-11
+-----------------------------
+- Issue #3257390 by gausarts, crutch, uwe_mue, wrd-oaitsd: It is not possible to
+  uninstall slick.
+
 Slick 8.x-2.0-dev, 2022-02-03
 -----------------------------
 - Micro optimization: Modernizing PHP sections: null coalescing, destructuring.
