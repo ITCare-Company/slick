@@ -257,7 +257,7 @@ class SlickFilter extends BlazyFilter {
 
     if ($children->length > 0) {
       // Can only have the first found for the main slide stage.
-      $child = $children->item(0);
+      $child = self::getValidNode($children);
 
       // Provides individual item settings.
       $this->buildItemSettings($build, $child);
@@ -608,6 +608,23 @@ class SlickFilter extends BlazyFilter {
       }
       $build['attributes'] = $attributes;
     }
+  }
+
+  /**
+   * Returns a valid node, excluding blur/ noscript images.
+   *
+   * @todo remove for BlazyFilterUtil::getValidNode() method post Blazy 2.9+.
+   */
+  private static function getValidNode($children) {
+    $child = $children->item(0);
+    $class = $child->getAttribute('class');
+    $is_blur = $class && mb_strpos($class, 'b-blur') !== FALSE;
+    $is_bg = $class && mb_strpos($class, 'b-bg') !== FALSE;
+
+    if ($is_blur && !$is_bg) {
+      $child = $children->item(1) ?: $child;
+    }
+    return $child;
   }
 
 }

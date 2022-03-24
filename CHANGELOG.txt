@@ -1,6 +1,8 @@
 
 Slick 8.x-2.0-dev, 2022-03-24
 -----------------------------
+- Issue #3271346 by gausarts: SlickFilter is not compatible with Blazy Noscript
+  and Blur.
 - Issue #3271217 by chr.fritsch: Fix update hook and add new options to all
   option sets.
 
