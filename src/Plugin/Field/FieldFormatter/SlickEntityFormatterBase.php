@@ -3,8 +3,9 @@
 namespace Drupal\slick\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\blazy\Dejavu\BlazyEntityBase;
+// @todo enabled post Blazy:2.10:
+// use Drupal\blazy\Field\BlazyEntityVanillaBase;
+use Drupal\blazy\Dejavu\BlazyEntityBase as BlazyEntityVanillaBase;
 use Drupal\slick\SlickDefault;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -14,19 +15,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @see \Drupal\slick_paragraphs\Plugin\Field\FieldFormatter
  * @see \Drupal\slick_entityreference\Plugin\Field\FieldFormatter
  */
-abstract class SlickEntityFormatterBase extends BlazyEntityBase implements ContainerFactoryPluginInterface {
+abstract class SlickEntityFormatterBase extends BlazyEntityVanillaBase {
 
-  use SlickFormatterViewTrait;
-  use SlickFormatterTrait {
-    buildSettings as traitBuildSettings;
-  }
-
-  /**
-   * The logger factory.
-   *
-   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
-   */
-  protected $loggerFactory;
+  use SlickFormatterTrait;
 
   /**
    * {@inheritdoc}
@@ -62,24 +53,6 @@ abstract class SlickEntityFormatterBase extends BlazyEntityBase implements Conta
     }
 
     return $this->commonViewElements($items, $langcode, $entities);
-  }
-
-  /**
-   * Builds the settings.
-   *
-   * @todo inherit and extend parent post Blazy 2.x release.
-   */
-  public function buildSettings() {
-    return ['blazy' => TRUE, 'vanilla' => TRUE] + $this->traitBuildSettings();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getScopedFormElements() {
-    return [
-      'no_layouts' => TRUE,
-    ] + $this->getCommonScopedFormElements() + parent::getScopedFormElements();
   }
 
 }

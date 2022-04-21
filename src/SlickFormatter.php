@@ -2,10 +2,8 @@
 
 namespace Drupal\slick;
 
-use Drupal\Component\Utility\UrlHelper;
 use Drupal\slick\Entity\Slick;
 use Drupal\blazy\BlazyFormatter;
-use Drupal\image\Plugin\Field\FieldType\ImageItem;
 
 /**
  * Provides Slick field formatters utilities.
@@ -17,17 +15,32 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
    */
   public function buildSettings(array &$build, $items) {
     $settings = &$build['settings'];
+    $settings += SlickDefault::htmlSettings();
 
     // Prepare integration with Blazy.
-    $settings['item_id']   = 'slide';
-    $settings['namespace'] = 'slick';
-    $settings['_unload']   = FALSE;
+    $settings['_unload'] = FALSE;
 
-    // @todo move this into ::prepareData() post Blazy 2.7.
-    $build['optionset'] = $optionset = Slick::loadWithFallback($settings['optionset']);
-    if (isset($settings['blazies'])) {
-      $blazies = &$settings['blazies'];
-      $blazies->set('initial', $optionset->getSetting('initialSlide'));
+    // @todo move it into self::preSettingsData() post Blazy 2.10.
+    $optionset = Slick::verifyOptionset($build, $settings['optionset']);
+
+    // Only display thumbnail nav if having at least 2 slides. This might be
+    // an issue such as for ElevateZoom Plus module, but it should work it out.
+    $nav = $settings['nav'] ?? !empty($settings['optionset_thumbnail']) && isset($items[1]);
+
+    // Do not bother for SlickTextFormatter, or when vanilla is on.
+    if (empty($settings['vanilla'])) {
+      $optionset->whichLazy($settings);
+    }
+    else {
+      // Nothing to work with Vanilla on, disable the asnavfor, else JS error.
+      $nav = FALSE;
+    }
+
+    $settings['nav'] = $nav;
+    $blazies = $settings['blazies'] ?? NULL;
+    if ($blazies) {
+      $blazies->set('initial', $optionset->getSetting('initialSlide'))
+        ->set('is.nav', $nav);
     }
 
     // Pass basic info to parent::buildSettings().
@@ -42,46 +55,12 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
 
     $settings = &$build['settings'];
 
-    // Only display thumbnail nav if having at least 2 slides. This might be
-    // an issue such as for ElevateZoom Plus module, but it should work it out.
-    if (!isset($settings['nav'])) {
-      $settings['nav'] = !empty($settings['optionset_thumbnail']) && isset($items[1]);
-    }
-
-    // Do not bother for SlickTextFormatter, or when vanilla is on.
-    if (empty($settings['vanilla'])) {
-      $build['optionset']->whichLazy($settings);
-    }
-    else {
-      // Nothing to work with Vanilla on, disable the asnavfor, else JS error.
-      $settings['nav'] = FALSE;
-    }
-
     // Only trim overridables options if disabled.
     if (empty($settings['override']) && isset($settings['overridables'])) {
       $settings['overridables'] = array_filter($settings['overridables']);
     }
 
     $this->getModuleHandler()->alter('slick_settings', $build, $items);
-  }
-
-  /**
-   * {@inheritdoc}
-   *
-   * @todo Remove post Blazy 2.5+.
-   */
-  public function getThumbnail(array $settings = [], $item = NULL) {
-    if (!empty($settings['uri'])) {
-      $external = UrlHelper::isExternal($settings['uri']);
-      return [
-        '#theme'      => $external ? 'image' : 'image_style',
-        '#style_name' => empty($settings['thumbnail_style']) ? 'thumbnail' : $settings['thumbnail_style'],
-        '#uri'        => $settings['uri'],
-        '#item'       => $item,
-        '#alt'        => $item && $item instanceof ImageItem ? $item->getValue()['alt'] : '',
-      ];
-    }
-    return [];
   }
 
 }

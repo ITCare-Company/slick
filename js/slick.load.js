@@ -10,13 +10,14 @@
   var _id = 'slick';
   var _unslick = 'unslick';
   var _mounted = _id + '--initialized';
-  var _element = '.' + _id + ':not(.' + _mounted + ')';
+  var _element = '.' + _id;
   var _elSlider = '.slick__slider';
   var _elArrow = '.slick__arrow';
-  var _elBlazy = '.b-lazy:not(.b-loaded)';
+  var _elBlazy = '.b-lazy[data-src]:not(.b-loaded)';
   var _elClose = '.media__icon--close';
   var _isPlaying = 'is-playing';
   var _isPaused = 'is-paused';
+  var _hidden = 'visually-hidden';
   var _blazy = Drupal.blazy || {};
 
   /**
@@ -70,7 +71,7 @@
 
           // Fixes for slidesToShow > 1, centerMode, clones with Blazy IO.
           var $src = t.find('.slick-cloned.slick-active ' + _elBlazy);
-          if (isBlazy && $src.length) {
+          if (isBlazy && $src.length && _blazy.init) {
             _blazy.init.load($src);
           }
         });
@@ -84,7 +85,13 @@
       }
       else {
         // Useful to hide caption during loading, but watch out unloading().
-        $('.media', t).closest('.slide__content').addClass('is-loading');
+        var $media = $('.media', t);
+        if ($media.length) {
+          var isBlazyEl = $media.find('[data-src]').length || $media.hasClass('b-bg');
+          if (isBlazyEl) {
+            $media.closest('.slide__content').addClass('is-loading');
+          }
+        }
       }
 
       t.on('setPosition.sl', function (e, slick) {
@@ -107,7 +114,7 @@
         if (!$src.length) {
           $src = t.find('.slick-cloned ' + _elBlazy);
         }
-        if ($src.length) {
+        if ($src.length && _blazy.init) {
           _blazy.init.load($src);
         }
       }
@@ -225,7 +232,12 @@
         }
 
         // Do not remove arrows, to allow responsive have different options.
-        a[hide ? 'addClass' : 'removeClass']('visually-hidden');
+        // Allows the down arrow to be prominent unless disabled.
+        if (a.length) {
+          $.each(['next', 'prev'], function (i, key) {
+            $('.slick-' + key, a)[hide ? 'addClass' : 'removeClass'](_hidden);
+          });
+        }
       }
     }
 
@@ -302,17 +314,30 @@
   Drupal.behaviors.slick = {
     attach: function (context) {
 
-      // Weirdo: context may be null after Colorbox close.
-      context = context || document;
+      if (_d.context && _d.once.find) {
+        context = _d.context(context);
+        _d.once(doSlick, _id, _element, context);
+      }
+      else {
+        // @todo remove post Blazy 2.10.
+        // Weirdo: context may be null after Colorbox close.
+        context = context || document;
 
-      // jQuery may pass its object as non-expected context identified by length.
-      context = 'length' in context ? context[0] : context;
-      context = context instanceof HTMLDocument ? context : document;
+        // jQuery may pass its object as non-expected context identified by length.
+        context = 'length' in context ? context[0] : context;
+        context = context instanceof HTMLDocument ? context : document;
 
-      // Prevents potential missing due to the newly added sitewide option.
-      var elms = context.querySelectorAll(_element);
-      if (elms.length) {
-        _d.once(_d.forEach(elms, doSlick));
+        // Prevents potential missing due to the newly added sitewide option.
+        var elms = context.querySelectorAll(_element + ':not(.' + _mounted + ')');
+        if (elms.length) {
+          _d.once(_d.forEach(elms, doSlick));
+        }
+      }
+    },
+    detach: function (context, setting, trigger) {
+      if (trigger === 'unload' && _d.once.removeSafely) {
+        context = _d.context(context);
+        _d.once.removeSafely(_id, _element, context);
       }
     }
   };

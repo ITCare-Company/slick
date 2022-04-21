@@ -22,8 +22,6 @@ use Drupal\Core\Field\FieldItemListInterface;
  */
 class SlickMediaFormatter extends SlickEntityReferenceFormatterBase {
 
-  use SlickFormatterViewTrait;
-
   /**
    * Returns the blazy manager.
    */
@@ -51,7 +49,7 @@ class SlickMediaFormatter extends SlickEntityReferenceFormatterBase {
    * @todo inherit and extends parent post blazy:2.x.
    */
   public function buildSettings() {
-    return ['blazy' => TRUE] + $this->traitBuildSettings();
+    return ['blazy' => TRUE] + parent::buildSettings();
   }
 
   /**

@@ -4,7 +4,6 @@ namespace Drupal\slick_ui\Controller;
 
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\blazy\BlazyGrid;
 
 /**
  * Provides a listing of Slick optionsets.
@@ -106,7 +105,7 @@ class SlickListBuilder extends SlickListBuilderBase {
     $build['skins_header']['#markup'] = $header;
     $build['skins_header']['#weight'] = 20;
 
-    $build['skins'] = BlazyGrid::build($availaible_skins, $settings);
+    $build['skins'] = $manager->grid($availaible_skins, $settings);
     $build['skins']['#weight'] = 21;
     $build['skins']['#attached'] = $manager->attach($settings);
     $build['skins']['#attached']['library'][] = 'blazy/admin';

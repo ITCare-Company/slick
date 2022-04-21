@@ -235,33 +235,45 @@ class Slick extends SlickBase implements SlickInterface {
    * Checks which lazyload to use.
    */
   public function whichLazy(array &$settings) {
-    $lazy              = $this->getSetting('lazyLoad');
-    $settings['blazy'] = $lazy == 'blazy' || !empty($settings['blazy']);
-    $settings['lazy']  = $settings['blazy'] ? 'blazy' : $lazy;
+    $lazy = $this->getSetting('lazyLoad');
 
-    // Allows Blazy to take over for advanced features like Responsive image,
-    // CSS background, video, etc.
-    if (empty($settings['blazy'])) {
-      $settings['lazy_class'] = $settings['lazy_attribute'] = 'lazy';
-    }
-
-    // Disable anything lazy-related settings if in preview mode.
-    $settings['lazy'] = empty($settings['is_preview']) ? $settings['lazy'] : '';
     $settings['_lazy'] = TRUE;
+
+    // @todo remove check post Blazy 2.10 to follow up Blazy improvements:
+    // `Loading` priority, `No JavaScript: lazy`, etc.
+    if (method_exists(Blazy::class, 'which')) {
+      Blazy::which($settings, $lazy, 'lazy', 'lazy');
+    }
+    else {
+      // @todo remove these post Blazy 2.10.
+      $use_blazy = $lazy == 'blazy'
+        || !empty($settings['blazy'])
+        || !empty($settings['background'])
+        || !empty($settings['responsive_image_style']);
+
+      $lazy = $use_blazy ? 'blazy' : $lazy;
+
+      // Allows Blazy to take over for advanced features like Responsive image,
+      // CSS background, video, etc.
+      if (!$use_blazy && $lazy) {
+        $settings['lazy_class'] = $settings['lazy_attribute'] = 'lazy';
+      }
+
+      // Disable anything lazy-related settings if in preview mode.
+      $settings['blazy'] = $use_blazy;
+      $settings['lazy'] = empty($settings['is_preview']) ? $lazy : '';
+    }
   }
 
   /**
-   * Returns the trusted HTML ID of a single slick instance.
-   *
-   * @deprecated in slick:8.x-2.0 and is removed from slick:8.x-2.2. Use
-   *   \Drupal\blazy\Blazy::getHtmlId() instead.
-   * @see https://www.drupal.org/node/3105648
-   *
-   * @return string
-   *   The html ID.
+   * If optionset does not exist, create one.
    */
-  public static function getHtmlId($string = 'slick', $id = '') {
-    return Blazy::getHtmlId($string, $id);
+  public static function verifyOptionset(array &$build, $name) {
+    if (empty($build['optionset'])) {
+      $build['optionset'] = self::loadWithFallback($name);
+    }
+    // Also returns it for convenient.
+    return $build['optionset'];
   }
 
 }

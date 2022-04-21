@@ -8,8 +8,8 @@ use Drupal\Component\Utility\Xss;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\filter\FilterProcessResult;
 use Drupal\blazy\Blazy;
-use Drupal\blazy\BlazyUtil;
-use Drupal\blazy\Plugin\Filter\BlazyFilter;
+use Drupal\blazy\Plugin\Filter\BlazyFilterBase;
+use Drupal\blazy\Plugin\Filter\BlazyFilterUtil as Util;
 use Drupal\slick\SlickDefault;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -30,10 +30,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   weight = 4
  * )
  *
- * @todo replace methods by Drupal\blazy\Plugin\Filter\BlazyFilterUtil post 2.5.
- * @todo use Drupal\blazy\Plugin\Filter\BlazyFilterBase instead post 2.5.
+ * @todo remove `blazies` checks and deprecated settings post Blazy:2.10.
  */
-class SlickFilter extends BlazyFilter {
+class SlickFilter extends BlazyFilterBase {
 
   /**
    * {@inheritdoc}
@@ -68,18 +67,18 @@ class SlickFilter extends BlazyFilter {
 
     $attachments = [];
     $settings = $this->buildSettings($text);
-    $text = self::unwrap($text, 'slick', 'slide');
+    $text = Util::unwrap($text, 'slick', 'slide');
     $dom = Html::load($text);
-    $nodes = self::getValidNodes($dom, ['slick']);
+    $nodes = Util::validNodes($dom, ['slick']);
 
     if (count($nodes) > 0) {
       foreach ($nodes as $node) {
         if ($output = $this->build($node, $settings)) {
-          $this->renderNode($node, $output);
+          $this->render($node, $output);
         }
       }
 
-      $attach = self::attach($settings);
+      $attach = Util::attach($settings);
       $attachments = $this->manager->attach($attach);
     }
 
@@ -94,14 +93,7 @@ class SlickFilter extends BlazyFilter {
    * {@inheritdoc}
    */
   public function buildSettings($text) {
-    $this->settings['no_item_container'] = TRUE;
     $settings = parent::buildSettings($text);
-
-    // @todo remove post Blazy 2.5+.
-    $settings['plugin_id'] = $this->getPluginId();
-    $settings['item_id'] = 'slide';
-    $settings['namespace'] = 'slick';
-    $settings['visible_items'] = 0;
 
     // Provides alter like formatters to modify at one go, even clumsy here.
     $build = ['settings' => $settings];
@@ -110,15 +102,37 @@ class SlickFilter extends BlazyFilter {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  protected function preSettings(array &$settings, $text) {
+    $settings['no_item_container'] = TRUE;
+    $settings['item_id'] = 'slide';
+    $settings['namespace'] = 'slick';
+    $settings['visible_items'] = 0;
+
+    // @todo remove check post Blazy:2.10.
+    if (method_exists(get_parent_class($this), 'preSettings')) {
+      parent::preSettings($settings, $text);
+    }
+  }
+
+  /**
    * Build the slick.
    */
   private function build($object, array $settings) {
-    $attribute = $object->getAttribute('data');
+    $dataset = $object->getAttribute('data');
+    $blazies = $settings['blazies'] ?? NULL;
 
-    $settings['id'] = $settings['gallery_id'] = Blazy::getHtmlId(str_replace('_', '-', $settings['plugin_id']));
+    $id = Blazy::getHtmlId(str_replace('_', '-', $settings['plugin_id']));
+    $settings['id'] = $settings['gallery_id'] = $id;
 
-    if (!empty($attribute) && mb_strpos($attribute, ":") !== FALSE) {
-      return $this->byEntity($object, $settings, $attribute);
+    if ($blazies) {
+      $blazies->set('lightbox.gallery_id', $id)
+        ->set('css.id', $id);
+    }
+
+    if (!empty($dataset) && mb_strpos($dataset, ":") !== FALSE) {
+      return $this->byEntity($object, $settings, $dataset);
     }
 
     return $this->byDom($object, $settings);
@@ -127,30 +141,47 @@ class SlickFilter extends BlazyFilter {
   /**
    * Build the slick using the node ID and field_name.
    */
-  private function byEntity(\DOMElement $object, array $settings, $attribute) {
+  private function byEntity(\DOMElement $object, array &$settings, $attribute) {
     [$entity_type, $id, $field_name, $field_image] = array_pad(array_map('trim', explode(":", $attribute, 4)), 4, NULL);
     if (empty($field_name)) {
       return [];
     }
 
     $entity = $this->manager->entityLoad($id, $entity_type);
-    $settings['entity_type_id'] = $entity_type;
-    $settings['entity_id'] = $id;
+
+    $blazies = $settings['blazies'] ?? NULL;
+
+    if ($blazies) {
+      $blazies->set('entity.id', $id)
+        ->set('entity.type_id', $entity_type)
+        ->set('field.name', $field_name);
+    }
+
+    // @todo remove.
     $settings['field_name'] = $field_name;
     $settings['image'] = $field_image;
 
     if ($entity && $entity->hasField($field_name)) {
       $list = $entity->get($field_name);
-      $settings['bundle'] = $entity->bundle();
-      $settings['count'] = count($list);
+      $definition = $list ? $list->getFieldDefinition() : NULL;
+      $field_type = $settings['field_type'] = $definition ? $definition->get('field_type') : '';
+
+      $count = count($list);
+      $settings['bundle'] = $bundle = $entity->bundle();
+      $settings['count'] = $count;
+
+      if ($blazies) {
+        $blazies->set('entity.bundle', $bundle)
+          ->set('field.type', $field_type)
+          ->set('count', $count);
+      }
+
       $build = ['settings' => $settings];
 
       $this->prepareBuild($build, $object);
       $settings = $build['settings'];
 
       if ($list) {
-        $definition = $list->getFieldDefinition();
-        $field_type = $settings['field_type'] = $definition->get('field_type');
         $field_settings = $definition->get('settings');
         $handler = $field_settings['handler'] ?? NULL;
         $texts = ['text', 'text_long', 'text_with_summary'];
@@ -198,19 +229,21 @@ class SlickFilter extends BlazyFilter {
    * Build the slick using the DOM lookups.
    */
   private function byDom(\DOMElement $object, array $settings) {
-    $text = self::getHtml($object);
+    $text = Util::getHtml($object);
+
     if (empty($text)) {
       return [];
     }
 
     $dom = Html::load($text);
-    $nodes = self::getNodes($dom);
+    $nodes = Util::getNodes($dom, '//slide');
     if ($nodes->length == 0) {
       return [];
     }
 
     $settings['count'] = $nodes->length;
     $build = ['settings' => $settings];
+
     $this->prepareBuild($build, $object);
 
     foreach ($nodes as $delta => $node) {
@@ -218,12 +251,24 @@ class SlickFilter extends BlazyFilter {
         continue;
       }
 
-      $sets = $build['settings'];
+      $sets   = &$build['settings'];
+      $sets  += SlickDefault::itemSettings();
+      $tn_uri = $node->getAttribute('data-thumb');
+
       $sets['delta'] = $delta;
-      $sets['thumbnail_uri'] = $node->getAttribute('data-thumb');
+      if ($tn_uri) {
+        $sets['thumbnail_uri'] = $tn_uri;
+      }
+
+      if (isset($sets['blazies'])) {
+        $blazies = $sets['blazies']->reset($sets);
+        $blazies->set('delta', $delta);
+        $blazies->set('thumbnail.uri', $tn_uri);
+      }
+
       $element = ['caption' => [], 'item' => NULL, 'settings' => $sets];
 
-      $this->buildItem($element, $node);
+      $this->buildItem($element, $node, $delta);
 
       if (empty($element['slide'])) {
         $element['slide'] = ['#markup' => $dom->saveHtml($node)];
@@ -233,7 +278,7 @@ class SlickFilter extends BlazyFilter {
 
       // Build individual slick thumbnail.
       if (!empty($sets['nav'])) {
-        $this->buildNav($build, $element);
+        $this->buildNav($build, $element, $delta);
       }
     }
 
@@ -243,33 +288,53 @@ class SlickFilter extends BlazyFilter {
   /**
    * Build the slide item.
    */
-  private function buildItem(array &$build, $node) {
-    $text = self::getHtml($node);
+  private function buildItem(array &$build, $node, $delta) {
+    $text = Util::getHtml($node);
     if (empty($text)) {
       return;
     }
 
-    $dom = Html::load($text);
-    $xpath = new \DOMXPath($dom);
+    $tn_uri   = $node->getAttribute('data-thumb');
+    $sets     = &$build['settings'];
+    $sets    += SlickDefault::itemSettings();
+    $dom      = Html::load($text);
+    $xpath    = new \DOMXPath($dom);
     $children = $xpath->query("//iframe | //img");
+    $blazies  = $sets['blazies'] ?? NULL;
 
-    $this->buildNodeItemAttributes($build, $node);
+    $sets['delta'] = $delta;
+    if ($tn_uri) {
+      $sets['thumbnail_uri'] = $tn_uri;
+    }
+
+    if ($blazies) {
+      $blazies = $sets['blazies']->reset($sets);
+      $blazies->set('delta', $delta);
+      $blazies->set('thumbnail.uri', $tn_uri);
+    }
+
+    $this->buildItemAttributes($build, $node, $delta);
 
     if ($children->length > 0) {
       // Can only have the first found for the main slide stage.
       $child = self::getValidNode($children);
 
+      // @todo use this post Blazy:2.10, and remove the three build below.
+      // Build item settings, image, and caption.
+      // $this->buildItemContent($build, $child, $delta);
       // Provides individual item settings.
-      $this->buildItemSettings($build, $child);
+      $this->buildItemSettings($build, $child, $delta);
 
       // Extracts image item from SRC attribute.
-      $this->buildImageItem($build, $child);
+      $this->buildImageItem($build, $child, $delta);
 
       // Extracts image caption if available.
       $this->buildImageCaption($build, $child);
 
-      if (!empty($build['settings']['uri'])) {
-        $build['slide'] = $this->blazyManager->getBlazy($build);
+      $uri = $sets['uri'] ?? '';
+      $uri = $blazies ? $blazies->get('image.uri', $uri) : $uri;
+      if ($uri) {
+        $build['slide'] = $this->blazyManager->getBlazy($build, $delta);
       }
     }
   }
@@ -291,8 +356,12 @@ class SlickFilter extends BlazyFilter {
    * Prepares the slick.
    */
   private function prepareBuild(array &$build, $node) {
-    $settings = &$build['settings'];
+    $sets    = &$build['settings'];
+    $blazies = $sets['blazies'] ?? NULL;
+    $count   = $sets['count'] ?? 0;
+    $count   = $blazies ? $blazies->get('count', $count) : $count;
     $options = [];
+
     if ($check = $node->getAttribute('options')) {
       $check = str_replace("'", '"', $check);
       if ($check) {
@@ -300,28 +369,29 @@ class SlickFilter extends BlazyFilter {
       }
     }
 
-    // @todo remove check post Blazy 2.5+.
-    if (method_exists(get_parent_class($this), 'prepareSettings')) {
-      parent::prepareSettings($node, $settings);
-    }
-    else {
-      if ($check = $node->getAttribute('settings')) {
-        $check = str_replace("'", '"', $check);
-        $check = Json::decode($check);
-        if ($check) {
-          $settings = array_merge($settings, $check);
-        }
-      }
-
-      self::toGrid($node, $settings);
+    // Extract settings from attributes.
+    if ($blazies) {
+      $blazies->set('was.initialized', FALSE);
     }
 
-    if (!isset($settings['nav'])) {
-      $settings['nav'] = (!empty($settings['optionset_thumbnail']) && $settings['count'] > 1);
+    if (method_exists($this, 'extractSettings')) {
+      $this->extractSettings($node, $sets);
+    }
+    // @todo remove post Blazy:2.10.
+    elseif (method_exists($this, 'prepareSettings')) {
+      $this->prepareSettings($node, $sets);
     }
 
-    $settings['_grid'] = !empty($settings['style']) && !empty($settings['grid']);
-    $settings['visible_items'] = $settings['_grid'] && empty($settings['visible_items']) ? 6 : $settings['visible_items'];
+    if (!isset($sets['nav'])) {
+      $sets['nav'] = (!empty($sets['optionset_thumbnail']) && $count > 1);
+    }
+
+    if ($blazies) {
+      $blazies->set('is.nav', $sets['nav']);
+    }
+
+    $sets['_grid'] = !empty($sets['style']) && !empty($sets['grid']);
+    $sets['visible_items'] = $sets['_grid'] && empty($sets['visible_items']) ? 6 : $sets['visible_items'];
 
     $build['options'] = $options;
   }
@@ -329,12 +399,12 @@ class SlickFilter extends BlazyFilter {
   /**
    * Build the slick navigation.
    */
-  private function buildNav(array &$build, array $element) {
-    $sets = $element['settings'];
-    $item = $element['item'];
-    $delta = $sets['delta'];
-    $caption = empty($sets['thumbnail_caption']) ? NULL : $sets['thumbnail_caption'];
-    $text = (empty($item) || empty($item->{$caption})) ? [] : ['#markup' => Xss::filterAdmin($item->{$caption})];
+  private function buildNav(array &$build, array $element, $delta) {
+    $sets    = $element['settings'];
+    $item    = $element['item'] ?? NULL;
+    $caption = $sets['thumbnail_caption'] ?? NULL;
+    $text    = ($caption && $item && !empty($item->{$caption}))
+      ? ['#markup' => Xss::filterAdmin($item->{$caption})] : [];
 
     // Thumbnail usages: asNavFor pagers, dot, arrows, photobox thumbnails.
     $thumb = [
@@ -351,14 +421,11 @@ class SlickFilter extends BlazyFilter {
    * Returns the expected caption DOMelement.
    */
   protected function getCaptionElement($node) {
-    $caption = NULL;
-    // @todo remove check post Blazy 2.5+.
-    if (method_exists(get_parent_class($this), 'getCaptionElement')) {
-      $caption = parent::getCaptionElement($node);
-    }
+    $caption = parent::getCaptionElement($node);
 
-    // @todo figure out better traversal with DOM.
     if (empty($caption) && $node->parentNode) {
+      // @todo use post Blazy 2.10.
+      // $caption = $this->getCaptionFallback($node);
       $parent = $node->parentNode->parentNode;
       if ($parent && $grandpa = $parent->parentNode) {
         if ($grandpa->parentNode) {
@@ -389,9 +456,8 @@ class SlickFilter extends BlazyFilter {
     if ($long) {
       return file_get_contents(dirname(__FILE__) . "/FILTER_TIPS.txt");
     }
-    else {
-      return $this->t('<b>Slick</b>: Create a slideshow/ carousel: <br><ul><li><b>With self-closing using data entity, <code>data=ENTITY_TYPE:ID:FIELD_NAME:FIELD_IMAGE</code></b>:<br><code>[slick data="node:44:field_media" /]</code>. <code>FIELD_IMAGE</code> is optional.</li><li><b>With any HTML</b>: <br><code>[slick settings="{}" options="{}"]...[slide]...[/slide]...[/slick]</li></code></ul>');
-    }
+
+    return $this->t('<b>Slick</b>: Create a slideshow/ carousel: <br><ul><li><b>With self-closing using data entity, <code>data=ENTITY_TYPE:ID:FIELD_NAME:FIELD_IMAGE</code></b>:<br><code>[slick data="node:44:field_media" /]</code>. <code>FIELD_IMAGE</code> is optional.</li><li><b>With any HTML</b>: <br><code>[slick settings="{}" options="{}"]...[slide]...[/slide]...[/slick]</li></code></ul>');
   }
 
   /**
@@ -422,192 +488,6 @@ class SlickFilter extends BlazyFilter {
     }
 
     return $element;
-  }
-
-  /**
-   * Unwrap the enclosing tags.
-   *
-   * @todo remove/ replace all methods below by BlazyFilterUtil post Blazy 2.5+.
-   */
-  private static function unwrap($string, $container = 'slick', $item = 'slide') {
-    // Might not be available with self-closing [TAG data="BLAH" /].
-    if (mb_strpos($string, "[$item") !== FALSE) {
-      $string = self::unwrapItem($string, $item);
-    }
-
-    return self::unwrapItem($string, $container);
-  }
-
-  /**
-   * Unwrap the enclosing tags.
-   */
-  private static function unwrapItem($string, $item) {
-    $patterns = [
-      // Not supported, but for completion [TAG data="BLAH"]A.B.C[/TAG].
-      "~(<p\>)\[$item?(.*?)\](.*?)\[/$item\](<\/p>)~",
-      // Normal WYSIWYG editor outputs with HTML correction filter enabled:
-      // <p>[TAG data="BLAH" /]</p>.
-      // <p>[TAG settings="BLAH"]</p>.
-      // <p>[/TAG]</p>.
-      "~(<p\>)\[(/)?$item(.*?)\](<\/p>)~",
-      // Abnormal non-WYSIWYG editor outputs: <p>[/TAG]<br />.
-      "~(<p\>)\[(/)?$item(.*?)\](<br \/>)~",
-      // Abnormal non-WYSIWYG editor outputs, letfovers: [TAG]</p>.
-      "~\[(/)?$item(.*?)\](<\/p>)~",
-    ];
-
-    $replacements = [
-      "<$item$2>$3</$item>",
-      "<$2$item$3>",
-      "<$2$item$3>",
-      "<$1$item$2>",
-    ];
-
-    return preg_replace($patterns, $replacements, $string);
-  }
-
-  /**
-   * Returns the inner HTMLof the DOMElement node.
-   *
-   * See http://www.php.net/manual/en/class.domelement.php#101243
-   */
-  private static function getHtml($node) {
-    $text = '';
-    foreach ($node->childNodes as $child) {
-      if ($child instanceof \DOMElement) {
-        $text .= $child->ownerDocument->saveXML($child);
-      }
-    }
-    return $text;
-  }
-
-  /**
-   * Returns settings for attachments.
-   */
-  private static function attach(array $settings = []) {
-    $all = ['blazy' => TRUE, 'filter' => TRUE, 'ratio' => TRUE];
-    $all['media_switch'] = $switch = $settings['media_switch'];
-
-    if (!empty($settings[$switch])) {
-      $all[$switch] = $settings[$switch];
-    }
-
-    return $all;
-  }
-
-  /**
-   * Returns valid nodes based on the allowed tags.
-   */
-  private static function getValidNodes(\DOMDocument $dom, array $allowed_tags = [], $exclude = '') {
-    $valid_nodes = [];
-    foreach ($allowed_tags as $allowed_tag) {
-      $nodes = $dom->getElementsByTagName($allowed_tag);
-      if ($nodes->length > 0) {
-        foreach ($nodes as $node) {
-          if ($exclude && $node->hasAttribute($exclude)) {
-            continue;
-          }
-
-          $valid_nodes[] = $node;
-        }
-      }
-    }
-    return $valid_nodes;
-  }
-
-  /**
-   * Returns attributes extracted from a DOMElement if any.
-   */
-  private static function getAttribute($node, array $excludes = []) {
-    $attributes = [];
-    if ($node && $node->attributes->length) {
-      foreach ($node->attributes as $attribute) {
-        $name = $attribute->nodeName;
-        $value = $attribute->nodeValue;
-        if ($excludes && in_array($name, $excludes)) {
-          continue;
-        }
-        $attributes[$name] = ($name == 'class') ? [$value] : $value;
-      }
-    }
-    return $attributes ? BlazyUtil::sanitize($attributes) : [];
-  }
-
-  /**
-   * Returns DOMElement nodes expected to be slide items.
-   */
-  private static function getNodes($dom, $tag = '//slide') {
-    $xpath = new \DOMXPath($dom);
-
-    return $xpath->query($tag);
-  }
-
-  /**
-   * Extract grids from the node attribute.
-   */
-  private static function toGrid(\DOMElement $node, array &$settings) {
-    if ($check = $node->getAttribute('grid')) {
-      [$settings['style'], $grid, $settings['visible_items']] = array_pad(array_map('trim', explode(":", $check, 3)), 3, NULL);
-
-      if ($grid) {
-        [
-          $settings['grid_small'],
-          $settings['grid_medium'],
-          $settings['grid'],
-        ] = array_pad(array_map('trim', explode("-", $grid, 3)), 3, NULL);
-      }
-    }
-  }
-
-  /**
-   * Render the output.
-   *
-   * @todo remove for parent::render() method post Blazy 2.5+/
-   */
-  private function renderNode(\DOMElement $node, array $output) {
-    $dom = $node->ownerDocument;
-    $altered_html = $this->blazyManager->getRenderer()->render($output);
-
-    // Load the altered HTML into a new DOMDocument, retrieve element.
-    $updated_nodes = Html::load($altered_html)->getElementsByTagName('body')
-      ->item(0)
-      ->childNodes;
-
-    foreach ($updated_nodes as $updated_node) {
-      // Import the updated from the new DOMDocument into the original
-      // one, importing also the child nodes of the updated node.
-      $updated_node = $dom->importNode($updated_node, TRUE);
-      $node->parentNode->insertBefore($updated_node, $node);
-    }
-
-    // Finally, remove the original blazy node.
-    if ($node->parentNode) {
-      $node->parentNode->removeChild($node);
-    }
-  }
-
-  /**
-   * Build the slide item attributes.
-   *
-   * @todo remove for parent::buildItemAttributes() method post Blazy 2.5+.
-   */
-  private function buildNodeItemAttributes(array &$build, $node) {
-    if ($caption = $node->getAttribute('caption')) {
-      if (method_exists(get_parent_class($this), 'filterHtml')) {
-        $safe_caption = parent::filterHtml($caption);
-        $build['captions']['alt'] = ['#markup' => $safe_caption];
-      }
-      $node->removeAttribute('caption');
-    }
-
-    if ($attributes = self::getAttribute($node)) {
-      // Move it to .slide__content for better displays like .well/ .card.
-      if (!empty($attributes['class'])) {
-        $build['content_attributes']['class'] = $attributes['class'];
-        unset($attributes['class']);
-      }
-      $build['attributes'] = $attributes;
-    }
   }
 
   /**

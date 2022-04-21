@@ -539,6 +539,26 @@ function hook_slick_optionset_alter(Slick &$slick, array $settings) {
 }
 
 /**
+ * Modifies Slick options before being passed to preprocess, or templates.
+ *
+ * Alternative to hook_slick_optionset_alter modify options directly.
+ *
+ * @param array $options
+ *   The modified options related to JavaScript options.
+ * @param array $settings
+ *   The contextual settings related to UI and HTML layout settings.
+ * @param \Drupal\slick\Entity\Slick $slick
+ *   The Slick object being modified.
+ *
+ * @see \Drupal\slick\SlickManager::preRenderSlick()
+ *
+ * @ingroup slick_api
+ */
+function hook_slick_options_alter(array &$options, array $settings, Slick $slick) {
+  // Change options as needed based on the given settings.
+}
+
+/**
  * Modifies Slick HTML settings before being passed to preprocess, or templates.
  *
  * If you need to override globally to be inherited by all blazy-related

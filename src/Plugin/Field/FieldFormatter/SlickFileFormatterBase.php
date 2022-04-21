@@ -14,7 +14,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
 
   use SlickFormatterTrait;
-  use SlickFormatterViewTrait;
 
   /**
    * {@inheritdoc}
@@ -102,6 +101,7 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
    */
   public function getScopedFormElements() {
     $captions = ['title' => $this->t('Title'), 'alt' => $this->t('Alt')];
+
     return [
       'namespace'       => 'slick',
       'nav'             => TRUE,

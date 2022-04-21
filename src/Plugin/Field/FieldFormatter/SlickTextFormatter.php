@@ -22,10 +22,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   },
  *   quickedit = {"editor" = "disabled"}
  * )
+ *
+ * @todo extends BlazyTextFormatter post Blazy:2.10.
  */
 class SlickTextFormatter extends FormatterBase implements ContainerFactoryPluginInterface {
 
-  use SlickFormatterViewTrait;
   use SlickFormatterTrait {
     buildSettings as traitBuildSettings;
   }
@@ -34,15 +35,7 @@ class SlickTextFormatter extends FormatterBase implements ContainerFactoryPlugin
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    $instance = new static(
-      $plugin_id,
-      $plugin_definition,
-      $configuration['field_definition'],
-      $configuration['settings'],
-      $configuration['label'],
-      $configuration['view_mode'],
-      $configuration['third_party_settings']
-    );
+    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
     return self::injectServices($instance, $container, 'text');
   }
 

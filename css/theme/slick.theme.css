@@ -18,6 +18,7 @@
 .slick iframe {
   border: 0;
   max-width: 100%;
+  min-height: 1px;
 }
 
 /* Prevents overflowing nested slides. */
@@ -251,7 +252,7 @@ img[data-lazy] {
 }
 
 /* Center the image to reduce gap at RHS with smaller image, larger container */
-.media__image {
+.slick img.media__element {
   margin: 0 auto;
 }
 

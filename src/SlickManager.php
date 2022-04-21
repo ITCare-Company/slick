@@ -100,9 +100,10 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $build = $element['#build'];
     unset($element['#build']);
 
-    $settings = &$build['settings'];
+    $settings  = &$build['settings'];
     $settings += SlickDefault::htmlSettings();
-    $defaults = Slick::defaultSettings();
+    $defaults  = Slick::defaultSettings();
+    $optionset = $build['optionset'];
 
     // Adds helper class if thumbnail on dots hover provided.
     if (!empty($settings['thumbnail_effect']) && (!empty($settings['thumbnail_style']) || !empty($settings['thumbnail']))) {
@@ -114,15 +115,17 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
       $dots_class[] = 'slick-dots--' . str_replace('_', '-', $settings['skin_dots']);
     }
 
-    if (isset($dots_class) && !empty($build['optionset'])) {
-      $dots_class[] = $build['optionset']->getSetting('dotsClass') ?: 'slick-dots';
+    if (isset($dots_class)) {
+      $dots_class[] = $optionset->getSetting('dotsClass') ?: 'slick-dots';
       $js['dotsClass'] = implode(" ", $dots_class);
     }
 
     // Handle some accessible-slick options.
-    if ($settings['library'] == 'accessible-slick' && $build['optionset']->getSetting('autoplay') && $build['optionset']->getSetting('useAutoplayToggleButton')) {
+    if ($settings['library'] == 'accessible-slick'
+      && $optionset->getSetting('autoplay')
+      && $optionset->getSetting('useAutoplayToggleButton')) {
       foreach (['pauseIcon', 'playIcon'] as $setting) {
-        if ($classes = trim(strip_tags($build['optionset']->getSetting($setting)))) {
+        if ($classes = trim(strip_tags($optionset->getSetting($setting)) ?: '')) {
           if ($classes != $defaults[$setting]) {
             $js[$setting] = '<span class="' . $classes . '" aria-hidden="true"></span>';
           }
@@ -133,7 +136,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     // Checks for breaking changes: Slick 1.8.1 - 1.9.0 / Accessible Slick.
     // @todo Remove this once the library has permanent solutions.
     if (!empty($settings['breaking'])) {
-      if ($build['optionset']->getSetting('rows') == 1) {
+      if ($optionset->getSetting('rows') == 1) {
         $js['rows'] = 0;
       }
     }
@@ -161,7 +164,6 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
       $element["#$key"] = $build[$key];
     }
 
-    unset($build);
     return $element;
   }
 
@@ -247,13 +249,28 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
       unset($slide);
     }
 
-    $result = BlazyGrid::build($output, $settings);
+    $result = $this->grid($output, $settings);
+
     $result['#attributes']['class'][] = empty($settings['unslick']) ? 'slide__content' : 'slick__grid';
 
     $build = ['slide' => $result, 'settings' => $settings];
 
     $this->moduleHandler->alter('slick_grid_item', $build, $settings);
     return $build;
+  }
+
+  /**
+   * Returns items as a grid display.
+   *
+   * @todo remove and call self::toGrid() directly post Blazy:2.10.
+   */
+  public function grid(array $output, array $settings): array {
+    // @todo remove check post Blazy 2.10.
+    if (method_exists($this, 'toGrid')) {
+      return $this->toGrid($output, $settings);
+    }
+
+    return BlazyGrid::build($output, $settings);
   }
 
   /**
@@ -278,71 +295,145 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   }
 
   /**
-   * Prepare settings for the known module features, not necessarily users'.
+   * Prepares js-related options.
    */
-  protected function prepareSettings(array &$element, array &$build) {
-    $settings = array_merge(SlickDefault::htmlSettings(), $build['settings']);
-    $id       = $settings['id'] = Blazy::getHtmlId('slick', $settings['id']);
-    $thumb_id = $id . '-thumbnail';
-    $options  = $build['options'];
+  protected function prepareOptions(
+    Slick &$optionset,
+    array &$options,
+    array &$settings
+  ) {
+    $blazies    = $settings['blazies'] ?? NULL;
+    $route_name = $settings['route_name'] ?? '';
+    $sandboxed  = !empty($settings['is_preview']);
+
+    if ($blazies) {
+      $route_name = $blazies->get('route_name');
+      $sandboxed  = $blazies->is('sandboxed');
+    }
 
     // Disable draggable for Layout Builder UI to not conflict with UI sortable.
-    if (strpos($settings['route_name'], 'layout_builder.') === 0 || !empty($settings['is_preview'])) {
+    $lb = $route_name && strpos($route_name, 'layout_builder.') === 0;
+    if ($lb || $sandboxed) {
       $options['draggable'] = FALSE;
     }
 
     // Supports programmatic options defined within skin definitions to allow
     // addition of options with other libraries integrated with Slick without
     // modifying optionset such as for Zoom, Reflection, Slicebox, Transit, etc.
-    if (!empty($settings['skin']) && $skins = $this->skinManager->getSkinsByGroup('main')) {
+    if (!empty($settings['skin'])
+      && $skins = $this->skinManager->getSkinsByGroup('main')) {
       if (isset($skins[$settings['skin']]['options'])) {
         $options = array_merge($options, $skins[$settings['skin']]['options']);
       }
     }
 
-    // Additional settings.
-    $build['optionset']   = $build['optionset'] ?: Slick::loadWithFallback($settings['optionset']);
-    $settings['library']  = $this->configLoad('library', 'slick.settings');
-    $settings['breaking'] = $this->skinManager->isBreaking();
-    $settings['count']    = empty($settings['count']) ? count($build['items']) : $settings['count'];
-    $settings['nav']      = $settings['nav'] && (empty($settings['vanilla']) && !empty($settings['optionset_thumbnail']) && isset($build['items'][1]));
-    $settings['navpos']   = ($settings['nav'] && !empty($settings['thumbnail_position'])) ? $settings['thumbnail_position'] : '';
-    $settings['vertical'] = $build['optionset']->getSetting('vertical');
-    $mousewheel           = $build['optionset']->getSetting('mouseWheel');
+    $this->moduleHandler->alter('slick_options', $options, $settings, $optionset);
 
-    if ($settings['nav']) {
-      $options['asNavFor']     = "#{$thumb_id}-slider";
-      $optionset_thumbnail     = $build['optionset_tn'] = Slick::loadWithFallback($settings['optionset_thumbnail']);
-      $mousewheel              = $optionset_thumbnail->getSetting('mouseWheel');
-      $settings['vertical_tn'] = $optionset_thumbnail->getSetting('vertical');
+    // Disabled irrelevant options when lacking of slides.
+    $this->unslick($options, $settings);
+  }
+
+  /**
+   * Prepare settings for the known module features, not necessarily users'.
+   */
+  protected function prepareSettings(array &$element, array &$build) {
+    $settings  = &$build['settings'];
+    $settings += SlickDefault::htmlSettings();
+    $options   = &$build['options'];
+
+    // @todo remove check post Blazy:2.10.
+    if (method_exists(Blazy::class, 'verify')) {
+      Blazy::verify($settings);
+    }
+
+    $optionset = Slick::verifyOptionset($build, $settings['optionset']);
+    $blazies   = $settings['blazies'] ?? NULL;
+    $slicks    = $settings['slicks'];
+    $id        = $settings['id'] ?? NULL;
+    $id        = $settings['id'] = Blazy::getHtmlId('slick', $id);
+    $thumb_id  = $id . '-thumbnail';
+    $count     = $settings['count'] ?? NULL;
+    $count     = $count ?: count($build['items']);
+
+    // Additional settings.
+    $wheel = $optionset->getSetting('mouseWheel');
+    $nav = $slicks->is('nav', !empty($settings['nav']));
+    $nav = $nav
+      && (empty($settings['vanilla'])
+      && !empty($settings['optionset_thumbnail'])
+      && isset($build['items'][1]));
+    $navpos = $settings['thumbnail_position'] ?? NULL;
+
+    $data = [
+      'library'    => $this->configLoad('library', 'slick.settings'),
+      'breaking'   => $this->skinManager->isBreaking(),
+      'count'      => $count,
+      'nav'        => $nav,
+      'navpos'     => ($nav && $navpos) ? $navpos : '',
+      'vertical'   => $optionset->getSetting('vertical'),
+      'mousewheel' => $wheel,
+    ];
+
+    foreach ($data as $key => $value) {
+      // @todo remove settings after migration.
+      $settings[$key] = $value;
+      $slicks->set(is_bool($value) ? 'is.' . $key : $key, $value);
+    }
+
+    // Few dups are generic and needed by Blazy to interop Slick and Splide.
+    if ($blazies) {
+      $blazies->set('count', $count)
+        ->set('is.nav', $slicks->is('nav'));
+    }
+
+    $options['count'] = $count;
+    $this->prepareOptions($optionset, $options, $settings);
+
+    if ($slicks->is('nav')) {
+      $options['asNavFor'] = "#{$thumb_id}-slider";
+      $optionset_tn = Slick::loadWithFallback($settings['optionset_thumbnail']);
+      $wheel = $optionset_tn->getSetting('mouseWheel');
+      $vertical_tn = $optionset_tn->getSetting('vertical');
+
+      $build['optionset_tn'] = $optionset_tn;
+      $settings['vertical_tn'] = $vertical_tn;
+      $slicks->set('is.vertical_tn', $vertical_tn);
     }
     else {
       // Pass extra attributes such as those from Commerce product variations to
       // theme_slick() since we have no asNavFor wrapper here.
       if (isset($element['#attributes'])) {
-        $build['attributes'] = empty($build['attributes']) ? $element['#attributes'] : NestedArray::mergeDeep($build['attributes'], $element['#attributes']);
+        $build['attributes'] = empty($build['attributes'])
+          ? $element['#attributes']
+          : NestedArray::mergeDeep($build['attributes'], $element['#attributes']);
       }
     }
 
     // Supports Blazy multi-breakpoint or lightbox images if provided.
     // Cases: Blazy within Views gallery, or references without direct image.
-    if (!empty($settings['check_blazy']) && !empty($settings['first_image'])) {
-      $this->isBlazy($settings, $settings['first_image']);
+    $data = $settings['first_image'] ?? [];
+    $data = $blazies ? $blazies->get('first.data') : $data;
+    if ($data && is_array($data)) {
+      $this->isBlazy($settings, $data);
     }
 
     // Formatters might have checked this, but not views, nor custom works.
     // Why the formatters should check it first? It is so known to children.
     if (empty($settings['_lazy'])) {
-      $build['optionset']->whichLazy($settings);
+      $optionset->whichLazy($settings);
     }
 
-    $settings['mousewheel'] = $mousewheel;
-    $settings['down_arrow'] = $build['optionset']->getSetting('downArrow');
-    $build['options']       = $options;
-    $build['settings']      = $settings;
-    $attachments            = $this->attach($settings);
-    $element['#settings']   = $settings;
-    $element['#attached']   = empty($build['attached']) ? $attachments : NestedArray::mergeDeep($build['attached'], $attachments);
+    // @tdo remove settings after migration.
+    $settings['mousewheel'] = $wheel;
+    $settings['down_arrow'] = $down_arrow = $optionset->getSetting('downArrow');
+
+    $slicks->set('is.mousewheel', $wheel)
+      ->set('is.down_arrow', $down_arrow);
+
+    $attachments          = $this->attach($settings);
+    $element['#settings'] = $settings;
+    $element['#attached'] = empty($build['attached'])
+      ? $attachments : NestedArray::mergeDeep($build['attached'], $attachments);
   }
 
   /**
@@ -354,13 +445,17 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
       $build[$key] = $thumbs[$key] ?? [];
     }
 
-    $settings                     = array_merge($settings, $build['settings']);
-    $settings['optionset']        = $settings['optionset_thumbnail'];
-    $settings['skin']             = $settings['skin_thumbnail'];
-    $settings['display']          = 'thumbnail';
-    $build['optionset']           = $build['optionset_tn'];
-    $build['settings']            = $settings;
-    $build['options']['asNavFor'] = "#" . $settings['id'] . '-slider';
+    $settings              = array_merge($settings, $build['settings']);
+    $options               = &$build['options'];
+    $settings['optionset'] = $settings['optionset_thumbnail'];
+    $settings['skin']      = $settings['skin_thumbnail'];
+    $settings['display']   = 'thumbnail';
+    $build['optionset']    = $build['optionset_tn'];
+    $build['settings']     = $settings;
+    $options['asNavFor']   = "#" . $settings['id'] . '-slider';
+
+    // Disabled irrelevant options when lacking of slides.
+    $this->unslick($options, $settings);
 
     // The slick thumbnail navigation has the same structure as the main one.
     unset($build['optionset_tn']);
@@ -380,6 +475,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     // Checks if we have thumbnail navigation.
     $thumbs   = $build['thumb'] ?? [];
     $settings = $build['settings'];
+    $slicks   = $settings['slicks'];
 
     // Prevents unused thumb going through the main display.
     unset($build['thumb']);
@@ -388,12 +484,12 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $slick[0] = $this->slick($build);
 
     // Build the thumbnail Slick.
-    if ($settings['nav'] && $thumbs) {
+    if ($slicks->is('nav') && $thumbs) {
       $slick[1] = $this->buildNavigation($build, $thumbs);
     }
 
     // Reverse slicks if thumbnail position is provided to get CSS float work.
-    if ($settings['navpos']) {
+    if ($slicks->get('navpos')) {
       $slick = array_reverse($slick);
     }
 
@@ -428,6 +524,22 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    */
   public function getSkinsByGroup($group = '', $option = FALSE) {
     return $this->skinManager->getSkinsByGroup($group, $option);
+  }
+
+  /**
+   * Disabled irrelevant options when lacking of slides, unslick softly.
+   *
+   * Unlike `settings.unslick`, this doesn't destroy the markups so that
+   * `settings.unslick` can be overriden as needed unless being forced.
+   */
+  private function unslick(array &$options, array $settings) {
+    $slicks = $settings['slicks'];
+    if ($slicks->get('count') < 2) {
+      $options['arrows'] = FALSE;
+      $options['dots'] = FALSE;
+      $options['draggable'] = FALSE;
+      $options['infinite'] = FALSE;
+    }
   }
 
 }

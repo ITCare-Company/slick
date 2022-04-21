@@ -1,4 +1,8 @@
 
+Slick 8.x-2.0-dev, 2022-04-21
+-----------------------------
+- Updated to Blazy:2.10.
+
 Slick 8.x-2.0-dev, 2022-03-24
 -----------------------------
 - Issue #3271346 by gausarts: SlickFilter is not compatible with Blazy Noscript

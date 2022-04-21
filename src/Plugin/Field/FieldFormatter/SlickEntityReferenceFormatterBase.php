@@ -2,8 +2,10 @@
 
 namespace Drupal\slick\Plugin\Field\FieldFormatter;
 
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\blazy\Dejavu\BlazyEntityReferenceBase;
+// @todo enable post Blazy:2.10:
+// use Drupal\blazy\Field\BlazyEntityReferenceBase;
+// use Drupal\blazy\Field\BlazyField;
 use Drupal\slick\SlickDefault;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -13,18 +15,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @see \Drupal\slick_media\Plugin\Field\FieldFormatter
  * @see \Drupal\slick_paragraphs\Plugin\Field\FieldFormatter
  */
-abstract class SlickEntityReferenceFormatterBase extends BlazyEntityReferenceBase implements ContainerFactoryPluginInterface {
+abstract class SlickEntityReferenceFormatterBase extends BlazyEntityReferenceBase {
 
-  use SlickFormatterTrait {
-    buildSettings as traitBuildSettings;
-  }
-
-  /**
-   * The logger factory.
-   *
-   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
-   */
-  protected $loggerFactory;
+  use SlickFormatterTrait;
 
   /**
    * {@inheritdoc}
@@ -45,14 +38,22 @@ abstract class SlickEntityReferenceFormatterBase extends BlazyEntityReferenceBas
    * {@inheritdoc}
    */
   public function buildElementThumbnail(array &$build, $element, $entity, $delta) {
-    // @todo move it to Slick as too specific for Slick which has thumbnail.
     // The settings in $element has updated metadata extracted from media.
-    $settings = $element['settings'];
-    $item_id = $settings['item_id'];
+    $settings  = $element['settings'];
+    $item_id   = 'slide';
+    $view_mode = $settings['view_mode'] ?? '';
+    $caption   = $settings['thumbnail_caption'] ?? NULL;
+
     if (!empty($settings['nav'])) {
       // Thumbnail usages: asNavFor pagers, dot, arrows, photobox thumbnails.
-      $element[$item_id] = empty($settings['thumbnail_style']) ? [] : $this->formatter()->getThumbnail($settings, $element['item']);
-      $element['caption'] = empty($settings['thumbnail_caption']) ? [] : $this->blazyEntity()->getFieldRenderable($entity, $settings['thumbnail_caption'], $settings['view_mode']);
+      $element[$item_id] = empty($settings['thumbnail_style'])
+        ? [] : $this->formatter->getThumbnail($settings, $element['item']);
+
+      $element['caption'] = $caption
+        // @todo enable post Blazy:2.10:
+        // BlazyField::view($entity, $caption, $view_mode)
+        ? $this->blazyEntity->getFieldRenderable($entity, $caption, $view_mode)
+        : [];
 
       $build['thumb']['items'][$delta] = $element;
     }
@@ -61,19 +62,15 @@ abstract class SlickEntityReferenceFormatterBase extends BlazyEntityReferenceBas
   /**
    * {@inheritdoc}
    */
-  public function getScopedFormElements() {
-    $admin       = $this->admin();
-    $target_type = $this->getFieldSetting('target_type');
-    $views_ui    = $this->getFieldSetting('handler') == 'default';
-    $bundles     = $views_ui ? [] : $this->getFieldSetting('handler_settings')['target_bundles'];
-    $texts       = ['text', 'text_long', 'string', 'string_long', 'link'];
-    $texts       = $admin->getFieldOptions($bundles, $texts, $target_type);
+  protected function getPluginScopes(): array {
+    $_texts = ['text', 'text_long', 'string', 'string_long', 'link'];
+    $texts  = $this->getFieldOptions($_texts);
 
     return [
       'thumb_captions'  => $texts,
       'thumb_positions' => TRUE,
       'nav'             => TRUE,
-    ] + $this->getCommonScopedFormElements() + parent::getScopedFormElements();
+    ] + parent::getPluginScopes();
   }
 
 }
