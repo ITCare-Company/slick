@@ -1,6 +1,8 @@
 
 Slick 8.x-2.0-dev, 2022-04-21
 -----------------------------
+- Issue #3272646 by hswong3i: Also Search `libraries/accessible360--accessible
+  -slick`.
 - Updated to Blazy:2.10.
 
 Slick 8.x-2.0-dev, 2022-03-24
