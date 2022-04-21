@@ -41,9 +41,8 @@ officially supported now, Jan 2020.
    * Download Slick archive **>= 1.6 && <= 1.8.0** from
      [Slick releases](https://github.com/kenwheeler/slick/releases)
    * Master branch (1.9.0 but in code as 1.8.1) is not supported, and had been
-     removed from official repo 2019. Instead download, rename one of the
-     official slick releases to slick. Extract and rename it to `slick`, so the
-     assets are at:
+     removed from official repo 2019. Instead download, etract and rename one of
+     the official slick releases to `slick`, so the assets are at:
      + **/libraries/slick/slick/slick.css**
      + **/libraries/slick/slick/slick-theme.css** (optional)
      + **/libraries/slick/slick/slick.min.js**
@@ -69,11 +68,8 @@ officially supported now, Jan 2020.
 
    This is CSS easing fallback for non-supporting browsers.
 
-3. [Blazy](https://drupal.org/project/blazy), to reduce DRY stuffs, and as a
-   bonus, advanced lazyloading such as delay lazyloading for below-fold sliders,
-   iframe, (fullscreen) CSS background lazyloading, breakpoint dependent
-   multi-serving images, lazyload ahead for smoother UX.
-   Check out Blazy installation guides!
+3. [Blazy](https://drupal.org/project/blazy) 2.10+ since Slick:2.7  
+   To reduce DRY stuffs, and as a bonus, advanced lazyloading such as delay lazyloading for below-fold sliders, iframe, (fullscreen) CSS background lazyloading, breakpoint dependent multi-serving images, lazyload ahead for smoother UX. Check out Blazy installation guides!
 
 
 ***

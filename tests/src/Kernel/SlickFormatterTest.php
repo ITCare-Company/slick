@@ -121,6 +121,8 @@ class SlickFormatterTest extends BlazyKernelTestBase {
    *
    * @param string $uri
    *   The uri being tested.
+   * @param bool $use_item
+   *   Whether to use ImageItem.
    * @param bool $expected
    *   The expected output.
    *

@@ -24,10 +24,14 @@ If you don't find the below solve your issues, check out:
 3. If you are customizing template files, or theme functions, be sure to
    re-check against the latest.
 
-4. Slick release is similar, or later than Blazy.
+4. Slick and Blazy versions must be the latest. Too much version difference will
+   most likely cause issues. Different branches will surely error.
 
 5. Skins are permanently cached. Clear cache if new skins you created or
    provided by sub-modules do not appear immediately.
+
+6. Lightboxes under `Media switcher` option are permanently cached. Clear cache
+   if new lightbox modules installed do not appear immediately.   
 
 
 ## KNOWN ISSUES
