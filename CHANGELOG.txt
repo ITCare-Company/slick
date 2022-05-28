@@ -1,4 +1,8 @@
 
+Slick 8.x-2.0-dev, 2022-05-28
+-----------------------------
+- Updated SlickTextFormatter to extend BlazyTextFormatter.
+
 Slick 8.x-2.0-dev, 2022-04-21
 -----------------------------
 - Fixed for wrong room commit, should be #3272646.
