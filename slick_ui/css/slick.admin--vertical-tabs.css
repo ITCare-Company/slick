@@ -58,6 +58,11 @@
 
 .form--slick .vertical-tabs__panes > details:first-child {
   padding: 0;
+  overflow: visible !important; /* csslint allow: known-properties, important */
+}
+
+.form--slick.slick-form .vertical-tabs .claro-details:not(:first-child) .details-wrapper {
+  top: 0;
 }
 
 .form--slick .details--responsive .details--settings .form-item:first-child {

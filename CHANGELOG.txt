@@ -1,6 +1,8 @@
 
 Slick 8.x-2.0-dev, 2022-10-16
 -----------------------------
+- Issue #3302250 by Dharti Patel, higherform: Claro Admin Theme + Blazy = Rows
+  of Optionsets Hidden.
 - Issue #3284411 by DamienMcKenna: Document how to make Composer download
   library to libraries/slick.
 - Issue #3289720 by Project Update Bot: Automated Drupal 10 compatibility fixes.
