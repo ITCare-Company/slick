@@ -46,10 +46,13 @@ officially supported now, Jan 2020.
      + **/libraries/slick/slick/slick.css**
      + **/libraries/slick/slick/slick-theme.css** (optional)
      + **/libraries/slick/slick/slick.min.js**
-     + Or any path supported by core library finder as per Drupal 8.9+. If using
-       composer, the library directory is `slick-carousel`. They are fine.
-       Slick v1.6.0 is the only battle-tested, and less issues, only lacking
-       features such as extra lazy-load, etc.
+     + Or any path supported by core library finder as per Drupal 8.9+.
+   * If using composer the library will be downoaded to the directory
+     `slick-carousel`; this is fine, the module will still be able to find the
+     library, it does not have to be moved or renamed.
+   * Slick v1.6.0 is the only version that is fully supported - it is
+     battle-tested and has fewer issues, it only lacks some newer features such
+     as extra lazy-load.
 
    **Accessible version**
 
