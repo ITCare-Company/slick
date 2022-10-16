@@ -19,7 +19,7 @@ class SlickSkinManagerTest extends BlazyKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'system',
     'user',
     'field',

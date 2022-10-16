@@ -22,7 +22,7 @@ class SlickManagerTest extends BlazyKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'system',
     'user',
     'field',

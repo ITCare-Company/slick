@@ -21,7 +21,7 @@ class SlickFormatterTest extends BlazyKernelTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'system',
     'user',
     'help',

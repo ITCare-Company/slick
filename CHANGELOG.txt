@@ -1,4 +1,8 @@
 
+Slick 8.x-2.0-dev, 2022-10-16
+-----------------------------
+- Issue #3289720 by Project Update Bot: Automated Drupal 10 compatibility fixes.
+
 Slick 8.x-2.0-dev, 2022-05-28
 -----------------------------
 - Updated SlickTextFormatter to extend BlazyTextFormatter.
