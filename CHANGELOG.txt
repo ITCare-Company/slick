@@ -1,4 +1,9 @@
 
+Slick 8.x-2.0-dev, 2022-12-15
+-----------------------------
+- Issue #3318321 by adaucyj, viniciuscosta: Use null coalesce operator instead
+  of ternary operator.
+
 Slick 8.x-2.0-dev, 2022-10-16
 -----------------------------
 - Issue #3302250 by Dharti Patel, higherform: Claro Admin Theme + Blazy = Rows

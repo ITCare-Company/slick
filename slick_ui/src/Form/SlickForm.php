@@ -258,7 +258,7 @@ class SlickForm extends SlickFormBase {
               $form['responsives']['responsive'][$i][$key] = [
                 '#type'          => $responsive['type'],
                 '#title'         => $responsive['title'],
-                '#default_value' => isset($options['responsives']['responsive'][$i][$key]) ? $options['responsives']['responsive'][$i][$key] : $responsive['default'],
+                '#default_value' => $options['responsives']['responsive'][$i][$key] ?? $responsive['default'],
                 '#description'   => $responsive['description'],
                 '#attributes'    => $tooltip,
               ];
