@@ -7,6 +7,7 @@ use Drupal\slick\SlickDefault;
 use Drupal\slick\Entity\Slick;
 use Drupal\Tests\blazy\Kernel\BlazyKernelTestBase;
 use Drupal\Tests\slick\Traits\SlickUnitTestTrait;
+use PHPUnit\Framework\Exception as UnitException;
 
 /**
  * Tests creation, loading, updating, deleting of Slick optionsets.
@@ -90,7 +91,7 @@ class SlickCrudTest extends BlazyKernelTestBase {
     try {
       $responsive_options = $main->getResponsiveOptions();
     }
-    catch (\PHPUnit\Framework\Exception $e) {
+    catch (UnitException $e) {
     }
 
     $this->assertTrue(TRUE);
@@ -167,7 +168,7 @@ class SlickCrudTest extends BlazyKernelTestBase {
     try {
       $mobile_first = $nav->getOptions('settings', 'mobileFirst');
     }
-    catch (\PHPUnit\Framework\Exception $e) {
+    catch (UnitException $e) {
     }
 
     $this->assertTrue(!empty($mobile_first));
@@ -175,7 +176,7 @@ class SlickCrudTest extends BlazyKernelTestBase {
     try {
       $mobile_first = $nav->getOptions(['settings', 'mobileFirst']);
     }
-    catch (\PHPUnit\Framework\Exception $e) {
+    catch (UnitException $e) {
     }
 
     $this->assertTrue(!empty($mobile_first));
