@@ -202,7 +202,7 @@ class SlickForm extends SlickFormBase {
       '#tree'        => TRUE,
       '#group'       => 'options',
       '#parents'     => ['options', 'responsives'],
-      '#description' => $this->t('Containing breakpoints and settings objects. Settings set at a given breakpoint/screen width is self-contained and does not inherit the main settings, but defaults. Be sure to set Breakpoints option above.'),
+      '#description' => $this->t('Containing breakpoints and settings objects. Settings set at a given breakpoint/screen width is self-contained and does not inherit the main settings, but defaults. Be sure to set Breakpoints option above (enter a number and press tab to populate the Responsive display tab).'),
     ];
 
     $form['responsives']['responsive'] = [

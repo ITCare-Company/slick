@@ -1,6 +1,7 @@
 
 Slick 8.x-2.0-dev, 2022-12-15
 -----------------------------
+- Issue #3279333 by david.mcmeans: How to add breakpoints.
 - Issue #3318321 by adaucyj, viniciuscosta: Use null coalesce operator instead
   of ternary operator.
 
