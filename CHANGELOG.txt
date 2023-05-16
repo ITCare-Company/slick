@@ -1,6 +1,7 @@
 
 Slick 8.x-2.0-dev, 2023-05-15
 -----------------------------
+- Issue #3333772 by jurgenhaas: Translation of aria labels breaks HTML.
 - Upped minimum version to Blazy >= 2.14 to reduce compat issues.
 
 Slick 8.x-2.0-dev, 2022-12-15
