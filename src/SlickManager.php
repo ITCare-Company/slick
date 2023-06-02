@@ -271,7 +271,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   /**
    * {@inheritdoc}
    */
-  public function build(array $build = []) {
+  public function build(array $build): array {
     foreach (SlickDefault::themeProperties() as $key) {
       $build[$key] = $build[$key] ?? [];
     }

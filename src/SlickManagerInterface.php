@@ -40,6 +40,6 @@ interface SlickManagerInterface extends BlazyManagerInterface, TrustedCallbackIn
    * @return array
    *   The renderable array of both main and thumbnail slick instances.
    */
-  public function build(array $build = []);
+  public function build(array $build): array;
 
 }
