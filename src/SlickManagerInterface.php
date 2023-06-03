@@ -3,12 +3,11 @@
 namespace Drupal\slick;
 
 use Drupal\Core\Security\TrustedCallbackInterface;
-use Drupal\blazy\BlazyManagerInterface;
 
 /**
  * Defines re-usable services and functions for slick plugins.
  */
-interface SlickManagerInterface extends BlazyManagerInterface, TrustedCallbackInterface {
+interface SlickManagerInterface extends TrustedCallbackInterface {
 
   /**
    * Returns a cacheable renderable array of a single slick instance.

@@ -9,7 +9,7 @@ use Drupal\blazy\BlazyManagerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Implements BlazyManagerInterface, SlickManagerInterface.
+ * Provides slick manager.
  */
 class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
