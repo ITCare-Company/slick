@@ -5,7 +5,7 @@ namespace Drupal\Tests\slick\Kernel;
 use Drupal\Tests\blazy\Kernel\BlazyKernelTestBase;
 use Drupal\Tests\slick\Traits\SlickUnitTestTrait;
 use Drupal\Tests\slick\Traits\SlickKernelTrait;
-use Drupal\Slick\SlickDefault;
+use Drupal\slick\SlickDefault;
 
 /**
  * Tests the Slick field rendering using the image field type.
@@ -95,10 +95,10 @@ class SlickFormatterTest extends BlazyKernelTestBase {
     $build = $this->display->build($entity);
     $build_empty = $this->displayEmpty->build($entity);
 
-    $render = $this->slickManager->getRenderer()->renderRoot($build);
+    $render = $this->slickManager->renderer()->renderRoot($build);
     $this->assertNotEmpty($render);
 
-    $render_empty = $this->slickManager->getRenderer()->renderRoot($build_empty[$this->testEmptyName]);
+    $render_empty = $this->slickManager->renderer()->renderRoot($build_empty[$this->testEmptyName]);
     $this->assertEmpty($render_empty);
 
     $this->assertInstanceOf('\Drupal\Core\Field\FieldItemListInterface', $this->testItems);

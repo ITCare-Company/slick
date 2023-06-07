@@ -39,7 +39,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   /**
    * Returns slick skin manager service.
    */
-  public function skinManager() {
+  public function skinManager(): SlickSkinManagerInterface {
     return $this->skinManager;
   }
 
@@ -66,36 +66,82 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   /**
    * {@inheritdoc}
    */
-  public function slick(array $build = []) {
+  public function attachSkin(array &$load, array $attach): void {
+    $this->skinManager->attachSkin($load, $attach);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function build(array $build): array {
     foreach (SlickDefault::themeProperties() as $key) {
       $build[$key] = $build[$key] ?? [];
     }
 
-    return empty($build['items']) ? [] : [
-      '#theme'      => 'slick',
+    $slick = [
+      '#theme'      => 'slick_wrapper',
       '#items'      => [],
       '#build'      => $build,
-      '#pre_render' => [[$this, 'preRenderSlick']],
+      '#pre_render' => [[$this, 'preRenderSlickWrapper']],
+      // Satisfy CTools blocks as per 2017/04/06: 2804165.
+      'items'       => [],
     ];
+
+    $this->moduleHandler->alter('slick_build', $slick, $build['settings']);
+    return empty($build['items']) ? [] : $slick;
   }
 
   /**
-   * Prepare attributes for the known module features, not necessarily users'.
+   * Returns items as a grid display.
    */
-  protected function prepareAttributes(array $build = []) {
-    $settings = $build['settings'];
-    $attributes = $build['attributes'] ?? [];
+  public function buildGrid(array $items, array &$settings): array {
+    $grids = [];
 
-    if ($settings['display'] == 'main') {
-      Blazy::containerAttributes($attributes, $settings);
+    // Enforces unslick with less items.
+    if (empty($settings['unslick']) && !empty($settings['count'])) {
+      $settings['unslick'] = $settings['count'] < $settings['visible_items'];
     }
-    return $attributes;
+
+    // Display all items if unslick is enforced for plain grid to lightbox.
+    // Or when the total is less than visible_items.
+    if (!empty($settings['unslick'])) {
+      $settings['display']      = 'main';
+      $settings['current_item'] = 'grid';
+      $settings['count']        = 2;
+
+      $grids[0] = $this->buildGridItem($items, 0, $settings);
+    }
+    else {
+      // Otherwise do chunks to have a grid carousel, and also update count.
+      $preserve_keys     = !empty($settings['preserve_keys']);
+      $grid_items        = array_chunk($items, $settings['visible_items'], $preserve_keys);
+      $settings['count'] = count($grid_items);
+
+      foreach ($grid_items as $delta => $grid_item) {
+        $grids[] = $this->buildGridItem($grid_item, $delta, $settings);
+      }
+    }
+    return $grids;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSkins(): array {
+    return $this->skinManager->getSkins();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSkinsByGroup($group = '', $option = FALSE): array {
+    return $this->skinManager->getSkinsByGroup($group, $option);
   }
 
   /**
    * Builds the Slick instance as a structured array ready for ::renderer().
    */
-  public function preRenderSlick(array $element) {
+  public function preRenderSlick(array $element): array {
     $build = $element['#build'];
     unset($element['#build']);
 
@@ -168,42 +214,48 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   }
 
   /**
-   * Returns items as a grid display.
+   * One slick_theme() to serve multiple displays: main, overlay, thumbnail.
    */
-  public function buildGrid(array $items = [], array &$settings = []) {
-    $grids = [];
+  public function preRenderSlickWrapper($element): array {
+    $build = $element['#build'];
+    unset($element['#build']);
 
-    // Enforces unslick with less items.
-    if (empty($settings['unslick']) && !empty($settings['count'])) {
-      $settings['unslick'] = $settings['count'] < $settings['visible_items'];
+    // Prepare settings and assets.
+    $this->prepareSettings($element, $build);
+
+    // Checks if we have thumbnail navigation.
+    $thumbs   = $build['thumb'] ?? [];
+    $settings = $build['settings'];
+    $slicks   = $settings['slicks'];
+
+    // Prevents unused thumb going through the main display.
+    unset($build['thumb']);
+
+    // Build the main Slick.
+    $slick[0] = $this->slick($build);
+
+    // Build the thumbnail Slick.
+    if ($slicks->is('nav') && $thumbs) {
+      $slick[1] = $this->buildNavigation($build, $thumbs);
     }
 
-    // Display all items if unslick is enforced for plain grid to lightbox.
-    // Or when the total is less than visible_items.
-    if (!empty($settings['unslick'])) {
-      $settings['display']      = 'main';
-      $settings['current_item'] = 'grid';
-      $settings['count']        = 2;
-
-      $grids[0] = $this->buildGridItem($items, 0, $settings);
+    // Reverse slicks if thumbnail position is provided to get CSS float work.
+    if ($slicks->get('navpos')) {
+      $slick = array_reverse($slick);
     }
-    else {
-      // Otherwise do chunks to have a grid carousel, and also update count.
-      $preserve_keys     = !empty($settings['preserve_keys']);
-      $grid_items        = array_chunk($items, $settings['visible_items'], $preserve_keys);
-      $settings['count'] = count($grid_items);
 
-      foreach ($grid_items as $delta => $grid_item) {
-        $grids[] = $this->buildGridItem($grid_item, $delta, $settings);
-      }
-    }
-    return $grids;
+    // Collect the slick instances.
+    $element['#items'] = $slick;
+    $element['#cache'] = $this->getCacheMetadata($build);
+
+    unset($build);
+    return $element;
   }
 
   /**
    * Returns items as a grid item display.
    */
-  public function buildGridItem(array $items, $delta, array $settings = []) {
+  protected function buildGridItem(array $items, $delta, array $settings): array {
     $output = [];
 
     foreach ($items as $delta => $item) {
@@ -260,33 +312,16 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   }
 
   /**
-   * Returns items as a grid display.
-   *
-   * @todo remove and call self::toGrid() directly post Blazy:2.10.
+   * Prepare attributes for the known module features, not necessarily users'.
    */
-  public function grid(array $output, array $settings): array {
-    return $this->toGrid($output, $settings);
-  }
+  protected function prepareAttributes(array $build): array {
+    $settings = $build['settings'];
+    $attributes = $build['attributes'] ?? [];
 
-  /**
-   * {@inheritdoc}
-   */
-  public function build(array $build): array {
-    foreach (SlickDefault::themeProperties() as $key) {
-      $build[$key] = $build[$key] ?? [];
+    if ($settings['display'] == 'main') {
+      Blazy::containerAttributes($attributes, $settings);
     }
-
-    $slick = [
-      '#theme'      => 'slick_wrapper',
-      '#items'      => [],
-      '#build'      => $build,
-      '#pre_render' => [[$this, 'preRenderSlickWrapper']],
-      // Satisfy CTools blocks as per 2017/04/06: 2804165.
-      'items'       => [],
-    ];
-
-    $this->moduleHandler->alter('slick_build', $slick, $build['settings']);
-    return empty($build['items']) ? [] : $slick;
+    return $attributes;
   }
 
   /**
@@ -296,7 +331,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     Slick &$optionset,
     array &$options,
     array &$settings
-  ) {
+  ): void {
     $blazies    = $settings['blazies'] ?? NULL;
     $route_name = $settings['route_name'] ?? '';
     $sandboxed  = !empty($settings['is_preview']);
@@ -331,7 +366,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   /**
    * Prepare settings for the known module features, not necessarily users'.
    */
-  protected function prepareSettings(array &$element, array &$build) {
+  protected function prepareSettings(array &$element, array &$build): void {
     $settings  = &$build['settings'];
     $settings += SlickDefault::htmlSettings();
     $options   = &$build['options'];
@@ -357,7 +392,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $navpos = $settings['thumbnail_position'] ?? NULL;
 
     $data = [
-      'library'    => $this->configLoad('library', 'slick.settings'),
+      'library'    => $this->config('library', 'slick.settings'),
       'breaking'   => $this->skinManager->isBreaking(),
       'count'      => $count,
       'nav'        => $nav,
@@ -431,7 +466,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   /**
    * Returns slick navigation with the structured array similar to main display.
    */
-  protected function buildNavigation(array &$build, array $thumbs) {
+  protected function buildNavigation(array &$build, array $thumbs): array {
     $settings = $build['settings'];
     foreach (['items', 'options', 'settings'] as $key) {
       $build[$key] = $thumbs[$key] ?? [];
@@ -455,67 +490,29 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   }
 
   /**
-   * One slick_theme() to serve multiple displays: main, overlay, thumbnail.
+   * Returns a cacheable renderable array of a single slick instance.
+   *
+   * @param array $build
+   *   An associative array containing:
+   *   - items: An array of slick contents: text, image or media.
+   *   - options: An array of key:value pairs of custom JS overrides.
+   *   - optionset: The cached optionset object to avoid multiple invocations.
+   *   - settings: An array of key:value pairs of HTML/layout related settings.
+   *
+   * @return array
+   *   The cacheable renderable array of a slick instance, or empty array.
    */
-  public function preRenderSlickWrapper($element) {
-    $build = $element['#build'];
-    unset($element['#build']);
-
-    // Prepare settings and assets.
-    $this->prepareSettings($element, $build);
-
-    // Checks if we have thumbnail navigation.
-    $thumbs   = $build['thumb'] ?? [];
-    $settings = $build['settings'];
-    $slicks   = $settings['slicks'];
-
-    // Prevents unused thumb going through the main display.
-    unset($build['thumb']);
-
-    // Build the main Slick.
-    $slick[0] = $this->slick($build);
-
-    // Build the thumbnail Slick.
-    if ($slicks->is('nav') && $thumbs) {
-      $slick[1] = $this->buildNavigation($build, $thumbs);
+  protected function slick(array $build = []) {
+    foreach (SlickDefault::themeProperties() as $key) {
+      $build[$key] = $build[$key] ?? [];
     }
 
-    // Reverse slicks if thumbnail position is provided to get CSS float work.
-    if ($slicks->get('navpos')) {
-      $slick = array_reverse($slick);
-    }
-
-    // Collect the slick instances.
-    $element['#items'] = $slick;
-    $element['#cache'] = $this->getCacheMetadata($build);
-
-    unset($build);
-    return $element;
-  }
-
-  /**
-   * Provides a shortcut to attach skins only if required.
-   */
-  public function attachSkin(array &$load, $attach = []) {
-    $this->skinManager->attachSkin($load, $attach);
-  }
-
-  /**
-   * Returns slick skins registered via SlickSkin plugin, or defaults.
-   *
-   * @todo TBD; deprecate this at slick:8.x-3.0 for slick:9.x-1.0.
-   */
-  public function getSkins() {
-    return $this->skinManager->getSkins();
-  }
-
-  /**
-   * Returns available slick skins by group.
-   *
-   * @todo TBD; deprecate this at slick:8.x-3.0 for slick:9.x-1.0.
-   */
-  public function getSkinsByGroup($group = '', $option = FALSE) {
-    return $this->skinManager->getSkinsByGroup($group, $option);
+    return empty($build['items']) ? [] : [
+      '#theme'      => 'slick',
+      '#items'      => [],
+      '#build'      => $build,
+      '#pre_render' => [[$this, 'preRenderSlick']],
+    ];
   }
 
   /**

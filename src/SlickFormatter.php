@@ -60,7 +60,7 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
       $settings['overridables'] = array_filter($settings['overridables']);
     }
 
-    $this->getModuleHandler()->alter('slick_settings', $build, $items);
+    $this->moduleHandler()->alter('slick_settings', $build, $items);
   }
 
 }

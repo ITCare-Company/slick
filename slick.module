@@ -15,7 +15,7 @@ use Drupal\slick\SlickDefault;
  * @param string $key
  *   Identifier of the service.
  *
- * @return class
+ * @return \Drupal\slick\SlickManagerInterface|\Drupal\slick\SlickSkinManagerInterface
  *   The required Slick class instance.
  */
 function slick($key = 'manager') {
@@ -97,7 +97,7 @@ function slick_libraries_get_path($name, $base_path = FALSE) {
  * Implements hook_page_attachments().
  */
 function slick_page_attachments(array &$attachments) {
-  $sitewide = slick()->configLoad('sitewide', 'slick.settings');
+  $sitewide = slick()->config('sitewide', 'slick.settings');
 
   if ((!empty($sitewide) && $sitewide > 0) && !\Drupal::service('router.admin_context')->isAdminRoute()) {
     $slicks = slick()->attach([
@@ -127,7 +127,7 @@ function slick_hook_info() {
  */
 function slick_field_formatter_info_alter(array &$info) {
   // Supports Media Entity via VEM within VEF if available.
-  if (slick()->getModuleHandler()->moduleExists('video_embed_media')) {
+  if (slick()->moduleExists('video_embed_media')) {
     $info['slick_file'] = [
       'id'          => 'slick_file',
       'label'       => t('Slick Image with VEF (deprecated)'),

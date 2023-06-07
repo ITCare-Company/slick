@@ -25,7 +25,7 @@ interface SlickBaseInterface extends ConfigEntityInterface {
   /**
    * Returns the array of slick settings.
    *
-   * @param string $ansich
+   * @param bool $ansich
    *   Whether to return the settings as is.
    *
    * @return array

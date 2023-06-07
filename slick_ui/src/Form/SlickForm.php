@@ -5,8 +5,9 @@ namespace Drupal\slick_ui\Form;
 use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\slick\Entity\Slick;
 use Drupal\slick\SlickDefault;
+use Drupal\slick\Entity\Slick;
+use Drupal\slick\Entity\SlickInterface;
 
 /**
  * Extends base form for slick instance configuration form.
@@ -17,15 +18,21 @@ class SlickForm extends SlickFormBase {
    * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
-    $form      = parent::form($form, $form_state);
-    $path      = SlickDefault::getPath('module', 'slick');
-    $slick     = $this->entity;
+    $form  = parent::form($form, $form_state);
+    $path  = SlickDefault::getPath('module', 'slick');
+    $slick = $this->entity;
+
+    // Satisfy phpstan.
+    if (!($slick instanceof SlickInterface)) {
+      return $form;
+    }
+
     $options   = $slick->getOptions() ?: [];
     $tooltip   = ['class' => ['is-tooltip']];
     $route     = ['name' => 'slick_ui'];
-    $is_help   = $this->manager()->getModuleHandler()->moduleExists('help');
+    $is_help   = $this->manager()->moduleExists('help');
     $readme    = $is_help ? Url::fromRoute('help.page', $route)->toString() : Url::fromUri('base:' . $path . '/docs/README.md')->toString();
-    $admin_css = $this->manager->configLoad('admin_css', 'blazy.settings');
+    $admin_css = $this->manager->config('admin_css', 'blazy.settings');
 
     $form['label'] = [
       '#type'          => 'textfield',
@@ -377,6 +384,135 @@ class SlickForm extends SlickFormBase {
   }
 
   /**
+   * Returns the typecast values.
+   *
+   * @param array $settings
+   *   An array of Optionset settings.
+   */
+  public function typecastOptionset(array &$settings = []) {
+    if (empty($settings)) {
+      return;
+    }
+
+    $defaults = Slick::defaultSettings();
+
+    foreach ($defaults as $name => $value) {
+      if (isset($settings[$name])) {
+        // Seems double is ignored, and causes a missing schema, unlike float.
+        $type = gettype($defaults[$name]);
+        $type = $type == 'double' ? 'float' : $type;
+
+        // Change float to integer if value is no longer float.
+        if ($name == 'edgeFriction') {
+          $type = $settings[$name] == '1' ? 'integer' : 'float';
+        }
+
+        settype($settings[$name], $type);
+      }
+    }
+  }
+
+  /**
+   * Handles switching the breakpoints based on the input value.
+   */
+  public function addBreakpoints($form, FormStateInterface $form_state) {
+    if (!$form_state->isValueEmpty('breakpoints')) {
+      $form_state->setValue('breakpoints_count', $form_state->getValue('breakpoints'));
+      if ($form_state->getValue('breakpoints') >= 6) {
+        $message = $this->t('You are trying to load too many Breakpoints. Try reducing it to reasonable numbers say, between 1 to 5.');
+        $this->messenger()->addMessage($message, 'warning');
+      }
+    }
+
+    return $form['responsives']['responsive'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    parent::validateForm($form, $form_state);
+
+    // Update CSS Bezier version.
+    $override = $form_state->getValue(['options', 'settings', 'cssEaseOverride']);
+    if ($override) {
+      $override = $this->getBezier($override);
+    }
+
+    // Update cssEaseBezier value based on cssEaseOverride.
+    $form_state->setValue(['options', 'settings', 'cssEaseBezier'], $override);
+
+    // Check if rows is set to 1 and show a warning.
+    // See: https://www.drupal.org/project/slick/issues/3123787#comment-13532059
+    if (($form['settings']['rows']['#value'] ?? -1) == 1) {
+      $message = $this->t('Hint: You set Slicks "rows" option to "1" (optionset: %optionset), this will result in markup issues on Slick versions >1.9.0. Consider to set it to "0" instead, or leave it as if not using >1.9.0. Check out <a href=":url">this issue</a> for further information.', [
+        ':url' => 'https://www.drupal.org/project/slick/issues/3123787',
+        '%optionset' => $form['name']['#value'],
+      ]);
+      $this->messenger()->addMessage($message, 'warning');
+    }
+    // Check if slidesPerRow is set to 0 and show a warning.
+    // See: https://www.drupal.org/project/slick/issues/3123787#comment-13532059
+    if (($form['settings']['slidesPerRow']['#value'] ?? -1) == 0) {
+      $message = $this->t('Important: You set Slicks "slidesPerRow" option to "0" (optionset: %optionset), this will result in browser crashes >1.9.0. Consider to set it to "1" instead. Consider to set it to "0" instead, or leave it as if not using >1.9.0. Check out <a href=":url">this issue</a> for further information.', [
+        ':url' => 'https://www.drupal.org/project/slick/issues/3123787',
+        '%optionset' => $form['name']['#value'],
+      ]);
+      $this->messenger()->addMessage($message, 'warning');
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+    parent::submitForm($form, $form_state);
+
+    // Satisfy phpstan.
+    $slick = $this->entity;
+    if (!($slick instanceof SlickInterface)) {
+      return;
+    }
+
+    // Optimized if so configured.
+    $default = $slick->id() == 'default';
+    if (!$default && !$form_state->isValueEmpty('optimized')) {
+      $defaults = $slick::defaultSettings();
+      $required = $this->getOptionsRequiredByTemplate();
+      $main     = array_diff_assoc($defaults, $required);
+      $settings = $form_state->getValue(['options', 'settings']);
+
+      // Cast the values.
+      $this->typecastOptionset($settings);
+
+      // Remove settings that aren't supported by the active library.
+      Slick::removeUnsupportedSettings($settings);
+
+      // Remove wasted dependent options if disabled, empty or not.
+      $slick->removeWastedDependentOptions($settings);
+
+      $main_settings = array_diff_assoc($settings, $main);
+      $slick->setSettings($main_settings);
+
+      $responsive_options = ['options', 'responsives', 'responsive'];
+      if ($responsives = $form_state->getValue($responsive_options)) {
+        foreach ($responsives as $delta => &$responsive) {
+          if (!empty($responsive['unslick'])) {
+            $slick->setResponsiveSettings([], $delta);
+          }
+          else {
+            $this->typecastOptionset($responsive['settings']);
+            $slick->removeWastedDependentOptions($responsive['settings']);
+
+            $responsive_settings = array_diff_assoc($responsive['settings'], $defaults);
+            $slick->setResponsiveSettings($responsive_settings, $delta);
+          }
+        }
+      }
+    }
+  }
+
+  /**
    * Defines available options for the main and responsive settings.
    *
    * @return array
@@ -384,7 +520,7 @@ class SlickForm extends SlickFormBase {
    *
    * @see http://kenwheeler.github.io/slick
    */
-  public function getFormElements() {
+  protected function getFormElements() {
     if (!isset($this->formElements)) {
       $elements = [];
 
@@ -799,7 +935,7 @@ class SlickForm extends SlickFormBase {
    * @return array
    *   An array of cleaned out options.
    */
-  public function cleanFormElements() {
+  protected function cleanFormElements() {
     $excludes = [
       'accessibility',
       'appendArrows',
@@ -833,7 +969,7 @@ class SlickForm extends SlickFormBase {
    * @return array
    *   An array of Slick responsive options.
    */
-  public function getResponsiveFormElements($count = 0) {
+  protected function getResponsiveFormElements($count = 0) {
     $elements = [];
     $range = range(0, ($count - 1));
     $breakpoints = array_combine($range, $range);
@@ -875,7 +1011,7 @@ class SlickForm extends SlickFormBase {
   /**
    * Returns modifiable lazyload options.
    */
-  public function getLazyloadOptions() {
+  protected function getLazyloadOptions() {
     $options = [
       'anticipated' => $this->t('Anticipated'),
       'blazy'       => $this->t('Blazy'),
@@ -883,145 +1019,21 @@ class SlickForm extends SlickFormBase {
       'progressive' => $this->t('Progressive'),
     ];
 
-    $this->manager->getModuleHandler()->alter('slick_lazyload_options_info', $options);
+    $this->manager->moduleHandler()->alter('slick_lazyload_options_info', $options);
     return $options;
   }
 
   /**
    * Defines options required by theme_slick(), used with optimized option.
    */
-  public function getOptionsRequiredByTemplate() {
+  protected function getOptionsRequiredByTemplate() {
     $options = [
       'lazyLoad'     => 'ondemand',
       'slidesToShow' => 1,
     ];
 
-    $this->manager->getModuleHandler()->alter('slick_options_required_by_template', $options);
+    $this->manager->moduleHandler()->alter('slick_options_required_by_template', $options);
     return $options;
-  }
-
-  /**
-   * Returns the typecast values.
-   *
-   * @param array $settings
-   *   An array of Optionset settings.
-   */
-  public function typecastOptionset(array &$settings = []) {
-    if (empty($settings)) {
-      return;
-    }
-
-    $defaults = Slick::defaultSettings();
-
-    foreach ($defaults as $name => $value) {
-      if (isset($settings[$name])) {
-        // Seems double is ignored, and causes a missing schema, unlike float.
-        $type = gettype($defaults[$name]);
-        $type = $type == 'double' ? 'float' : $type;
-
-        // Change float to integer if value is no longer float.
-        if ($name == 'edgeFriction') {
-          $type = $settings[$name] == '1' ? 'integer' : 'float';
-        }
-
-        settype($settings[$name], $type);
-      }
-    }
-  }
-
-  /**
-   * Handles switching the breakpoints based on the input value.
-   */
-  public function addBreakpoints($form, FormStateInterface $form_state) {
-    if (!$form_state->isValueEmpty('breakpoints')) {
-      $form_state->setValue('breakpoints_count', $form_state->getValue('breakpoints'));
-      if ($form_state->getValue('breakpoints') >= 6) {
-        $message = $this->t('You are trying to load too many Breakpoints. Try reducing it to reasonable numbers say, between 1 to 5.');
-        $this->messenger()->addMessage($message, 'warning');
-      }
-    }
-
-    return $form['responsives']['responsive'];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    parent::validateForm($form, $form_state);
-
-    // Update CSS Bezier version.
-    $override = $form_state->getValue(['options', 'settings', 'cssEaseOverride']);
-    if ($override) {
-      $override = $this->getBezier($override);
-    }
-
-    // Update cssEaseBezier value based on cssEaseOverride.
-    $form_state->setValue(['options', 'settings', 'cssEaseBezier'], $override);
-
-    // Check if rows is set to 1 and show a warning.
-    // See: https://www.drupal.org/project/slick/issues/3123787#comment-13532059
-    if (($form['settings']['rows']['#value'] ?? -1) == 1) {
-      $message = $this->t('Hint: You set Slicks "rows" option to "1" (optionset: %optionset), this will result in markup issues on Slick versions >1.9.0. Consider to set it to "0" instead, or leave it as if not using >1.9.0. Check out <a href=":url">this issue</a> for further information.', [
-        ':url' => 'https://www.drupal.org/project/slick/issues/3123787',
-        '%optionset' => $form['name']['#value'],
-      ]);
-      $this->messenger()->addMessage($message, 'warning');
-    }
-    // Check if slidesPerRow is set to 0 and show a warning.
-    // See: https://www.drupal.org/project/slick/issues/3123787#comment-13532059
-    if (($form['settings']['slidesPerRow']['#value'] ?? -1) == 0) {
-      $message = $this->t('Important: You set Slicks "slidesPerRow" option to "0" (optionset: %optionset), this will result in browser crashes >1.9.0. Consider to set it to "1" instead. Consider to set it to "0" instead, or leave it as if not using >1.9.0. Check out <a href=":url">this issue</a> for further information.', [
-        ':url' => 'https://www.drupal.org/project/slick/issues/3123787',
-        '%optionset' => $form['name']['#value'],
-      ]);
-      $this->messenger()->addMessage($message, 'warning');
-    }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-    parent::submitForm($form, $form_state);
-
-    // Optimized if so configured.
-    $slick   = $this->entity;
-    $default = $slick->id() == 'default';
-    if (!$default && !$form_state->isValueEmpty('optimized')) {
-      $defaults = $slick::defaultSettings();
-      $required = $this->getOptionsRequiredByTemplate();
-      $main     = array_diff_assoc($defaults, $required);
-      $settings = $form_state->getValue(['options', 'settings']);
-
-      // Cast the values.
-      $this->typecastOptionset($settings);
-
-      // Remove settings that aren't supported by the active library.
-      Slick::removeUnsupportedSettings($settings);
-
-      // Remove wasted dependent options if disabled, empty or not.
-      $slick->removeWastedDependentOptions($settings);
-
-      $main_settings = array_diff_assoc($settings, $main);
-      $slick->setSettings($main_settings);
-
-      $responsive_options = ['options', 'responsives', 'responsive'];
-      if ($responsives = $form_state->getValue($responsive_options)) {
-        foreach ($responsives as $delta => &$responsive) {
-          if (!empty($responsive['unslick'])) {
-            $slick->setResponsiveSettings([], $delta);
-          }
-          else {
-            $this->typecastOptionset($responsive['settings']);
-            $slick->removeWastedDependentOptions($responsive['settings']);
-
-            $responsive_settings = array_diff_assoc($responsive['settings'], $defaults);
-            $slick->setResponsiveSettings($responsive_settings, $delta);
-          }
-        }
-      }
-    }
   }
 
 }

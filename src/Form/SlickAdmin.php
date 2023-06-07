@@ -120,8 +120,8 @@ class SlickAdmin implements SlickAdminInterface {
    */
   public function openingForm(array &$form, array &$definition): void {
     $path         = SlickDefault::getPath('module', 'slick');
-    $is_slick_ui  = $this->manager()->getModuleHandler()->moduleExists('slick_ui');
-    $is_help      = $this->manager()->getModuleHandler()->moduleExists('help');
+    $is_slick_ui  = $this->manager()->moduleExists('slick_ui');
+    $is_help      = $this->manager()->moduleExists('help');
     $route_name   = ['name' => 'slick_ui'];
     $readme       = $is_slick_ui && $is_help ? Url::fromRoute('help.page', $route_name)->toString() : Url::fromUri('base:' . $path . '/docs/README.md')->toString();
     $readme_field = $is_slick_ui && $is_help ? Url::fromRoute('help.page', $route_name)->toString() : Url::fromUri('base:' . $path . '/docs/FORMATTER.md')->toString();
@@ -373,7 +373,7 @@ class SlickAdmin implements SlickAdminInterface {
       'variableWidth' => $this->t('Variable width'),
     ];
 
-    $this->manager->getModuleHandler()->alter('slick_overridable_options_info', $options);
+    $this->manager->moduleHandler()->alter('slick_overridable_options_info', $options);
     return $options;
   }
 
@@ -403,7 +403,7 @@ class SlickAdmin implements SlickAdminInterface {
    */
   public function getOptionsetsByGroupOptions($group = ''): array {
     $optionsets = $groups = $ungroups = [];
-    $slicks = $this->manager->entityLoadMultiple('slick');
+    $slicks = $this->manager->loadMultiple('slick');
     foreach ($slicks as $slick) {
       $name = Html::escape($slick->label());
       $id = $slick->id();
@@ -442,8 +442,13 @@ class SlickAdmin implements SlickAdminInterface {
   /**
    * Returns available fields for select options.
    */
-  public function getFieldOptions($target_bundles = [], $allowed_field_types = [], $entity_type_id = 'media', $target_type = ''): array {
-    return $this->blazyAdmin->getFieldOptions($target_bundles, $allowed_field_types, $entity_type_id, $target_type);
+  public function getFieldOptions(
+    array $target_bundles = [],
+    array $allowed_field_types = [],
+    $entity_type = 'media',
+    $target_type = ''
+  ): array {
+    return $this->blazyAdmin->getFieldOptions($target_bundles, $allowed_field_types, $entity_type, $target_type);
   }
 
   /**

@@ -56,7 +56,7 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
       $settings['delta'] = $delta;
       $settings['type'] = 'image';
 
-      /** @var Drupal\image\Plugin\Field\FieldType\ImageItem $item */
+      /** @var \Drupal\image\Plugin\Field\FieldType\ImageItem $item */
       $item = $file->_referringItem;
 
       $settings['file_tags'] = $file->getCacheTags();

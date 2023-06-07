@@ -1,4 +1,9 @@
 
+Slick 8.x-2.0-dev, 2023-06-07
+-----------------------------
+- Fixed for phpstan issues, etc.
+- Updated to and required a minimum Blazy:2.16.
+
 Slick 8.x-2.0-dev, 2023-05-15
 -----------------------------
 - Issue #3340509 by Anybody, gausarts, ericdsd, arnoldbird, ivnish:

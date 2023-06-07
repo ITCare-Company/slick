@@ -4,6 +4,7 @@ namespace Drupal\slick_ui\Controller;
 
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\slick\Entity\SlickInterface;
 
 /**
  * Provides a listing of Slick optionsets.
@@ -36,6 +37,11 @@ class SlickListBuilder extends SlickListBuilderBase {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
+    // Satisfy phpstan.
+    if (!($entity instanceof SlickInterface)) {
+      return parent::buildRow($entity);
+    }
+
     $skins = $this->manager->skinManager()->getSkins()['skins'];
     $skin = $entity->getSkin();
 

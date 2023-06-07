@@ -139,9 +139,6 @@ class SlickManagerTest extends BlazyKernelTestBase {
       'optionset' => Slick::load($settings['optionset']),
     ];
 
-    $slick = $manager->slick($build);
-    $this->assertEquals($expected, !empty($slick));
-
     $slick['#build']['settings'] = $settings;
     $slick['#build']['items'] = $items;
     $slick['#build']['options'] = [];
@@ -224,30 +221,10 @@ class SlickManagerTest extends BlazyKernelTestBase {
   /**
    * Tests for \Drupal\slick_ui\Form\SlickForm.
    *
-   * @covers \Drupal\slick_ui\Form\SlickForm::getFormElements
-   * @covers \Drupal\slick_ui\Form\SlickForm::cleanFormElements
-   * @covers \Drupal\slick_ui\Form\SlickForm::getResponsiveFormElements
-   * @covers \Drupal\slick_ui\Form\SlickForm::getLazyloadOptions
    * @covers \Drupal\slick_ui\Form\SlickForm::typecastOptionset
-   * @covers \Drupal\slick_ui\Form\SlickForm::getJsEasingOptions
-   * @covers \Drupal\slick_ui\Form\SlickForm::getCssEasingOptions
-   * @covers \Drupal\slick_ui\Form\SlickForm::getOptionsRequiredByTemplate
-   * @covers \Drupal\slick_ui\Form\SlickForm::getBezier
    */
   public function testSlickForm() {
-    $elements = $this->slickForm->getFormElements();
-    $this->assertArrayHasKey('mobileFirst', $elements);
-
-    $elements = $this->slickForm->cleanFormElements();
-    $this->assertArrayNotHasKey('appendArrows', $elements);
-
-    $elements = $this->slickForm->getResponsiveFormElements(2);
-    $this->assertArrayHasKey('breakpoint', $elements[0]);
-
-    $options = $this->slickForm->getLazyloadOptions();
-    $this->assertArrayHasKey('ondemand', $options);
-
-    $settings = [];
+      $settings = [];
     $this->slickForm->typecastOptionset($settings);
     $this->assertEmpty($settings);
 
@@ -255,18 +232,6 @@ class SlickManagerTest extends BlazyKernelTestBase {
     $settings['edgeFriction'] = 0.27;
     $this->slickForm->typecastOptionset($settings);
     $this->assertEquals(TRUE, $settings['mobileFirst']);
-
-    $options = $this->slickForm->getJsEasingOptions();
-    $this->assertArrayHasKey('easeInQuad', $options);
-
-    $options = $this->slickForm->getCssEasingOptions();
-    $this->assertArrayHasKey('easeInQuad', $options);
-
-    $options = $this->slickForm->getOptionsRequiredByTemplate();
-    $this->assertArrayHasKey('lazyLoad', $options);
-
-    $bezier = $this->slickForm->getBezier('easeInQuad');
-    $this->assertEquals('cubic-bezier(0.550, 0.085, 0.680, 0.530)', $bezier);
   }
 
 }

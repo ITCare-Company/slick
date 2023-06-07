@@ -65,15 +65,18 @@ officially supported now, Jan 2020.
      + **/libraries/accessible-slick/slick/slick.min.js**
      + Or any path supported by core library finder as per Drupal 8.9+.
 
-2. [Download jqeasing](https://github.com/gdsmith/jquery.easing), so available:
+2. [Download jqeasing](https://github.com/gdsmith/jquery.easing), so available:  
 
    **/libraries/easing/jquery.easing.min.js**
 
    This is CSS easing fallback for non-supporting browsers.
 
-3. [Blazy](https://drupal.org/project/blazy) 2.10+ since Slick:2.7  
+3. [Blazy](https://drupal.org/project/blazy) 2.10+ since Slick:2.7
 
-   To reduce DRY stuffs, and as a bonus, advanced lazyloading such as delay lazyloading for below-fold sliders, iframe, (fullscreen) CSS background lazyloading, breakpoint dependent multi-serving images, lazyload ahead for smoother UX. Check out Blazy installation guides!
+   To reduce DRY stuffs, and as a bonus, advanced lazyloading such as delay
+   lazyloading for below-fold sliders, iframe, (fullscreen) CSS background
+   lazyloading, breakpoint dependent multi-serving images, lazyload ahead for
+   smoother UX. Check out Blazy installation guides!
 
 
 ***

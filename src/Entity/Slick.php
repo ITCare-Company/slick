@@ -64,42 +64,68 @@ class Slick extends SlickBase implements SlickInterface {
   /**
    * {@inheritdoc}
    */
-  public function getSkin() {
-    return $this->skin;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getBreakpoints() {
+  public function getBreakpoints(): int {
     return $this->breakpoints;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getGroup() {
+  public function getSkin(): string {
+    return $this->skin;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getGroup(): string {
     return $this->group;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function optimized() {
+  public function optimized(): bool {
     return $this->optimized;
   }
 
   /**
-   * Returns the Slick responsive settings.
+   * Defines the dependent options.
    *
    * @return array
-   *   The responsive options.
+   *   The dependent options.
    */
-  public function getResponsiveOptions() {
-    if (empty($this->breakpoints)) {
-      return FALSE;
-    }
+  public static function getDependentOptions(): array {
+    $down_arrow = ['downArrowTarget', 'downArrowOffset'];
+    return [
+      'arrows'     => ['arrowsPlacement', 'prevArrow', 'nextArrow', 'downArrow'] + $down_arrow,
+      'downArrow'  => $down_arrow,
+      'autoplay'   => [
+        'pauseOnHover',
+        'pauseOnDotsHover',
+        'pauseOnFocus',
+        'autoplaySpeed',
+        'useAutoplayToggleButton',
+        'pauseIcon',
+        'playIcon',
+      ],
+      'centerMode' => ['centerPadding'],
+      'dots'       => ['dotsClass', 'appendDots'],
+      'swipe'      => ['swipeToSlide'],
+      'useCSS'     => ['cssEase', 'cssEaseBezier', 'cssEaseOverride'],
+      'vertical'   => ['verticalSwiping'],
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getResponsiveOptions(): array {
     $options = [];
+    if (empty($this->breakpoints)) {
+      return $options;
+    }
+
     if (isset($this->options['responsives']['responsive'])) {
       $responsives = $this->options['responsives'];
       if ($responsives['responsive']) {
@@ -117,23 +143,17 @@ class Slick extends SlickBase implements SlickInterface {
   }
 
   /**
-   * Sets the Slick responsive settings.
-   *
-   * @return $this
-   *   The class instance that this method is called on.
+   * {@inheritdoc}
    */
-  public function setResponsiveSettings($values, $delta = 0, $key = 'settings') {
+  public function setResponsiveSettings($values, $delta = 0, $key = 'settings'): self {
     $this->options['responsives']['responsive'][$delta][$key] = $values;
     return $this;
   }
 
   /**
-   * Strip out options containing default values so to have real clean JSON.
-   *
-   * @return array
-   *   The cleaned out settings.
+   * {@inheritdoc}
    */
-  public function removeDefaultValues(array $js) {
+  public function removeDefaultValues(array $js): array {
     $config   = [];
     $defaults = self::defaultSettings();
 
@@ -186,9 +206,9 @@ class Slick extends SlickBase implements SlickInterface {
   }
 
   /**
-   * Removes wasted dependent options, even if not empty.
+   * {@inheritdoc}
    */
-  public function removeWastedDependentOptions(array &$js) {
+  public function removeWastedDependentOptions(array &$js): void {
     foreach (self::getDependentOptions() as $key => $option) {
       if (isset($js[$key]) && empty($js[$key])) {
         foreach ($option as $dependent) {
@@ -204,37 +224,9 @@ class Slick extends SlickBase implements SlickInterface {
   }
 
   /**
-   * Defines the dependent options.
-   *
-   * @return array
-   *   The dependent options.
-   */
-  public static function getDependentOptions() {
-    $down_arrow = ['downArrowTarget', 'downArrowOffset'];
-    return [
-      'arrows'     => ['arrowsPlacement', 'prevArrow', 'nextArrow', 'downArrow'] + $down_arrow,
-      'downArrow'  => $down_arrow,
-      'autoplay'   => [
-        'pauseOnHover',
-        'pauseOnDotsHover',
-        'pauseOnFocus',
-        'autoplaySpeed',
-        'useAutoplayToggleButton',
-        'pauseIcon',
-        'playIcon',
-      ],
-      'centerMode' => ['centerPadding'],
-      'dots'       => ['dotsClass', 'appendDots'],
-      'swipe'      => ['swipeToSlide'],
-      'useCSS'     => ['cssEase', 'cssEaseBezier', 'cssEaseOverride'],
-      'vertical'   => ['verticalSwiping'],
-    ];
-  }
-
-  /**
    * Checks which lazyload to use.
    */
-  public function whichLazy(array &$settings) {
+  public function whichLazy(array &$settings): void {
     $lazy = $this->getSetting('lazyLoad');
 
     $settings['_lazy'] = TRUE;

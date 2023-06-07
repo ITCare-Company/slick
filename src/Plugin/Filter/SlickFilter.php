@@ -35,6 +35,20 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class SlickFilter extends BlazyFilterBase {
 
   /**
+   * The slick manager.
+   *
+   * @var \Drupal\slick\SlickManagerInterface
+   */
+  protected $manager;
+
+  /**
+   * The slick admin service.
+   *
+   * @var \Drupal\slick\Form\SlickAdminInterface
+   */
+  protected $admin;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
@@ -97,7 +111,7 @@ class SlickFilter extends BlazyFilterBase {
 
     // Provides alter like formatters to modify at one go, even clumsy here.
     $build = ['settings' => $settings];
-    $this->manager->getModuleHandler()->alter('slick_settings', $build, $this->settings);
+    $this->manager->moduleHandler()->alter('slick_settings', $build, $this->settings);
     return array_merge($settings, $build['settings']);
   }
 
@@ -147,7 +161,7 @@ class SlickFilter extends BlazyFilterBase {
       return [];
     }
 
-    $entity = $this->manager->entityLoad($id, $entity_type);
+    $entity = $this->manager->load($id, $entity_type);
 
     $blazies = $settings['blazies'] ?? NULL;
 
@@ -199,7 +213,7 @@ class SlickFilter extends BlazyFilterBase {
             }
             else {
               $settings['vanilla'] = TRUE;
-              $exists = $this->manager->getModuleHandler()->moduleExists('slick_entityreference');
+              $exists = $this->manager->moduleExists('slick_entityreference');
               if ($exists) {
                 $formatter = 'slick_entityreference';
               }
