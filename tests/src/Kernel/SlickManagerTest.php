@@ -132,16 +132,18 @@ class SlickManagerTest extends BlazyKernelTestBase {
     $build = $this->display->build($this->entity);
 
     $items = !$items ? [] : $build[$this->testFieldName]['#build']['items'];
+    $optionset = Slick::load($settings['optionset']);
     $build = [
       'items'     => $items,
       'settings'  => $settings,
       'options'   => $options,
-      'optionset' => Slick::load($settings['optionset']),
+      'optionset' => $optionset,
     ];
 
     $slick['#build']['settings'] = $settings;
     $slick['#build']['items'] = $items;
     $slick['#build']['options'] = [];
+    $slick['#build']['optionset'] = $optionset;
 
     $element = $manager->preRenderSlick($slick);
     $this->assertEquals($expected, !empty($element));
@@ -224,7 +226,7 @@ class SlickManagerTest extends BlazyKernelTestBase {
    * @covers \Drupal\slick_ui\Form\SlickForm::typecastOptionset
    */
   public function testSlickForm() {
-      $settings = [];
+    $settings = [];
     $this->slickForm->typecastOptionset($settings);
     $this->assertEmpty($settings);
 
