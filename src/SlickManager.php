@@ -204,10 +204,10 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $build['attributes'] = $this->prepareAttributes($build);
     $build['options'] = array_merge($build['options'], (array) ($js ?? []));
 
-    $this->moduleHandler->alter('slick_optionset', $build['optionset'], $settings);
+    $this->moduleHandler->alter('slick_optionset', $optionset, $settings);
 
     foreach (SlickDefault::themeProperties() as $key) {
-      $element["#$key"] = $build[$key];
+      $element["#$key"] = $build[$key] ?? [];
     }
 
     return $element;
@@ -502,7 +502,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    * @return array
    *   The cacheable renderable array of a slick instance, or empty array.
    */
-  protected function slick(array $build = []) {
+  protected function slick(array $build) {
     foreach (SlickDefault::themeProperties() as $key) {
       $build[$key] = $build[$key] ?? [];
     }
