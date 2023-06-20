@@ -1,4 +1,8 @@
 
+Slick 8.x-2.0-dev, 2023-06-20
+-----------------------------
+- Issue #3367674 by paucala: Using http protocol is insecure. Use https instead.
+
 Slick 8.x-2.0-dev, 2023-06-07
 -----------------------------
 - Fixed for phpstan issues, etc.

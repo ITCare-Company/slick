@@ -20,7 +20,7 @@
 Visit **/admin/help/slick_ui** once Slick UI installed to read this in comfort.
 
 Slick is a powerful and performant slideshow/carousel solution leveraging Ken
-Wheeler's [Slick Carousel](http://kenwheeler.github.io/slick).
+Wheeler's [Slick Carousel](https://kenwheeler.github.io/slick).
 
 Slick has gazillion options, please start with the very basic working
 samples from [Slick Example](https://drupal.org/project/slick_extras) only if

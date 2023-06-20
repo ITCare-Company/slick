@@ -15,14 +15,14 @@
 ## READ MORE
 See the project page on drupal.org:
 
-[Slick Carousel](http://drupal.org/project/slick)
+[Slick Carousel](https://drupal.org/project/slick)
 
 More info relevant to each option is available at their form display by hovering
 over them, and clicking a dark question mark.
 
 See the Slick docs at:
 
-* [Slick website](http://kenwheeler.github.io/slick/)
+* [Slick website](https://kenwheeler.github.io/slick/)
 * [Slick at github](https://github.com/kenwheeler/slick/)
 
 [&#10548; Back to Top](#top)

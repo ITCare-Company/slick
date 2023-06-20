@@ -518,7 +518,7 @@ class SlickForm extends SlickFormBase {
    * @return array
    *   All available Slick options.
    *
-   * @see http://kenwheeler.github.io/slick
+   * @see https://kenwheeler.github.io/slick
    */
   protected function getFormElements() {
     if (!isset($this->formElements)) {
@@ -845,7 +845,7 @@ class SlickForm extends SlickFormBase {
         'type'         => 'select',
         'options'      => $this->getCssEasingOptions(),
         'empty_option' => $this->t('- None -'),
-        'description'  => $this->t('If provided, this will override the CSS ease with the pre-defined CSS easings based on <a href="@ceaser">CSS Easing Animation Tool</a>. Leave it empty to use your own CSS ease.', ['@ceaser' => 'http://matthewlein.com/ceaser/']),
+        'description'  => $this->t('If provided, this will override the CSS ease with the pre-defined CSS easings based on <a href="@ceaser">CSS Easing Animation Tool</a>. Leave it empty to use your own CSS ease.', ['@ceaser' => 'https://matthewlein.com/ceaser/']),
       ];
 
       $elements['useTransform'] = [
