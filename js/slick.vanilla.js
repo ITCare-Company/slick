@@ -31,7 +31,6 @@
    */
   Drupal.behaviors.slickVanilla = {
     attach: function (context) {
-      context = _d.context(context);
       _d.once(doSlickVanilla, _id, _element, context);
     },
     detach: function (context, setting, trigger) {

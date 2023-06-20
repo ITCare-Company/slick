@@ -229,32 +229,9 @@ class Slick extends SlickBase implements SlickInterface {
   public function whichLazy(array &$settings): void {
     $lazy = $this->getSetting('lazyLoad');
 
-    $settings['_lazy'] = TRUE;
-
-    // @todo remove check post Blazy 2.10 to follow up Blazy improvements:
     // `Loading` priority, `No JavaScript: lazy`, etc.
-    if (method_exists(Blazy::class, 'which')) {
-      Blazy::which($settings, $lazy, 'lazy', 'lazy');
-    }
-    else {
-      // @todo remove these post Blazy 2.10.
-      $use_blazy = $lazy == 'blazy'
-        || !empty($settings['blazy'])
-        || !empty($settings['background'])
-        || !empty($settings['responsive_image_style']);
-
-      $lazy = $use_blazy ? 'blazy' : $lazy;
-
-      // Allows Blazy to take over for advanced features like Responsive image,
-      // CSS background, video, etc.
-      if (!$use_blazy && $lazy) {
-        $settings['lazy_class'] = $settings['lazy_attribute'] = 'lazy';
-      }
-
-      // Disable anything lazy-related settings if in preview mode.
-      $settings['blazy'] = $use_blazy;
-      $settings['lazy'] = empty($settings['is_preview']) ? $lazy : '';
-    }
+    Blazy::which($settings, $lazy, 'lazy', 'lazy');
+    $settings['_lazy'] = TRUE;
   }
 
   /**

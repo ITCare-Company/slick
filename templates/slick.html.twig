@@ -52,15 +52,15 @@
   ]
 %}
 <div{{ attributes.addClass(classes) }}>
-  {% if not settings.unslick %}
+  {%- if not settings.unslick -%}
     <div{{ content_attributes.addClass('slick__slider') }}>
-  {% endif %}
+  {%- endif -%}
 
   {% block slick_content %}
-    {{ items }}
+    {{- items -}}
   {% endblock %}
 
-  {% if not settings.unslick %}
+  {%- if not settings.unslick -%}
     </div>
     {% block slick_arrow %}
       <nav{{ arrow_attributes.addClass(arrow_classes) }}>
@@ -75,5 +75,5 @@
         <button type="button" data-role="none" class="slick-next" aria-label="{{ settings.nextArrow|t|striptags }}" tabindex="0">{{ settings.nextArrow|t }}</button>
       </nav>
     {% endblock %}
-  {% endif %}
+  {%- endif -%}
 </div>

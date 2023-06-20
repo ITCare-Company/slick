@@ -19,7 +19,7 @@ class SlickAdminUnitTest extends UnitTestCase {
    *
    * @var \Drupal\blazy\Form\BlazyAdminInterface
    */
-  protected $blazyAdminExtended;
+  protected $blazyAdmin;
 
   /**
    * The slick admin service.
@@ -41,7 +41,7 @@ class SlickAdminUnitTest extends UnitTestCase {
   protected function setUp(): void {
     parent::setUp();
 
-    $this->blazyAdminExtended = $this->createMock('\Drupal\blazy\Dejavu\BlazyAdminExtended');
+    $this->blazyAdmin = $this->createMock('\Drupal\blazy\Form\BlazyAdminInterface');
     $this->slickManager = $this->createMock('\Drupal\slick\SlickManagerInterface');
   }
 
@@ -56,7 +56,8 @@ class SlickAdminUnitTest extends UnitTestCase {
     $exception = ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE;
 
     $map = [
-      ['blazy.admin.extended', $exception, $this->blazyAdminExtended],
+      // @todo use blazy.admin.formatter post blazy:2.17.
+      ['blazy.admin.extended', $exception, $this->blazyAdmin],
       ['slick.manager', $exception, $this->slickManager],
     ];
 
@@ -66,8 +67,7 @@ class SlickAdminUnitTest extends UnitTestCase {
 
     $slickAdmin = SlickAdmin::create($container);
     $this->assertInstanceOf(SlickAdmin::class, $slickAdmin);
-
-    $this->assertInstanceOf('\Drupal\blazy\Dejavu\BlazyAdminExtended', $slickAdmin->blazyAdmin());
+    $this->assertInstanceOf('\Drupal\blazy\Form\BlazyAdminInterface', $slickAdmin->blazyAdmin());
     $this->assertInstanceOf('\Drupal\slick\SlickManagerInterface', $slickAdmin->manager());
   }
 

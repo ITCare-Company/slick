@@ -19,11 +19,11 @@
 %}
 {% block slick_thumbnail %}
   <div{{ attributes.addClass(classes) }}>
-    {% if item.slide is not empty %}
-      <div class="slide__thumbnail">{{ item.slide }}</div>
-    {% endif %}
+    {%- if item.slide is not empty -%}
+      <div class="slide__thumbnail">{{- item.slide -}}</div>
+    {%- endif -%}
     {% if item.caption is not empty %}
-      <div class="slide__caption">{{ item.caption }}</div>
-    {% endif %}
+      <div class="slide__caption">{{- item.caption -}}</div>
+    {%- endif -%}
   </div>
 {% endblock %}

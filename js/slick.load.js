@@ -313,7 +313,6 @@
    */
   Drupal.behaviors.slick = {
     attach: function (context) {
-      context = _d.context(context);
       _d.once(doSlick, _id, _element, context);
     },
     detach: function (context, setting, trigger) {

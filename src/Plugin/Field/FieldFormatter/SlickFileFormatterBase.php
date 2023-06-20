@@ -49,50 +49,48 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
    */
   public function buildElements(array &$build, $files, $langcode) {
     $settings   = &$build['settings'];
-    $item_id    = $settings['item_id'];
-    $tn_caption = empty($settings['thumbnail_caption']) ? NULL : $settings['thumbnail_caption'];
+    $blazies    = $settings['blazies'];
+    $item_id    = $blazies->get('item.id');
+    $caption_id = 'caption';
+    $tn_caption = $settings['thumbnail_caption'] ?? NULL;
+    $is_nav     = $blazies->is('nav') ?? $settings['nav'] ?? FALSE;
+    $elements   = $this->getElements($build, $files, $caption_id);
 
-    foreach ($files as $delta => $file) {
-      $settings['delta'] = $delta;
-      $settings['type'] = 'image';
+    foreach ($elements as $element) {
+      $sets = $element['settings'];
+      $captions = $element[$caption_id] ?? [];
 
-      /** @var \Drupal\image\Plugin\Field\FieldType\ImageItem $item */
-      $item = $file->_referringItem;
-
-      $settings['file_tags'] = $file->getCacheTags();
-      $settings['uri']       = $file->getFileUri();
-
-      $element = ['item' => $item, 'settings' => $settings];
-
-      // @todo remove, no longer file entity/VEF/M for pure Media.
-      $this->buildElement($element, $file);
-      $settings = $element['settings'];
+      // Do not pass captions to theme_blazy().
+      unset($element[$caption_id]);
 
       // Image with responsive image, lazyLoad, and lightbox supports.
       $element[$item_id] = $this->formatter->getBlazy($element);
 
-      if (!empty($settings['caption'])) {
-        foreach ($settings['caption'] as $caption) {
-          $element['caption'][$caption] = empty($element['item']->{$caption}) ? [] : ['#markup' => Xss::filterAdmin($element['item']->{$caption})];
-        }
-      }
+      // Build captions if so configured.
+      $element[$caption_id] = $captions;
 
-      // Build individual slick item.
-      $build['items'][$delta] = $element;
+      // Build individual splide item.
+      $build['items'][] = $element;
 
-      // Build individual slick thumbnail.
-      if (!empty($settings['nav'])) {
-        $thumb = ['settings' => $settings];
+      // Build individual splide thumbnail.
+      if ($is_nav) {
+        $item = $element['item'];
+        $nav = ['settings' => $sets];
 
         // Thumbnail usages: asNavFor pagers, dot, arrows, photobox thumbnails.
-        $thumb[$item_id] = empty($settings['thumbnail_style']) ? [] : $this->formatter->getThumbnail($settings, $element['item']);
-        $thumb['caption'] = empty($element['item']->{$tn_caption}) ? [] : ['#markup' => Xss::filterAdmin($element['item']->{$tn_caption})];
+        $nav[$item_id] = empty($sets['thumbnail_style'])
+          ? []
+          : $this->formatter->getThumbnail($sets, $item);
 
-        $build['thumb']['items'][$delta] = $thumb;
-        unset($thumb);
+        $markup = empty($item->{$tn_caption})
+          ? []
+          : ['#markup' => Xss::filterAdmin($item->{$tn_caption})];
+
+        $nav[$caption_id] = $tn_caption ? $markup : [];
+
+        $build['nav']['items'][] = $nav;
+        unset($nav);
       }
-
-      unset($element);
     }
   }
 

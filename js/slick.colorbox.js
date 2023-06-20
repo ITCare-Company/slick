@@ -139,7 +139,6 @@
     attach: function (context) {
       var me = Drupal.slickColorbox;
 
-      context = _d.context(context);
       _d.once(doSlickColorbox.bind(me), _idOnce, _element, context);
     },
     detach: function (context, setting, trigger) {

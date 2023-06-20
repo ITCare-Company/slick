@@ -7,7 +7,6 @@ use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\filter\FilterProcessResult;
-use Drupal\blazy\Blazy;
 use Drupal\blazy\Plugin\Filter\BlazyFilterBase;
 use Drupal\blazy\Plugin\Filter\BlazyFilterUtil as Util;
 use Drupal\slick\SlickDefault;
@@ -119,33 +118,29 @@ class SlickFilter extends BlazyFilterBase {
    * {@inheritdoc}
    */
   protected function preSettings(array &$settings, $text) {
+    // @todo remove post blazy:2.17.
     $settings['no_item_container'] = TRUE;
     $settings['item_id'] = 'slide';
     $settings['namespace'] = 'slick';
     $settings['visible_items'] = 0;
 
-    // @todo remove check post Blazy:2.10.
-    if (method_exists(get_parent_class($this), 'preSettings')) {
-      parent::preSettings($settings, $text);
-    }
+    $blazies = &$settings['blazies'];
+    $blazies->set('item.id', 'slide')
+      ->set('namespace', 'slick')
+      ->set('no.item_container', TRUE);
+
+    parent::preSettings($settings, $text);
   }
 
   /**
    * Build the slick.
    */
-  private function build($object, array $settings): array {
+  private function build(&$object, array $settings): array {
     $dataset = $object->getAttribute('data');
-    $blazies = $settings['blazies'] ?? NULL;
-
-    $id = Blazy::getHtmlId(str_replace('_', '-', $settings['plugin_id']));
-    $settings['id'] = $settings['gallery_id'] = $id;
-
-    if ($blazies) {
-      $blazies->set('lightbox.gallery_id', $id)
-        ->set('css.id', $id);
-    }
 
     if (!empty($dataset) && mb_strpos($dataset, ":") !== FALSE) {
+      $dataset = strip_tags($dataset);
+      $object->setAttribute('data', '');
       return $this->byEntity($object, $settings, $dataset);
     }
 
@@ -156,39 +151,40 @@ class SlickFilter extends BlazyFilterBase {
    * Build the slick using the node ID and field_name.
    */
   private function byEntity(\DOMElement $object, array &$settings, $attribute) {
+    // @todo use $list = $this->formatterSettings($settings, $attribute);
     [$entity_type, $id, $field_name, $field_image] = array_pad(array_map('trim', explode(":", $attribute, 4)), 4, NULL);
     if (empty($field_name)) {
       return [];
     }
 
+    $id = (int) $id;
     $entity = $this->manager->load($id, $entity_type);
+    $blazies = $settings['blazies'];
 
-    $blazies = $settings['blazies'] ?? NULL;
-
-    if ($blazies) {
-      $blazies->set('entity.id', $id)
-        ->set('entity.type_id', $entity_type)
-        ->set('field.name', $field_name);
-    }
+    $blazies->set('entity.id', $id)
+      ->set('entity.type_id', $entity_type)
+      ->set('field.name', $field_name);
 
     // @todo remove.
     $settings['field_name'] = $field_name;
     $settings['image'] = $field_image;
+    $settings['view_mode'] = ($settings['view_mode'] ?? '') ?: 'default';
 
     if ($entity && $entity->hasField($field_name)) {
       $list = $entity->get($field_name);
       $definition = $list ? $list->getFieldDefinition() : NULL;
-      $field_type = $settings['field_type'] = $definition ? $definition->get('field_type') : '';
+      $field_type = $settings['field_type'] = $definition
+        ? $definition->get('field_type') : '';
 
       $count = count($list);
       $settings['bundle'] = $bundle = $entity->bundle();
       $settings['count'] = $count;
 
-      if ($blazies) {
-        $blazies->set('entity.bundle', $bundle)
-          ->set('field.type', $field_type)
-          ->set('count', $count);
-      }
+      $blazies->set('bundles.' . $bundle, $bundle, TRUE)
+        ->set('count', $count)
+        ->set('entity.bundle', $bundle)
+        ->set('entity.instance', $entity)
+        ->set('field.type', $field_type);
 
       $build = ['settings' => $settings];
 
@@ -202,7 +198,8 @@ class SlickFilter extends BlazyFilterBase {
 
         $formatter = NULL;
         // @todo refine for main stage, etc.
-        if ($field_type == 'entity_reference' || $field_type == 'entity_reference_revisions') {
+        if ($field_type == 'entity_reference'
+          || $field_type == 'entity_reference_revisions') {
           if ($handler == 'default:media') {
             $formatter = 'slick_media';
           }
@@ -213,8 +210,7 @@ class SlickFilter extends BlazyFilterBase {
             }
             else {
               $settings['vanilla'] = TRUE;
-              $exists = $this->manager->moduleExists('slick_entityreference');
-              if ($exists) {
+              if ($this->manager->moduleExists('slick_entityreference')) {
                 $formatter = 'slick_entityreference';
               }
             }
@@ -348,13 +344,15 @@ class SlickFilter extends BlazyFilterBase {
       $uri = $sets['uri'] ?? '';
       $uri = $blazies ? $blazies->get('image.uri', $uri) : $uri;
       if ($uri) {
-        $build['slide'] = $this->blazyManager->getBlazy($build, $delta);
+        $build['slide'] = $this->blazyManager->getBlazy($build);
       }
     }
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @todo change into protected post blazy:2.17.
    */
   public function buildImageCaption(array &$build, &$node) {
     $item = parent::buildImageCaption($build, $node);
@@ -371,9 +369,9 @@ class SlickFilter extends BlazyFilterBase {
    */
   private function prepareBuild(array &$build, $node) {
     $sets    = &$build['settings'];
-    $blazies = $sets['blazies'] ?? NULL;
+    $blazies = $sets['blazies'];
     $count   = $sets['count'] ?? 0;
-    $count   = $blazies ? $blazies->get('count', $count) : $count;
+    $count   = $blazies->get('count', 0) ?: $count;
     $options = [];
 
     if ($check = $node->getAttribute('options')) {
@@ -384,28 +382,18 @@ class SlickFilter extends BlazyFilterBase {
     }
 
     // Extract settings from attributes.
-    if ($blazies) {
-      $blazies->set('was.initialized', FALSE);
-    }
-
-    if (method_exists($this, 'extractSettings')) {
-      $this->extractSettings($node, $sets);
-    }
-    // @todo remove post Blazy:2.10.
-    elseif (method_exists($this, 'prepareSettings')) {
-      $this->prepareSettings($node, $sets);
-    }
+    $blazies->set('was.initialized', FALSE);
+    $this->extractSettings($node, $sets);
 
     if (!isset($sets['nav'])) {
       $sets['nav'] = (!empty($sets['optionset_thumbnail']) && $count > 1);
     }
 
-    if ($blazies) {
-      $blazies->set('is.nav', $sets['nav']);
-    }
-
     $sets['_grid'] = !empty($sets['style']) && !empty($sets['grid']);
     $sets['visible_items'] = $sets['_grid'] && empty($sets['visible_items']) ? 6 : $sets['visible_items'];
+
+    $blazies->set('is.nav', $sets['nav'])
+      ->set('is.grid', $sets['_grid']);
 
     $build['options'] = $options;
   }
@@ -471,7 +459,7 @@ class SlickFilter extends BlazyFilterBase {
       return file_get_contents(dirname(__FILE__) . "/FILTER_TIPS.txt");
     }
 
-    return $this->t('<b>Slick</b>: Create a slideshow/ carousel: <br><ul><li><b>With self-closing using data entity, <code>data=ENTITY_TYPE:ID:FIELD_NAME:FIELD_IMAGE</code></b>:<br><code>[slick data="node:44:field_media" /]</code>. <code>FIELD_IMAGE</code> is optional.</li><li><b>With any HTML</b>: <br><code>[slick settings="{}" options="{}"]...[slide]...[/slide]...[/slick]</li></code></ul>');
+    return $this->t('<b>Slick</b>: Create a slideshow/ carousel: <br><ul><li><b>With self-closing using data entity, <code>data=ENTITY_TYPE:ID:FIELD_NAME:FIELD_IMAGE</code></b>:<br><code>[slick data="node:44:field_media" /]</code>. <code>FIELD_IMAGE</code> is optional for video poster, or hires, normally <code>field_media_image</code>.</li><li><b>With any HTML</b>: <br><code>[slick settings="{}" options="{}"]...[slide]...[/slide]...[/slick]</li></code></ul>');
   }
 
   /**

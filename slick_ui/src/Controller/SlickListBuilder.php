@@ -103,7 +103,6 @@ class SlickListBuilder extends SlickListBuilderBase {
     $settings = [];
     $settings['grid'] = 3;
     $settings['grid_medium'] = 2;
-    $settings['blazy'] = FALSE;
     $settings['style'] = 'column';
 
     $header = '<br><hr><h2>' . $this->t('Available skins') . '</h2>';

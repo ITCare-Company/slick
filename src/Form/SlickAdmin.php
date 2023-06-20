@@ -7,7 +7,7 @@ use Drupal\Core\Render\Element;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\blazy\Dejavu\BlazyAdminExtended;
+use Drupal\blazy\Form\BlazyAdminInterface;
 use Drupal\slick\SlickManagerInterface;
 use Drupal\slick\SlickDefault;
 
@@ -21,7 +21,7 @@ class SlickAdmin implements SlickAdminInterface {
   /**
    * The blazy admin service.
    *
-   * @var \Drupal\blazy\Dejavu\BlazyAdminExtended
+   * @var \Drupal\blazy\Form\BlazyAdminInterface
    */
   protected $blazyAdmin;
 
@@ -35,12 +35,12 @@ class SlickAdmin implements SlickAdminInterface {
   /**
    * Constructs a SlickAdmin object.
    *
-   * @param \Drupal\blazy\Dejavu\BlazyAdminExtended $blazy_admin
+   * @param \Drupal\blazy\Form\BlazyAdminInterface $blazy_admin
    *   The blazy admin service.
    * @param \Drupal\slick\SlickManagerInterface $manager
    *   The slick manager service.
    */
-  public function __construct(BlazyAdminExtended $blazy_admin, SlickManagerInterface $manager) {
+  public function __construct(BlazyAdminInterface $blazy_admin, SlickManagerInterface $manager) {
     $this->blazyAdmin = $blazy_admin;
     $this->manager = $manager;
   }
@@ -50,6 +50,7 @@ class SlickAdmin implements SlickAdminInterface {
    */
   public static function create(ContainerInterface $container) {
     return new static(
+      // @todo use $container->get('blazy.admin.formatter'), post blazy:2.17.
       $container->get('blazy.admin.extended'),
       $container->get('slick.manager')
     );

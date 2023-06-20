@@ -148,8 +148,8 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $settings  = &$build['settings'];
     $settings += SlickDefault::htmlSettings();
     $defaults  = Slick::defaultSettings();
-    $optionset = $build['optionset'];
-    $slicks    = $settings['slicks'] ?? NULL;
+    $optionset = &$build['optionset'];
+    $slicks    = $settings['slicks'];
 
     // Adds helper class if thumbnail on dots hover provided.
     if (!empty($settings['thumbnail_effect']) && (!empty($settings['thumbnail_style']) || !empty($settings['thumbnail']))) {
@@ -181,7 +181,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
     // Checks for breaking changes: Slick 1.8.1 - 1.9.0 / Accessible Slick.
     // @todo Remove this once the library has permanent solutions.
-    if ($slicks && $slicks->is('breaking')) {
+    if ($slicks->is('breaking')) {
       if ($optionset->getSetting('rows') == 1) {
         $js['rows'] = 0;
       }
@@ -332,14 +332,9 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     array &$options,
     array &$settings
   ): void {
-    $blazies    = $settings['blazies'] ?? NULL;
-    $route_name = $settings['route_name'] ?? '';
-    $sandboxed  = !empty($settings['is_preview']);
-
-    if ($blazies) {
-      $route_name = $blazies->get('route_name');
-      $sandboxed  = $blazies->is('sandboxed');
-    }
+    $blazies    = $settings['blazies'];
+    $route_name = $blazies->get('route_name');
+    $sandboxed  = $blazies->is('sandboxed');
 
     // Disable draggable for Layout Builder UI to not conflict with UI sortable.
     $lb = $route_name && strpos($route_name, 'layout_builder.') === 0;
@@ -374,7 +369,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     Blazy::verify($settings);
 
     $optionset = Slick::verifyOptionset($build, $settings['optionset']);
-    $blazies   = $settings['blazies'] ?? NULL;
+    $blazies   = $settings['blazies'];
     $slicks    = $settings['slicks'];
     $id        = $settings['id'] ?? NULL;
     $id        = $settings['id'] = Blazy::getHtmlId('slick', $id);
@@ -408,10 +403,8 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     }
 
     // Few dups are generic and needed by Blazy to interop Slick and Splide.
-    if ($blazies) {
-      $blazies->set('count', $count)
-        ->set('is.nav', $slicks->is('nav'));
-    }
+    $blazies->set('count', $count)
+      ->set('is.nav', $slicks->is('nav'));
 
     $options['count'] = $count;
     $this->prepareOptions($optionset, $options, $settings);
@@ -439,7 +432,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     // Supports Blazy multi-breakpoint or lightbox images if provided.
     // Cases: Blazy within Views gallery, or references without direct image.
     $data = $settings['first_image'] ?? [];
-    $data = $blazies ? $blazies->get('first.data') : $data;
+    $data = $blazies->get('first.data') ?: $data;
     if ($data && is_array($data)) {
       $this->isBlazy($settings, $data);
     }
