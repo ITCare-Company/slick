@@ -16,6 +16,7 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
   public function buildSettings(array &$build, $items) {
     $settings = &$build['settings'];
     $settings += SlickDefault::htmlSettings();
+    $blazies = $settings['blazies'];
 
     // Prepare integration with Blazy.
     $settings['_unload'] = FALSE;
@@ -25,7 +26,10 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
 
     // Only display thumbnail nav if having at least 2 slides. This might be
     // an issue such as for ElevateZoom Plus module, but it should work it out.
-    $nav = $settings['nav'] ?? !empty($settings['optionset_thumbnail']) && isset($items[1]);
+    $nav = $blazies->isset('nav') || isset($settings['nav']);
+    if (!$nav) {
+      $nav = !empty($settings['optionset_thumbnail']) && isset($items[1]);
+    }
 
     // Do not bother for SlickTextFormatter, or when vanilla is on.
     if (empty($settings['vanilla'])) {
@@ -37,11 +41,8 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
     }
 
     $settings['nav'] = $nav;
-    $blazies = $settings['blazies'] ?? NULL;
-    if ($blazies) {
-      $blazies->set('initial', $optionset->getSetting('initialSlide'))
-        ->set('is.nav', $nav);
-    }
+    $blazies->set('initial', $optionset->getSetting('initialSlide') ?: 0)
+      ->set('is.nav', $nav);
 
     // Pass basic info to parent::buildSettings().
     parent::buildSettings($build, $items);

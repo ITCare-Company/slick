@@ -88,7 +88,7 @@ class SlickAdmin implements SlickAdminInterface {
     }
 
     if (empty($definition['no_layouts'])) {
-      $definition['layouts'] = isset($definition['layouts']) ? array_merge($this->getLayoutOptions(), $definition['layouts']) : $this->getLayoutOptions();
+      $definition['layouts'] = isset($definition['layouts']) ? array_merge($this->getLayoutOptions(), $definition['layouts'] ?: []) : $this->getLayoutOptions();
     }
 
     $this->openingForm($form, $definition);
@@ -266,10 +266,12 @@ class SlickAdmin implements SlickAdminInterface {
     $definition['thumbnail_style'] = $definition['thumbnail_style'] ?? TRUE;
     $definition['ratios'] = $definition['ratios'] ?? TRUE;
 
-    $definition['thumbnail_effect'] = $definition['_thumbnail_effect'] ?? [
+    $effects = $definition['_thumbnail_effect'] ?? [];
+    $defaults = [
       'hover' => $this->t('Hoverable'),
       'grid'  => $this->t('Static grid'),
     ];
+    $definition['thumbnail_effect'] = array_merge($defaults, $effects);
 
     if (!isset($form['image_style'])) {
       $this->blazyAdmin->imageStyleForm($form, $definition);
