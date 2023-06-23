@@ -17,6 +17,7 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
     $settings = &$build['settings'];
     $settings += SlickDefault::htmlSettings();
     $blazies = $settings['blazies'];
+    $slicks = $settings['slicks'];
 
     // Prepare integration with Blazy.
     $settings['_unload'] = FALSE;
@@ -44,6 +45,8 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
     $settings['nav'] = $nav;
     $blazies->set('initial', $optionset->getSetting('initialSlide') ?: 0)
       ->set('is.nav', $nav);
+
+    $slicks->set('is.nav', $nav);
 
     // Pass basic info to parent::buildSettings().
     parent::buildSettings($build, $items);

@@ -88,8 +88,7 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
 
         $nav[$caption_id] = $tn_caption ? $markup : [];
 
-        $build['nav']['items'][] = $nav;
-        unset($nav);
+        $build['thumb']['items'][] = $nav;
       }
     }
   }

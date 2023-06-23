@@ -226,6 +226,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     // Checks if we have thumbnail navigation.
     $thumbs   = $build['thumb'] ?? [];
     $settings = $build['settings'];
+    $blazies  = $settings['blazies'];
     $slicks   = $settings['slicks'];
 
     // Prevents unused thumb going through the main display.
@@ -235,7 +236,8 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $slick[0] = $this->slick($build);
 
     // Build the thumbnail Slick.
-    if ($slicks->is('nav') && $thumbs) {
+    // Using $blazies so that elevatezoomplus, etc. can swap Slick/Splide once.
+    if ($blazies->is('nav') && $thumbs) {
       $slick[1] = $this->buildNavigation($build, $thumbs);
     }
 
@@ -379,7 +381,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
     // Additional settings.
     $wheel = $optionset->getSetting('mouseWheel');
-    $nav = $slicks->is('nav', !empty($settings['nav']));
+    $nav = $blazies->is('nav') || !empty($settings['nav']);
     $nav = $nav
       && (empty($settings['vanilla'])
       && !empty($settings['optionset_thumbnail'])
@@ -404,7 +406,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
     // Few dups are generic and needed by Blazy to interop Slick and Splide.
     $blazies->set('count', $count)
-      ->set('is.nav', $slicks->is('nav'));
+      ->set('is.nav', $nav);
 
     $options['count'] = $count;
     $this->prepareOptions($optionset, $options, $settings);
@@ -431,8 +433,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
     // Supports Blazy multi-breakpoint or lightbox images if provided.
     // Cases: Blazy within Views gallery, or references without direct image.
-    $data = $settings['first_image'] ?? [];
-    $data = $blazies->get('first.data') ?: $data;
+    $data = $blazies->get('first.data');
     if ($data && is_array($data)) {
       $this->isBlazy($settings, $data);
     }
