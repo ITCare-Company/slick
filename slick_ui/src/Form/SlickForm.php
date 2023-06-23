@@ -143,14 +143,21 @@ class SlickForm extends SlickFormBase {
     foreach ($this->getFormElements() as $name => $element) {
       $element['default'] = $element['default'] ?? '';
       $default_value = (NULL !== $slick->getSetting($name)) ? $slick->getSetting($name) : $element['default'];
+      $element_type = $element['type'] ?? '';
+
+      // In case more useful stupidity gets in the way.
+      if ($element_type == 'textfield') {
+        $default_value = strip_tags($default_value);
+      }
+
       $form['settings'][$name] = [
         '#title'         => $element['title'] ?? '',
         '#default_value' => $default_value,
       ];
 
-      if (isset($element['type'])) {
-        $form['settings'][$name]['#type'] = $element['type'];
-        if ($element['type'] != 'hidden') {
+      if ($element_type) {
+        $form['settings'][$name]['#type'] = $element_type;
+        if ($element_type != 'hidden') {
           $form['settings'][$name]['#attributes'] = $tooltip;
         }
         else {
@@ -158,7 +165,7 @@ class SlickForm extends SlickFormBase {
           unset($element['states']);
         }
 
-        if ($element['type'] == 'textfield') {
+        if ($element_type == 'textfield') {
           $form['settings'][$name]['#size'] = 20;
           $form['settings'][$name]['#maxlength'] = 255;
         }
