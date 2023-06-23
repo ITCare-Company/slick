@@ -26,6 +26,7 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
 
     // Only display thumbnail nav if having at least 2 slides. This might be
     // an issue such as for ElevateZoom Plus module, but it should work it out.
+    // @todo use $blazies->isset('is.nav') post blazy:2.17.
     $nav = $blazies->isset('nav') || isset($settings['nav']);
     if (!$nav) {
       $nav = !empty($settings['optionset_thumbnail']) && isset($items[1]);
@@ -61,7 +62,7 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
       $settings['overridables'] = array_filter($settings['overridables']);
     }
 
-    $this->moduleHandler()->alter('slick_settings', $build, $items);
+    $this->moduleHandler->alter('slick_settings', $build, $items);
   }
 
 }

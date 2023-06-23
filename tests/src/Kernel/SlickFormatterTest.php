@@ -180,8 +180,8 @@ class SlickFormatterTest extends BlazyKernelTestBase {
   public function testBuildSettings(array $settings, $expected) {
     $format['settings'] = array_merge($this->getFormatterSettings(), $settings) + SlickDefault::extendedSettings();
 
-    $this->slickFormatter->buildSettings($format, $this->testItems);
-    $this->assertArrayHasKey('bundle', $format['settings']);
+    $this->slickFormatter->preBuildElements($format, $this->testItems);
+    $this->assertArrayHasKey('blazies', $format['settings']);
   }
 
   /**
