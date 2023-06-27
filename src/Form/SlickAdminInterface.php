@@ -14,6 +14,16 @@ use Drupal\blazy\Form\BlazyAdminInteropInterface;
 interface SlickAdminInterface extends BlazyAdminInteropInterface {
 
   /**
+   * Returns the blazy admin formatter.
+   */
+  public function blazyAdmin();
+
+  /**
+   * Returns the slick manager.
+   */
+  public function manager();
+
+  /**
    * Returns default layout options for the core Image, or Views.
    */
   public function getLayoutOptions(): array;

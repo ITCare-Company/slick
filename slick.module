@@ -56,6 +56,7 @@ function slick_theme() {
  * Implements hook_library_info_build().
  */
 function slick_library_info_build() {
+  /* @phpstan-ignore-next-line */
   return slick('skin')->libraryInfoBuild();
 }
 
@@ -72,6 +73,7 @@ function slick_config_schema_info_alter(array &$definitions) {
  */
 function slick_library_info_alter(&$libraries, $extension) {
   if ($extension === 'slick') {
+    /* @phpstan-ignore-next-line */
     slick('skin')->libraryInfoAlter($libraries, $extension);
   }
 }

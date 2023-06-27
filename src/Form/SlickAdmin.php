@@ -57,14 +57,14 @@ class SlickAdmin implements SlickAdminInterface {
   }
 
   /**
-   * Returns the blazy admin formatter.
+   * {@inheritdoc}
    */
   public function blazyAdmin() {
     return $this->blazyAdmin;
   }
 
   /**
-   * Returns the slick manager.
+   * {@inheritdoc}
    */
   public function manager() {
     return $this->manager;

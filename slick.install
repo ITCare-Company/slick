@@ -13,6 +13,7 @@ function slick_requirements($phase) {
     return [];
   }
 
+  /* @phpstan-ignore-next-line */
   $path = slick('skin')->getSlickPath();
   $exists = $path ? is_file($path . '/slick/slick.min.js') : FALSE;
 

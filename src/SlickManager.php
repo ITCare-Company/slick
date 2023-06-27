@@ -259,6 +259,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    */
   protected function buildGridItem(array $items, $delta, array $settings): array {
     $output = [];
+    $blazies = $settings['blazies'];
 
     foreach ($items as $delta => $item) {
       $sets = array_merge($settings, (array) ($item['settings'] ?? []));
@@ -282,6 +283,14 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
             $attrs['class'][] = 'grid--litebox';
           }
         }
+      }
+
+      if ($attrs_alter = $blazies->get('grid.item_attributes') ?: []) {
+        $attrs = $this->merge($attrs, $attrs_alter);
+      }
+
+      if ($content_attrs_alter = $blazies->get('grid.content_attributes') ?: []) {
+        $content_attrs = $this->merge($content_attrs, $content_attrs_alter);
       }
 
       $theme = empty($settings['vanilla']) ? 'slide' : 'vanilla';
