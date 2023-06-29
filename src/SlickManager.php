@@ -2,7 +2,6 @@
 
 namespace Drupal\slick;
 
-use Drupal\Component\Utility\NestedArray;
 use Drupal\slick\Entity\Slick;
 use Drupal\blazy\Blazy;
 use Drupal\blazy\BlazyManagerBase;
@@ -221,13 +220,12 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     unset($element['#build']);
 
     // Prepare settings and assets.
-    $this->prepareSettings($element, $build);
+    $settings = $this->prepareSettings($element, $build);
 
     // Checks if we have thumbnail navigation.
-    $thumbs   = $build['thumb'] ?? [];
-    $settings = $build['settings'];
-    $blazies  = $settings['blazies'];
-    $slicks   = $settings['slicks'];
+    $thumbs  = $build['thumb'] ?? [];
+    $blazies = $settings['blazies'];
+    $slicks  = $settings['slicks'];
 
     // Prevents unused thumb going through the main display.
     unset($build['thumb']);
@@ -249,6 +247,11 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     // Collect the slick instances.
     $element['#items'] = $slick;
     $element['#cache'] = $this->getCacheMetadata($build);
+
+    // @fixme this attach method resets few defined settings above, that is why
+    // moved it to the end.
+    $attachments = $this->attach($settings);
+    $element['#attached'] = $this->merge($attachments, $build, 'attached');
 
     unset($build);
     return $element;
@@ -372,7 +375,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   /**
    * Prepare settings for the known module features, not necessarily users'.
    */
-  protected function prepareSettings(array &$element, array &$build): void {
+  protected function prepareSettings(array &$element, array &$build): array {
     $settings  = &$build['settings'];
     $settings += SlickDefault::htmlSettings();
     $options   = &$build['options'];
@@ -387,14 +390,15 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $thumb_id  = $id . '-thumbnail';
     $count     = $settings['count'] ?? NULL;
     $count     = $count ?: count($build['items']);
+    $wheel     = $optionset->getSetting('mouseWheel');
+    $nav       = $blazies->is('nav', !empty($settings['nav']));
 
-    // Additional settings.
-    $wheel = $optionset->getSetting('mouseWheel');
-    $nav = $blazies->is('nav') || !empty($settings['nav']);
-    $nav = $nav
-      && (empty($settings['vanilla'])
-      && !empty($settings['optionset_thumbnail'])
-      && isset($build['items'][1]));
+    // Make it work with ElevateZoomPlus.
+    if (!$blazies->is('nav_overridden') && empty($settings['vanilla'])) {
+      $nav = !empty($settings['optionset_thumbnail'])
+        && isset($build['items'][1]);
+    }
+
     $navpos = $settings['thumbnail_position'] ?? NULL;
 
     $data = [
@@ -420,7 +424,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $options['count'] = $count;
     $this->prepareOptions($optionset, $options, $settings);
 
-    if ($slicks->is('nav')) {
+    if ($blazies->is('nav')) {
       $options['asNavFor'] = "#{$thumb_id}-slider";
       $optionset_tn = Slick::loadWithFallback($settings['optionset_thumbnail']);
       $wheel = $optionset_tn->getSetting('mouseWheel');
@@ -433,10 +437,8 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     else {
       // Pass extra attributes such as those from Commerce product variations to
       // theme_slick() since we have no asNavFor wrapper here.
-      if (isset($element['#attributes'])) {
-        $build['attributes'] = empty($build['attributes'])
-          ? $element['#attributes']
-          : NestedArray::mergeDeep($build['attributes'], $element['#attributes']);
+      if ($attributes = $element['#attributes'] ?? []) {
+        $build['attributes'] = $this->merge($attributes, $build, 'attributes');
       }
     }
 
@@ -460,10 +462,9 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $slicks->set('is.mousewheel', $wheel)
       ->set('is.down_arrow', $down_arrow);
 
-    $attachments          = $this->attach($settings);
     $element['#settings'] = $settings;
-    $element['#attached'] = empty($build['attached'])
-      ? $attachments : NestedArray::mergeDeep($build['attached'], $attachments);
+
+    return $settings;
   }
 
   /**

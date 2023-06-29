@@ -25,28 +25,29 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
     // @todo move it into self::preSettingsData() post Blazy 2.10.
     $optionset = Slick::verifyOptionset($build, $settings['optionset']);
 
+    // Prepare integration with Blazy.
+    $blazies->set('initial', $optionset->getSetting('initialSlide') ?: 0);
+
     // Only display thumbnail nav if having at least 2 slides. This might be
     // an issue such as for ElevateZoom Plus module, but it should work it out.
     // @todo use $blazies->isset('is.nav') post blazy:2.17.
-    $nav = $blazies->isset('nav') || isset($settings['nav']);
+    $nav = $blazies->is('nav') || isset($settings['nav']);
     if (!$nav) {
       $nav = !empty($settings['optionset_thumbnail']) && isset($items[1]);
     }
+
+    // Nothing to work with Vanilla on, disable the asnavfor, else JS error.
+    $nav = $nav && empty($settings['vanilla']);
+
+    // Dups to allow one swap to all sliders as seen at ElevateZoomPlus.
+    $settings['nav'] = $nav;
+    $blazies->set('is.nav', $nav);
+    $slicks->set('is.nav', $nav);
 
     // Do not bother for SlickTextFormatter, or when vanilla is on.
     if (empty($settings['vanilla'])) {
       $optionset->whichLazy($settings);
     }
-    else {
-      // Nothing to work with Vanilla on, disable the asnavfor, else JS error.
-      $nav = FALSE;
-    }
-
-    $settings['nav'] = $nav;
-    $blazies->set('initial', $optionset->getSetting('initialSlide') ?: 0)
-      ->set('is.nav', $nav);
-
-    $slicks->set('is.nav', $nav);
 
     // Pass basic info to parent::buildSettings().
     parent::buildSettings($build, $items);

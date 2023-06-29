@@ -124,7 +124,7 @@ class SlickFilter extends BlazyFilterBase {
     $settings['namespace'] = 'slick';
     $settings['visible_items'] = 0;
 
-    $blazies = &$settings['blazies'];
+    $blazies = $settings['blazies'];
     $blazies->set('item.id', 'slide')
       ->set('namespace', 'slick')
       ->set('no.item_container', TRUE);
