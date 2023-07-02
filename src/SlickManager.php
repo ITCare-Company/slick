@@ -73,8 +73,8 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    * {@inheritdoc}
    */
   public function build(array $build): array {
-    foreach (SlickDefault::themeProperties() as $key) {
-      $build[$key] = $build[$key] ?? [];
+    foreach (SlickDefault::themeProperties() as $key => $default) {
+      $build[$key] = $build[$key] ?? $default;
     }
 
     $slick = [
@@ -205,8 +205,8 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
     $this->moduleHandler->alter('slick_optionset', $optionset, $settings);
 
-    foreach (SlickDefault::themeProperties() as $key) {
-      $element["#$key"] = $build[$key] ?? [];
+    foreach (SlickDefault::themeProperties() as $key => $default) {
+      $element["#$key"] = $build[$key] ?? $default;
     }
 
     return $element;
@@ -507,8 +507,8 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    *   The cacheable renderable array of a slick instance, or empty array.
    */
   protected function slick(array $build) {
-    foreach (SlickDefault::themeProperties() as $key) {
-      $build[$key] = $build[$key] ?? [];
+    foreach (SlickDefault::themeProperties() as $key => $default) {
+      $build[$key] = $build[$key] ?? $default;
     }
 
     return empty($build['items']) ? [] : [

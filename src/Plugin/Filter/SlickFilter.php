@@ -262,7 +262,7 @@ class SlickFilter extends BlazyFilterBase {
       }
 
       $sets   = &$build['settings'];
-      $sets  += SlickDefault::itemSettings();
+      $sets  += SlickDefault::htmlSettings();
       $tn_uri = $node->getAttribute('data-thumb');
 
       $sets['delta'] = $delta;
@@ -306,7 +306,7 @@ class SlickFilter extends BlazyFilterBase {
 
     $tn_uri   = $node->getAttribute('data-thumb');
     $sets     = &$build['settings'];
-    $sets    += SlickDefault::itemSettings();
+    $sets    += SlickDefault::htmlSettings();
     $dom      = Html::load($text);
     $xpath    = new \DOMXPath($dom);
     $children = $xpath->query("//iframe | //img");
@@ -476,6 +476,7 @@ class SlickFilter extends BlazyFilterBase {
       'thumb_captions' => 'default',
       'thumb_positions' => TRUE,
       'nav' => TRUE,
+      'filter' => TRUE,
     ];
 
     $element = [];

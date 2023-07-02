@@ -53,7 +53,7 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
     $item_id    = $blazies->get('item.id');
     $caption_id = 'caption';
     $tn_caption = $settings['thumbnail_caption'] ?? NULL;
-    $is_nav     = $blazies->is('nav') ?? $settings['nav'] ?? FALSE;
+    $is_nav     = $blazies->is('nav') ?: $settings['nav'] ?? FALSE;
     $elements   = $this->getElements($build, $files, $caption_id);
 
     foreach ($elements as $element) {

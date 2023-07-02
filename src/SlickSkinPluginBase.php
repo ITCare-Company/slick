@@ -4,6 +4,7 @@ namespace Drupal\slick;
 
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\blazy\Blazy;
 
 /**
  * Provides base class for all slick skins.
@@ -70,6 +71,13 @@ abstract class SlickSkinPluginBase extends PluginBase implements SlickSkinPlugin
    */
   public function dots() {
     return $this->dots;
+  }
+
+  /**
+   * Alias for Blazy::getPath().
+   */
+  protected function getPath($type, $name) {
+    return Blazy::getPath($type, $name, TRUE);
   }
 
   /**

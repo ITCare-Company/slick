@@ -149,12 +149,12 @@ class SlickDefault extends BlazyDefault {
    */
   public static function themeProperties() {
     return [
-      'attached',
-      'attributes',
-      'items',
-      'options',
-      'optionset',
-      'settings',
+      'attached' => [],
+      'attributes' => [],
+      'items' => [],
+      'options' => [],
+      'optionset' => NULL,
+      'settings' => [],
     ];
   }
 

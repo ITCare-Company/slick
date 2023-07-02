@@ -1,4 +1,9 @@
 
+Slick 8.x-2.0-dev, 2023-07-02
+-----------------------------
+- Deprecated variables.js for variables.options as per slick:2.10.
+- Added more variables to template_preprocess_slick.
+
 Slick 8.x-2.0-dev, 2023-06-29
 -----------------------------
 - Fixed for thumbnail navigation regression post 2.9.

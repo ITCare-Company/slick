@@ -5,7 +5,6 @@ namespace Drupal\slick_ui\Form;
 use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\slick\SlickDefault;
 use Drupal\slick\Entity\Slick;
 use Drupal\slick\Entity\SlickInterface;
 
@@ -19,7 +18,7 @@ class SlickForm extends SlickFormBase {
    */
   public function form(array $form, FormStateInterface $form_state) {
     $form  = parent::form($form, $form_state);
-    $path  = SlickDefault::getPath('module', 'slick');
+    $path  = $this->manager->getPath('module', 'slick');
     $slick = $this->entity;
 
     // Satisfy phpstan.

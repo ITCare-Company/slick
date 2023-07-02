@@ -3,6 +3,7 @@
 namespace Drupal\slick;
 
 use Drupal\Component\Plugin\Mapper\MapperInterface;
+use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheBackendInterface;
@@ -309,7 +310,8 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
       $defined_skins = $nav_skins ? $this->getSkins()[$group] : $this->getSkins()['skins'];
 
       foreach ($defined_skins as $skin => $properties) {
-        $item = $option ? strip_tags($properties['name']) : $properties;
+        $name = $properties['name'] ?? 'x';
+        $item = $option ? Html::escape($name) : $properties;
         if (!empty($group)) {
           if (isset($properties['group'])) {
             if ($properties['group'] != $group) {

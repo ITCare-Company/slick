@@ -381,7 +381,7 @@
  *   // If you copy this file, be sure to add base_path() before any asset path
  *   // (css or js) as otherwise failing to load the assets. Your module can
  *   // register paths pointing to a theme. Almost similar to library.
- *   $theme_path = Blazy::getPath('theme', 'my_theme', TRUE);
+ *   $theme_path = $this->getPath('theme', 'my_theme');
  *
  *   return [
  *     'skin_name' => [
