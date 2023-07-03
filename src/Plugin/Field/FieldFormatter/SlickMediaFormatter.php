@@ -55,18 +55,6 @@ class SlickMediaFormatter extends SlickEntityReferenceFormatterBase {
   /**
    * {@inheritdoc}
    */
-  public function getScopedFormElements() {
-    $multiple = $this->fieldDefinition->getFieldStorageDefinition()->isMultiple();
-
-    return [
-      'grid_form' => $multiple,
-      'style'     => $multiple,
-    ] + $this->getCommonScopedFormElements() + parent::getScopedFormElements();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public static function isApplicable(FieldDefinitionInterface $field_definition) {
     $storage = $field_definition->getFieldStorageDefinition();
     return $storage->isMultiple() && $storage->getSetting('target_type') === 'media';

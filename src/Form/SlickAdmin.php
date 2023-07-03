@@ -78,6 +78,9 @@ class SlickAdmin implements SlickAdminInterface {
     $definition['optionsets']       = $definition['optionsets'] ?? $this->getOptionsetsByGroupOptions('main');
     $definition['skins']            = $definition['skins'] ?? $this->getSkinsByGroupOptions('main');
     $definition['responsive_image'] = $definition['responsive_image'] ?? TRUE;
+    $definition['grid_required']    = FALSE;
+    $definition['no_grid_header']   = FALSE;
+    $definition['slider']           = TRUE;
 
     foreach (['optionsets', 'skins'] as $key) {
       if (isset($definition[$key]['default'])) {

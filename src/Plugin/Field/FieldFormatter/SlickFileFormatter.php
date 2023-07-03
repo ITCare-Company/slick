@@ -3,7 +3,6 @@
 namespace Drupal\slick\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FieldDefinitionInterface;
-use Drupal\blazy\Dejavu\BlazyVideoTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -16,9 +15,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   \Drupal\slick\Plugin\Field\FieldFormatter\SlickMediaFormatter instead.
  */
 class SlickFileFormatter extends SlickFileFormatterBase {
-
-  // @todo remove post blazy:2.x.
-  use BlazyVideoTrait;
 
   /**
    * {@inheritdoc}
@@ -42,7 +38,7 @@ class SlickFileFormatter extends SlickFileFormatterBase {
    * {@inheritdoc}
    */
   public function buildSettings() {
-    return ['blazy' => TRUE] + parent::getSettings();
+    return ['blazy' => TRUE] + parent::buildSettings();
   }
 
   /**
@@ -53,7 +49,7 @@ class SlickFileFormatter extends SlickFileFormatterBase {
       'fieldable_form' => TRUE,
       'multimedia'     => TRUE,
       'view_mode'      => $this->viewMode,
-    ] + $this->getCommonScopedFormElements() + parent::getScopedFormElements();
+    ] + parent::getScopedFormElements();
   }
 
   /**

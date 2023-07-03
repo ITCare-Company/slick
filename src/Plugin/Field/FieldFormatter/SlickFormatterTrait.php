@@ -48,15 +48,19 @@ trait SlickFormatterTrait {
    * {@inheritdoc}
    */
   protected function pluginSettings(&$blazies, array &$settings): void {
-    $blazies->set('item.id', 'slide')
-      ->set('namespace', 'slick');
+    // @todo remove post blazy:2.18.
+    $blazies->set('namespace', 'slick')
+      ->set('item.id', 'slide');
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @todo remove post blazy:2.18.
    */
   public function getCommonFieldDefinition() {
-    return ['namespace' => 'slick'] + $this->blazyCommonFieldDefinition();
+    return ['namespace' => 'slick']
+      + $this->blazyCommonFieldDefinition();
   }
 
 }
