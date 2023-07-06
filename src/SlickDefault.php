@@ -65,7 +65,7 @@ class SlickDefault extends BlazyDefault {
    */
   public static function filterSettings() {
     $settings = self::imageSettings();
-    $unused = self::gridSettings() + [
+    $unused = [
       'breakpoints' => [],
       'sizes'       => '',
       'grid_header' => '',
@@ -75,7 +75,7 @@ class SlickDefault extends BlazyDefault {
         unset($settings[$key]);
       }
     }
-    return $settings;
+    return $settings + self::gridSettings();
   }
 
   /**
@@ -165,6 +165,15 @@ class SlickDefault extends BlazyDefault {
    */
   public static function getPath($type, $name, $absolute = FALSE): string {
     return Blazy::getPath($type, $name, $absolute);
+  }
+
+  /**
+   * A helper to convert settings to #settings to avoid render error.
+   *
+   * Needed for out of sync module like BVEF.
+   */
+  public static function toSettings(array $data): array {
+    return $data['#settings'] ?? $data['settings'] ?? [];
   }
 
 }

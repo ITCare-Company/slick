@@ -45,8 +45,6 @@ class SlickMediaFormatter extends SlickEntityReferenceFormatterBase {
 
   /**
    * Builds the settings.
-   *
-   * @todo inherit and extends parent post blazy:2.x.
    */
   public function buildSettings() {
     return ['blazy' => TRUE] + parent::buildSettings();

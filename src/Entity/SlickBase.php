@@ -7,6 +7,8 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
 
 /**
  * Defines the Slick configuration entity.
+ *
+ * @todo extends BlazyConfigEntityBase post blazy:2.17.
  */
 abstract class SlickBase extends ConfigEntityBase implements SlickBaseInterface {
 
@@ -85,8 +87,8 @@ abstract class SlickBase extends ConfigEntityBase implements SlickBaseInterface 
   /**
    * {@inheritdoc}
    */
-  public function getSetting($name) {
-    return $this->getSettings()[$name] ?? NULL;
+  public function getSetting($name, $default = NULL) {
+    return $this->getSettings()[$name] ?? $default;
   }
 
   /**
@@ -95,15 +97,6 @@ abstract class SlickBase extends ConfigEntityBase implements SlickBaseInterface 
   public function setSetting($name, $value) {
     $this->options['settings'][$name] = $value;
     return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function defaultSettings($group = 'settings') {
-    $settings = self::load('default')->options[$group];
-    self::removeUnsupportedSettings($settings);
-    return $settings;
   }
 
   /**
@@ -129,16 +122,45 @@ abstract class SlickBase extends ConfigEntityBase implements SlickBaseInterface 
   }
 
   /**
-   * Load the optionset with a fallback.
+   * Returns available slick default options under group 'settings'.
+   *
+   * @param string $group
+   *   The name of group: settings, responsives.
+   *
+   * @return array
+   *   The default settings under options.
    */
-  public static function loadWithFallback($id) {
+  public static function defaultSettings($group = 'settings'): array {
+    $settings = self::load('default')->options[$group] ?? [];
+    self::removeUnsupportedSettings($settings);
+    return $settings;
+  }
+
+  /**
+   * Load the optionset with a fallback.
+   *
+   * @param string $id
+   *   The optionset name.
+   *
+   * @return object
+   *   The optionset object.
+   */
+  public static function loadSafely($id) {
     $optionset = self::load($id);
 
     // Ensures deleted optionset while being used doesn't screw up.
-    if (empty($optionset)) {
-      $optionset = self::load('default');
-    }
-    return $optionset;
+    return empty($optionset) ? self::load('default') : $optionset;
+  }
+
+  /**
+   * Load the optionset with a fallback.
+   *
+   * @todo deprecated in slick:8.x-2.10 and is removed from slick:3.0.0.
+   *   Use self::loadSafely() instead.
+   * @see https://www.drupal.org/node/3103018
+   */
+  public static function loadWithFallback($id) {
+    return self::loadSafely($id);
   }
 
 }

@@ -58,7 +58,7 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
    * Build the slick carousel elements.
    */
   public function buildElements(array &$build, $files, $langcode) {
-    $settings   = &$build['settings'];
+    $settings   = $build['settings'];
     $blazies    = $settings['blazies'];
     $item_id    = $blazies->get('item.id');
     $caption_id = 'caption';
@@ -67,7 +67,7 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
     $elements   = $this->getElements($build, $files, $caption_id);
 
     foreach ($elements as $element) {
-      $sets = $element['settings'];
+      $sets = SlickDefault::toSettings($element);
       $captions = $element[$caption_id] ?? [];
 
       // Do not pass captions to theme_blazy().

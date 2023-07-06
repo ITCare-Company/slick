@@ -239,7 +239,7 @@ class Slick extends SlickBase implements SlickInterface {
    */
   public static function verifyOptionset(array &$build, $name) {
     if (empty($build['optionset'])) {
-      $build['optionset'] = self::loadWithFallback($name);
+      $build['optionset'] = self::loadSafely($name);
     }
     // Also returns it for convenient.
     return $build['optionset'];

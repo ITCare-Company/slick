@@ -109,9 +109,10 @@ class SlickFilter extends BlazyFilterBase {
     $settings = parent::buildSettings($text);
 
     // Provides alter like formatters to modify at one go, even clumsy here.
+    // @todo conver to #settings at/by 3.x.
     $build = ['settings' => $settings];
     $this->manager->moduleHandler()->alter('slick_settings', $build, $this->settings);
-    return array_merge($settings, $build['settings']);
+    return array_merge($settings, SlickDefault::toSettings($build));
   }
 
   /**
@@ -402,7 +403,7 @@ class SlickFilter extends BlazyFilterBase {
    * Build the slick navigation.
    */
   private function buildNav(array &$build, array $element, $delta) {
-    $sets    = $element['settings'];
+    $sets    = SlickDefault::toSettings($element);
     $item    = $element['item'] ?? NULL;
     $caption = $sets['thumbnail_caption'] ?? NULL;
     $text    = ($caption && $item && !empty($item->{$caption}))
@@ -468,15 +469,21 @@ class SlickFilter extends BlazyFilterBase {
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $definition = [
       'settings' => $this->settings,
-      'background' => TRUE,
-      'caches' => FALSE,
+      'grid_form' => TRUE,
       'image_style_form' => TRUE,
       'media_switch_form' => TRUE,
+      'background' => TRUE,
+      'caches' => FALSE,
+      'captions' => 'default',
       'multimedia' => TRUE,
+      'style' => TRUE,
       'thumb_captions' => 'default',
       'thumb_positions' => TRUE,
+      'thumbnail_style' => TRUE,
       'nav' => TRUE,
       'filter' => TRUE,
+      'no_preload' => TRUE,
+      'plugin_id' => $this->getPluginId(),
     ];
 
     $element = [];

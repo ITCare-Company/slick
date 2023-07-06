@@ -132,7 +132,7 @@ class SlickManagerTest extends BlazyKernelTestBase {
     $build = $this->display->build($this->entity);
 
     $items = !$items ? [] : $build[$this->testFieldName]['#build']['items'];
-    $optionset = Slick::loadWithFallback($settings['optionset']);
+    $optionset = Slick::loadSafely($settings['optionset']);
     $build = [
       'items'     => $items,
       'settings'  => $settings,

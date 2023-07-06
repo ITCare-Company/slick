@@ -246,12 +246,13 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
     // Collect the slick instances.
     $element['#items'] = $slick;
-    $element['#cache'] = $this->getCacheMetadata($build);
 
     // @fixme this attach method resets few defined settings above, that is why
     // moved it to the end.
-    $attachments = $this->attach($settings);
-    $element['#attached'] = $this->merge($attachments, $build, 'attached');
+    // $attachments = $this->attach($settings);
+    // $element['#attached'] = $this->merge($attachments, $build, 'attached');
+    // $element['#cache'] = $this->getCacheMetadata($build);
+    $this->setAttachments($element, $settings);
 
     unset($build);
     return $element;
@@ -426,7 +427,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
     if ($blazies->is('nav')) {
       $options['asNavFor'] = "#{$thumb_id}-slider";
-      $optionset_tn = Slick::loadWithFallback($settings['optionset_thumbnail']);
+      $optionset_tn = Slick::loadSafely($settings['optionset_thumbnail']);
       $wheel = $optionset_tn->getSetting('mouseWheel');
       $vertical_tn = $optionset_tn->getSetting('vertical');
 

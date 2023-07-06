@@ -89,6 +89,16 @@ class SlickAdmin implements SlickAdminInterface {
       }
     }
 
+    // @todo remove post blazy:2.17.
+    if (!empty($definition['thumb_captions'])) {
+      if ($definition['thumb_captions'] == 'default') {
+        $definition['thumb_captions'] = [
+          'alt' => $this->t('Alt'),
+          'title' => $this->t('Title'),
+        ];
+      }
+    }
+
     if (empty($definition['no_layouts'])) {
       $definition['layouts'] = isset($definition['layouts']) ? array_merge($this->getLayoutOptions(), $definition['layouts'] ?: []) : $this->getLayoutOptions();
     }
@@ -205,12 +215,6 @@ class SlickAdmin implements SlickAdminInterface {
     }
 
     if (!empty($definition['thumb_captions'])) {
-      if ($definition['thumb_captions'] == 'default') {
-        $definition['thumb_captions'] = [
-          'alt' => $this->t('Alt'),
-          'title' => $this->t('Title'),
-        ];
-      }
       $form['thumbnail_caption'] = [
         '#type'        => 'select',
         '#title'       => $this->t('Thumbnail caption'),
