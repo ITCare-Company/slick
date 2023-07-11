@@ -55,36 +55,46 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
   }
 
   /**
-   * Build the slick carousel elements.
+   * {@inheritdoc}
+   *
+   * @todo use array for $caption_id post blazy:2.17.
    */
   public function buildElements(array &$build, $files, $langcode) {
-    $settings   = $build['settings'];
+    $settings   = SlickDefault::toHashtag($build);
     $blazies    = $settings['blazies'];
-    $item_id    = $blazies->get('item.id');
+    $item_id    = $this->itemId;
     $caption_id = 'caption';
     $tn_caption = $settings['thumbnail_caption'] ?? NULL;
     $is_nav     = $blazies->is('nav') ?: $settings['nav'] ?? FALSE;
     $elements   = $this->getElements($build, $files, $caption_id);
 
     foreach ($elements as $element) {
-      $sets = SlickDefault::toSettings($element);
+      $sets = SlickDefault::toHashtag($element);
       $captions = $element[$caption_id] ?? [];
 
       // Do not pass captions to theme_blazy().
       unset($element[$caption_id]);
 
       // Image with responsive image, lazyLoad, and lightbox supports.
-      $element[$item_id] = $this->formatter->getBlazy($element);
+      $blazy = $this->formatter->getBlazy($element);
+      $element[$item_id] = $blazy;
 
       // Build captions if so configured.
       $element[$caption_id] = $captions;
 
-      // Build individual splide item.
+      // Build individual slick item.
       $build['items'][] = $element;
 
-      // Build individual splide thumbnail.
+      // Build individual slick thumbnail.
       if ($is_nav) {
         $item = $element['item'];
+
+        // Update with blazy processed settings such as unstyled extensions.
+        $item_build = $blazy['#build'] ?? [];
+        if ($blazysets = SlickDefault::toHashtag($item_build)) {
+          $sets['blazies']->merge($blazysets['blazies']->storage());
+        }
+
         $nav = ['settings' => $sets];
 
         // Thumbnail usages: asNavFor pagers, dot, arrows, photobox thumbnails.

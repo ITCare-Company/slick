@@ -114,7 +114,7 @@ Be sure to clear cache since skins are permanently cached!
 * **Grid**
 
   Only reasonable if you have considerable amount of slides.
-  Uses the Foundation 5.5 block-grid, and disabled if you choose your own skin
+  Uses the Foundation 5.5 b-grid, and disabled if you choose your own skin
   not named Grid. Otherwise overrides skin Grid accordingly.
 
   **Requires:**
@@ -169,7 +169,7 @@ To create Slick grid or multiple rows carousel, there are 3 options:
    + `slidesToShow, Rows and slidesPerRow = 1`
 
 The first 2 are supported by core library using pure JS approach.
-The last is the Module feature using pure `CSS Foundation` block-grid.
+The last is the Module feature using pure `CSS Foundation` b-grid.
 
 **The key is:**
 

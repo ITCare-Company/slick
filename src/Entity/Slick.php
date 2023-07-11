@@ -153,7 +153,25 @@ class Slick extends SlickBase implements SlickInterface {
   /**
    * {@inheritdoc}
    */
-  public function removeDefaultValues(array $js): array {
+  public function removeWastedDependentOptions(array &$js): void {
+    foreach (self::getDependentOptions() as $key => $option) {
+      if (isset($js[$key]) && empty($js[$key])) {
+        foreach ($option as $dependent) {
+          unset($js[$dependent]);
+        }
+      }
+    }
+
+    if (!empty($js['useCSS']) && !empty($js['cssEaseBezier'])) {
+      $js['cssEase'] = $js['cssEaseBezier'];
+    }
+    unset($js['cssEaseOverride'], $js['cssEaseBezier']);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function toJson(array $js): array {
     $config   = [];
     $defaults = self::defaultSettings();
 
@@ -206,24 +224,6 @@ class Slick extends SlickBase implements SlickInterface {
   }
 
   /**
-   * {@inheritdoc}
-   */
-  public function removeWastedDependentOptions(array &$js): void {
-    foreach (self::getDependentOptions() as $key => $option) {
-      if (isset($js[$key]) && empty($js[$key])) {
-        foreach ($option as $dependent) {
-          unset($js[$dependent]);
-        }
-      }
-    }
-
-    if (!empty($js['useCSS']) && !empty($js['cssEaseBezier'])) {
-      $js['cssEase'] = $js['cssEaseBezier'];
-    }
-    unset($js['cssEaseOverride'], $js['cssEaseBezier']);
-  }
-
-  /**
    * Checks which lazyload to use.
    */
   public function whichLazy(array &$settings): void {
@@ -235,14 +235,16 @@ class Slick extends SlickBase implements SlickInterface {
   }
 
   /**
-   * If optionset does not exist, create one.
+   * Strip out options containing default values so to have real clean JSON.
+   *
+   * @return array
+   *   The cleaned out settings.
+   *
+   * @todo reprecated in 2.10, and is removed from 3.x. Use self::toJson()
+   *   instead.
    */
-  public static function verifyOptionset(array &$build, $name) {
-    if (empty($build['optionset'])) {
-      $build['optionset'] = self::loadSafely($name);
-    }
-    // Also returns it for convenient.
-    return $build['optionset'];
+  public function removeDefaultValues(array $js): array {
+    return $this->toJson($js);
   }
 
 }

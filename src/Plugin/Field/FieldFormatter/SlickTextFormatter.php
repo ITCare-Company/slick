@@ -52,7 +52,9 @@ class SlickTextFormatter extends BlazyTextFormatter {
   }
 
   /**
-   * Build the slick carousel elements.
+   * {@inheritdoc}
+   *
+   * @todo remove post blazy:2.17.
    */
   public function buildElements(array &$build, $items, $langcode) {
     foreach ($this->getElements($items) as $element) {

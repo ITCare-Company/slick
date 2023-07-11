@@ -29,7 +29,7 @@ interface SlickAdminInterface extends BlazyAdminInteropInterface {
   public function getLayoutOptions(): array;
 
   /**
-   * Returns available splide optionsets by group.
+   * Returns available slick optionsets by group.
    */
   public function getOptionsetsByGroupOptions($group = ''): array;
 
@@ -39,7 +39,7 @@ interface SlickAdminInterface extends BlazyAdminInteropInterface {
   public function getOverridableOptions(): array;
 
   /**
-   * Returns available splide skins for select options.
+   * Returns available slick skins for select options.
    */
   public function getSkinsByGroupOptions($group = ''): array;
 

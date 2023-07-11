@@ -47,7 +47,7 @@ abstract class SlickEntityReferenceFormatterBase extends BlazyEntityReferenceBas
    */
   public function buildElementThumbnail(array &$build, $element, $entity, $delta) {
     // The settings in $element has updated metadata extracted from media.
-    $settings  = SlickDefault::toSettings($element);
+    $settings  = SlickDefault::toHashtag($element);
     $item_id   = $this->itemId;
     $view_mode = $settings['view_mode'] ?? '';
     $caption   = $settings['thumbnail_caption'] ?? NULL;

@@ -1,4 +1,9 @@
 
+Slick 8.x-2.0-dev, 2023-07-11
+-----------------------------
+- Fixed for poorly-informed thumbnails.
+- Changed grid loops to generators.
+
 Slick 8.x-2.0-dev, 2023-07-02
 -----------------------------
 - Deprecated variables.js for variables.options as per slick:2.10.

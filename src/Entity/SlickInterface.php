@@ -64,17 +64,17 @@ interface SlickInterface extends SlickBaseInterface {
   public function setResponsiveSettings($values, $delta = 0, $key = 'settings'): self;
 
   /**
+   * Removes wasted dependent options, even if not empty.
+   */
+  public function removeWastedDependentOptions(array &$js): void;
+
+  /**
    * Strip out options containing default values so to have real clean JSON.
    *
    * @return array
    *   The cleaned out settings.
    */
-  public function removeDefaultValues(array $js): array;
-
-  /**
-   * Removes wasted dependent options, even if not empty.
-   */
-  public function removeWastedDependentOptions(array &$js): void;
+  public function toJson(array $js): array;
 
   /**
    * Checks which lazyload to use.

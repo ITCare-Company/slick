@@ -68,12 +68,13 @@ abstract class SlickBase extends ConfigEntityBase implements SlickBaseInterface 
    * {@inheritdoc}
    */
   public function getSettings($ansich = FALSE) {
-    if ($ansich && isset($this->options['settings'])) {
-      return $this->options['settings'];
+    $settings = $this->options['settings'] ?? [];
+    if ($ansich) {
+      return $settings;
     }
 
     // With the Optimized options, all defaults are cleaned out, merge em.
-    return isset($this->options['settings']) ? array_merge(self::defaultSettings(), $this->options['settings']) : self::defaultSettings();
+    return $settings + self::defaultSettings();
   }
 
   /**
@@ -97,28 +98,6 @@ abstract class SlickBase extends ConfigEntityBase implements SlickBaseInterface 
   public function setSetting($name, $value) {
     $this->options['settings'][$name] = $value;
     return $this;
-  }
-
-  /**
-   * Remove settings that aren't supported by the active library.
-   */
-  public static function removeUnsupportedSettings(array &$settings = []) {
-    $library = \Drupal::config('slick.settings')->get('library');
-    // The `focusOnSelect`is required to sync asNavFor, but removed. Here must
-    // be kept for future fix, or less breaking changes due to different logic.
-    if ($library == 'accessible-slick') {
-      unset($settings['accessibility']);
-      unset($settings['focusOnChange']);
-    }
-    else {
-      unset($settings['regionLabel']);
-      unset($settings['useGroupRole']);
-      unset($settings['instructionsText']);
-      unset($settings['useAutoplayToggleButton']);
-      unset($settings['pauseIcon']);
-      unset($settings['playIcon']);
-      unset($settings['arrowsPlacement']);
-    }
   }
 
   /**
@@ -150,6 +129,47 @@ abstract class SlickBase extends ConfigEntityBase implements SlickBaseInterface 
 
     // Ensures deleted optionset while being used doesn't screw up.
     return empty($optionset) ? self::load('default') : $optionset;
+  }
+
+  /**
+   * Remove settings that aren't supported by the active library.
+   */
+  public static function removeUnsupportedSettings(array &$settings = []) {
+    $library = \Drupal::config('slick.settings')->get('library');
+    // The `focusOnSelect`is required to sync asNavFor, but removed. Here must
+    // be kept for future fix, or less breaking changes due to different logic.
+    if ($library == 'accessible-slick') {
+      unset($settings['accessibility']);
+      unset($settings['focusOnChange']);
+    }
+    else {
+      unset($settings['regionLabel']);
+      unset($settings['useGroupRole']);
+      unset($settings['instructionsText']);
+      unset($settings['useAutoplayToggleButton']);
+      unset($settings['pauseIcon']);
+      unset($settings['playIcon']);
+      unset($settings['arrowsPlacement']);
+    }
+  }
+
+  /**
+   * If optionset does not exist, create one.
+   *
+   * @param array $build
+   *   The build array.
+   * @param string $name
+   *   The optionset name.
+   *
+   * @return \Drupal\slick\Entity\Slick
+   *   The optionset object.
+   */
+  public static function verifyOptionset(array &$build, $name) {
+    if (empty($build['optionset'])) {
+      $build['optionset'] = self::loadSafely($name);
+    }
+    // Also returns it for convenient.
+    return $build['optionset'];
   }
 
   /**

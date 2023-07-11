@@ -52,6 +52,8 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
   /**
    * {@inheritdoc}
+   *
+   * @todo use self::attachments(array &$load, array $attach) post blazy:2.17.
    */
   public function attach(array $attach = []) {
     $load = parent::attach($attach);
@@ -94,28 +96,33 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    * Returns items as a grid display.
    */
   public function buildGrid(array $items, array &$settings): array {
+    $blazies = $settings['blazies'];
+    $slicks = $settings['slicks'];
     $grids = [];
 
     // Enforces unslick with less items.
-    if (empty($settings['unslick']) && !empty($settings['count'])) {
-      $settings['unslick'] = $settings['count'] < $settings['visible_items'];
+    if (!$slicks->is('unslick') && $count = $blazies->get('count', 0)) {
+      $settings['unslick'] = $unslick = $count < $settings['visible_items'];
+      $slicks->set('is.unslick', $unslick);
     }
 
     // Display all items if unslick is enforced for plain grid to lightbox.
     // Or when the total is less than visible_items.
-    if (!empty($settings['unslick'])) {
+    if ($slicks->is('unslick')) {
       $settings['display']      = 'main';
       $settings['current_item'] = 'grid';
-      $settings['count']        = 2;
+      $settings['count']        = $count = 2;
 
+      $blazies->set('count', $count);
       $grids[0] = $this->buildGridItem($items, 0, $settings);
     }
     else {
       // Otherwise do chunks to have a grid carousel, and also update count.
-      $preserve_keys     = !empty($settings['preserve_keys']);
+      $preserve_keys     = $settings['preserve_keys'] ?? FALSE;
       $grid_items        = array_chunk($items, $settings['visible_items'], $preserve_keys);
-      $settings['count'] = count($grid_items);
+      $settings['count'] = $count = count($grid_items);
 
+      $blazies->set('count', $count);
       foreach ($grid_items as $delta => $grid_item) {
         $grids[] = $this->buildGridItem($grid_item, $delta, $settings);
       }
@@ -169,10 +176,12 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     if ($settings['library'] == 'accessible-slick'
       && $optionset->getSetting('autoplay')
       && $optionset->getSetting('useAutoplayToggleButton')) {
-      foreach (['pauseIcon', 'playIcon'] as $setting) {
-        if ($classes = trim(strip_tags($optionset->getSetting($setting)) ?: '')) {
-          if ($classes != $defaults[$setting]) {
-            $js[$setting] = '<span class="' . $classes . '" aria-hidden="true"></span>';
+      foreach (['pauseIcon', 'playIcon'] as $key) {
+        if ($value = $optionset->getSetting($key)) {
+          if ($classes = trim(strip_tags($value))) {
+            if ($classes != $defaults[$key]) {
+              $js[$key] = '<span class="' . $classes . '" aria-hidden="true"></span>';
+            }
           }
         }
       }
@@ -246,12 +255,6 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
     // Collect the slick instances.
     $element['#items'] = $slick;
-
-    // @fixme this attach method resets few defined settings above, that is why
-    // moved it to the end.
-    // $attachments = $this->attach($settings);
-    // $element['#attached'] = $this->merge($attachments, $build, 'attached');
-    // $element['#cache'] = $this->getCacheMetadata($build);
     $this->setAttachments($element, $settings);
 
     unset($build);
@@ -262,63 +265,12 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    * Returns items as a grid item display.
    */
   protected function buildGridItem(array $items, $delta, array $settings): array {
-    $output = [];
-    $blazies = $settings['blazies'];
-
-    foreach ($items as $delta => $item) {
-      $sets = array_merge($settings, (array) ($item['settings'] ?? []));
-      $attrs = (array) ($item['attributes'] ?? []);
-      $content_attrs = (array) ($item['content_attributes'] ?? []);
-      $sets['current_item'] = 'grid';
-      $sets['delta'] = $delta;
-
-      unset($item['settings'], $item['attributes'], $item['content_attributes']);
-
-      if (empty($settings['unslick'])) {
-        $attrs['class'][] = 'slide__grid';
-      }
-
-      $attrs['class'][] = 'grid--' . $delta;
-      foreach (['type', 'media_switch'] as $key) {
-        if (!empty($sets[$key])) {
-          $value = $sets[$key];
-          $attrs['class'][] = 'grid--' . str_replace('_', '-', $value);
-          if ($key == 'media_switch' && mb_strpos($value, 'box') !== FALSE) {
-            $attrs['class'][] = 'grid--litebox';
-          }
-        }
-      }
-
-      if ($attrs_alter = $blazies->get('grid.item_attributes') ?: []) {
-        $attrs = $this->merge($attrs, $attrs_alter);
-      }
-
-      if ($content_attrs_alter = $blazies->get('grid.content_attributes') ?: []) {
-        $content_attrs = $this->merge($content_attrs, $content_attrs_alter);
-      }
-
-      $theme = empty($settings['vanilla']) ? 'slide' : 'vanilla';
-      $content = [
-        '#theme' => 'slick_' . $theme,
-        '#item' => $item,
-        '#delta' => $delta,
-        '#settings' => $sets,
-      ];
-
-      $slide = [
-        'content' => $content,
-        'attributes' => $attrs,
-        'content_attributes' => $content_attrs,
-        'settings' => $sets,
-      ];
-
-      $output[$delta] = $slide;
-      unset($slide);
-    }
-
+    $slicks = $settings['slicks'];
+    $output = $this->generateGridItem($items, $settings);
     $result = $this->toGrid($output, $settings);
 
-    $result['#attributes']['class'][] = empty($settings['unslick']) ? 'slide__content' : 'slick__grid';
+    $result['#attributes']['class'][] = $slicks->is('unslick')
+      ? 'slick__grid' : 'slide__content';
 
     $build = ['slide' => $result, 'settings' => $settings];
 
@@ -389,18 +341,18 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $id        = $settings['id'] ?? NULL;
     $id        = $settings['id'] = Blazy::getHtmlId('slick', $id);
     $thumb_id  = $id . '-thumbnail';
-    $count     = $settings['count'] ?? NULL;
-    $count     = $count ?: count($build['items']);
+    $count     = $blazies->get('count') ?: $settings['count'] ?? 0;
+    $total     = count($build['items']);
+    $count     = $count ?: $total;
     $wheel     = $optionset->getSetting('mouseWheel');
     $nav       = $blazies->is('nav', !empty($settings['nav']));
+    $navpos    = $settings['thumbnail_position'] ?? NULL;
 
     // Make it work with ElevateZoomPlus.
     if (!$blazies->is('nav_overridden') && empty($settings['vanilla'])) {
       $nav = !empty($settings['optionset_thumbnail'])
         && isset($build['items'][1]);
     }
-
-    $navpos = $settings['thumbnail_position'] ?? NULL;
 
     $data = [
       'library'    => $this->config('library', 'slick.settings'),
@@ -419,10 +371,13 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     }
 
     // Few dups are generic and needed by Blazy to interop Slick and Splide.
+    // The total is the original unmodified count, tricked at grids.
     $blazies->set('count', $count)
+      ->set('total', $total)
       ->set('is.nav', $nav);
 
     $options['count'] = $count;
+    $options['total'] = $total;
     $this->prepareOptions($optionset, $options, $settings);
 
     if ($blazies->is('nav')) {
@@ -518,6 +473,72 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
       '#build'      => $build,
       '#pre_render' => [[$this, 'preRenderSlick']],
     ];
+  }
+
+  /**
+   * Generates items as a grid item display.
+   */
+  private function generateGridItem(array $items, array $settings): \Generator {
+    $blazies = $settings['blazies'];
+    $slicks = $settings['slicks'];
+
+    foreach ($items as $delta => $item) {
+      if (!is_array($item)) {
+        continue;
+      }
+
+      $sets = SlickDefault::toHashtag($item);
+      $sets += $settings;
+      $attrs = SlickDefault::toHashtag($item, 'attributes');
+      $content_attrs = SlickDefault::toHashtag($item, 'content_attributes');
+      $sets['current_item'] = 'grid';
+      $sets['delta'] = $delta;
+
+      unset($item['settings'], $item['attributes'], $item['content_attributes']);
+
+      if (!$slicks->is('unslick')) {
+        $attrs['class'][] = 'slide__grid';
+      }
+
+      $attrs['class'][] = 'grid--' . $delta;
+      foreach (['type', 'media_switch'] as $key) {
+        if (!empty($sets[$key])) {
+          $value = $sets[$key];
+          $attrs['class'][] = 'grid--' . str_replace('_', '-', $value);
+          if ($key == 'media_switch' && mb_strpos($value, 'box') !== FALSE) {
+            $attrs['class'][] = 'grid--litebox';
+          }
+        }
+      }
+
+      // Listens to signaled attributes via hook_alters.
+      // @todo use Blazy::gridCheckAttributes($attrs, $content_attrs,
+      // $blazies, FALSE); post blazy:2.17.
+      if ($attrs_alter = $blazies->get('grid.item_attributes') ?: []) {
+        $attrs = $this->merge($attrs, $attrs_alter);
+      }
+
+      if ($content_attrs_alter = $blazies->get('grid.content_attributes') ?: []) {
+        $content_attrs = $this->merge($content_attrs, $content_attrs_alter);
+      }
+
+      $theme = empty($settings['vanilla']) ? 'slide' : 'vanilla';
+      $content = [
+        '#theme' => 'slick_' . $theme,
+        '#item' => $item,
+        '#delta' => $delta,
+        '#settings' => $sets,
+      ];
+
+      $slide = [
+        'content' => $content,
+        'attributes' => $attrs,
+        'content_attributes' => $content_attrs,
+        'settings' => $sets,
+      ];
+
+      yield $slide;
+    }
   }
 
   /**

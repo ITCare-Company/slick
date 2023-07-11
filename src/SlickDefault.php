@@ -48,7 +48,9 @@ class SlickDefault extends BlazyDefault {
       'thumbnail_caption'   => '',
       'thumbnail_effect'    => '',
       'thumbnail_position'  => '',
-    ] + self::baseSettings() + parent::imageSettings() + self::gridSettings();
+    ] + self::baseSettings()
+      + self::gridSettings()
+      + parent::imageSettings();
   }
 
   /**
@@ -168,12 +170,13 @@ class SlickDefault extends BlazyDefault {
   }
 
   /**
-   * A helper to convert settings to #settings to avoid render error.
+   * A helper to gradually convert things to #things to avoid render error.
    *
-   * Needed for out of sync module like BVEF.
+   * @todo refactor at 3.x, to solve out of sync module like BVEF, etc.
+   * No real problems found so far even with BVEF, just minimize issues.
    */
-  public static function toSettings(array $data): array {
-    return $data['#settings'] ?? $data['settings'] ?? [];
+  public static function toHashtag(array $data, $key = 'settings') {
+    return $data["#$key"] ?? $data[$key] ?? [];
   }
 
 }

@@ -483,7 +483,7 @@ class SlickForm extends SlickFormBase {
     // Optimized if so configured.
     $default = $slick->id() == 'default';
     if (!$default && !$form_state->isValueEmpty('optimized')) {
-      $defaults = $slick::defaultSettings();
+      $defaults = Slick::defaultSettings();
       $required = $this->getOptionsRequiredByTemplate();
       $main     = array_diff_assoc($defaults, $required);
       $settings = $form_state->getValue(['options', 'settings']);

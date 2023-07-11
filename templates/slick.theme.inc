@@ -8,7 +8,7 @@
 use Drupal\Core\Template\Attribute;
 use Drupal\Component\Serialization\Json;
 use Drupal\blazy\Blazy;
-use Drupal\slick\SlickDefault;
+use Drupal\slick\SlickDefault as Defaults;
 use Drupal\slick\Entity\Slick;
 
 /**
@@ -18,7 +18,7 @@ function template_preprocess_slick(&$variables) {
   $element = $variables['element'];
 
   // Pre 2.10 only used variables were added, now many in case needed.
-  foreach (SlickDefault::themeProperties() as $key => $default) {
+  foreach (Defaults::themeProperties() as $key => $default) {
     // A special variables#attached is taken care of upstream, not here.
     // Even if needed it should be $variables["#$key"] due to being special.
     // You can always add it even if skipped here to avoid dups. Core thingies
@@ -36,12 +36,14 @@ function template_preprocess_slick(&$variables) {
 
   // Shortcuts.
   $sets      = &$variables['settings'];
-  $sets     += SlickDefault::htmlSettings();
+  $sets     += Defaults::htmlSettings();
   $optionset = Slick::verifyOptionset($variables, $sets['optionset']);
   $js        = &$variables['options'];
   $js       += $optionset->getSettings();
   $display   = $variables['display'] = $sets['display'];
   $id        = empty($sets['id']) ? Blazy::getHtmlId('slick') : $sets['id'];
+  $blazies   = $sets['blazies'];
+  $slicks    = $sets['slicks'];
 
   // Prepare attributes, since Twig prepends, not appends, causing BEM problems.
   $attrs          = &$variables['attributes'];
@@ -51,11 +53,15 @@ function template_preprocess_slick(&$variables) {
   $attrs['id']    = $display == 'thumbnail' ? $id . '-thumbnail' : $id;
 
   // @see SlickManager::buildGrid(), and this should make sense.
-  $sets['count']   = $sets['count'] ?? count($element['#items']);
-  $sets['unslick'] = $sets['unslick'] || $sets['count'] == 1;
+  $sets['count']   = $count = $blazies->get('count') ?: count($element['#items']);
+  $sets['unslick'] = $unslick = $slicks->is('unslick') || $count == 1;
+
+  // Re-define for sure.
+  $slicks->set('is.unslick', $unslick);
+  $blazies->set('count', $count);
 
   // More shortcuts for convenience at Twig.
-  foreach (SlickDefault::jsSettings() as $key => $default) {
+  foreach (Defaults::jsSettings() as $key => $default) {
     $value = $js[$key] ?? $default;
     $sets[$key] = is_string($value) ? strip_tags($value) : $value;
   }
@@ -63,8 +69,10 @@ function template_preprocess_slick(&$variables) {
   // Blazy can still lazyload an unslick.
   // The lazy supercedes JS lazyLoad for background, breakpoints, media, etc.
   $sets['lazy'] = $sets['lazy'] ?: $js['lazyLoad'];
-  if ($display != 'thumbnail' && ($sets['lazy'] == 'blazy' || !empty($sets['blazy']))) {
-    $js['lazyLoad'] = 'blazy';
+  if ($display != 'thumbnail') {
+    if ($blazies->is('blazy') && !$blazies->is('unlazy')) {
+      $js['lazyLoad'] = 'blazy';
+    }
   }
 
   // Make slick language-direction-aware.
@@ -78,7 +86,7 @@ function template_preprocess_slick(&$variables) {
   Slick::removeUnsupportedSettings($js);
 
   // Prevents broken slick when only one item given, or an enforced unslick.
-  if (!$sets['unslick']) {
+  if (!$slicks->is('unslick')) {
     $content_attrs->setAttribute('id', $attrs['id'] . '-slider');
 
     $variables['arrow_attributes'] = new Attribute();
@@ -108,10 +116,14 @@ function template_preprocess_slick(&$variables) {
 
     // Add the configuration as JSON object into the slick container.
     $js = array_merge($js, (array) ($variables['js'] ?? []));
-    if ($json = $optionset->removeDefaultValues($js)) {
+    if ($json = $optionset->toJson($js)) {
       $content_attrs->setAttribute('data-slick', Json::encode($json));
     }
   }
+
+  // Shortcuts for easy calls.
+  $variables['blazies'] = $blazies->storage();
+  $variables['slicks'] = $slicks->storage();
 
   // @todo remove for variables.options at 3.x, just an unneeded oversight.
   // Splide has done it correctly learning from this mistake from the start.
@@ -121,10 +133,14 @@ function template_preprocess_slick(&$variables) {
 
   // Process or interpolate individual item.
   foreach ($variables['items'] as $delta => $item) {
-    $item_sets = (array) ($item['settings'] ?? []);
-    $item_sets = Blazy::merge($item_sets, $sets);
-    $item_attrs = (array) ($item['attributes'] ?? []);
-    $item_content_attrs = (array) ($item['content_attributes'] ?? []);
+    if (!is_array($item)) {
+      continue;
+    }
+
+    $item_sets = Defaults::toHashtag($item);
+    $item_sets += $sets;
+    $item_attrs = Defaults::toHashtag($item, 'attributes');
+    $item_content_attrs = Defaults::toHashtag($item, 'content_attributes');
     $item_sets['current_item'] = $display;
 
     // @todo refactor for hashed keys at 3.x to avoid this in the first place.
@@ -172,6 +188,11 @@ function template_preprocess_slick_wrapper(&$variables) {
   foreach (['attributes', 'items', 'settings'] as $key) {
     $variables[$key] = $variables['element']["#$key"] ?? [];
   }
+
+  // Shortcuts for easy calls.
+  $sets = $variables['settings'];
+  $variables['blazies'] = $sets['blazies']->storage();
+  $variables['slicks'] = $sets['slicks']->storage();
 }
 
 /**
@@ -188,6 +209,11 @@ function _slick_preprocess_slick_item(&$variables) {
   $attrs = &$variables['attributes'];
   $classes = (array) ($attrs['class'] ?? []);
   $attrs['class'] = array_merge(['slick__slide', 'slide'], $classes);
+
+  // Shortcuts for easy calls.
+  $sets = $variables['settings'];
+  $variables['blazies'] = $sets['blazies']->storage();
+  $variables['slicks'] = $sets['slicks']->storage();
 }
 
 /**
@@ -212,7 +238,7 @@ function template_preprocess_slick_slide(&$variables) {
 
   // All slide types -- main, thumbnail, grid, overlay -- may have captions.
   foreach (['alt', 'data', 'link', 'overlay', 'title'] as $key) {
-    $variables['item']['caption'][$key] = $variables['item']['caption'][$key] ?? [];
+    $variables['item']['caption'][$key] = Defaults::toHashtag($variables['item']['caption'] ?? [], $key);
   }
 
   $item = &$variables['item'];

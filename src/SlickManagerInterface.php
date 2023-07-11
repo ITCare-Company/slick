@@ -7,6 +7,8 @@ use Drupal\blazy\BlazyManagerBaseInterface;
 
 /**
  * Defines re-usable services and functions for slick plugins.
+ *
+ * @todo remove BlazyManagerBaseInterface when phpstand sniffs inheritance.
  */
 interface SlickManagerInterface extends BlazyManagerBaseInterface, TrustedCallbackInterface {
 

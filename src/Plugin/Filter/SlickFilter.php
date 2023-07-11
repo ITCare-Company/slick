@@ -112,7 +112,7 @@ class SlickFilter extends BlazyFilterBase {
     // @todo conver to #settings at/by 3.x.
     $build = ['settings' => $settings];
     $this->manager->moduleHandler()->alter('slick_settings', $build, $this->settings);
-    return array_merge($settings, SlickDefault::toSettings($build));
+    return array_merge($settings, SlickDefault::toHashtag($build));
   }
 
   /**
@@ -166,20 +166,16 @@ class SlickFilter extends BlazyFilterBase {
       ->set('entity.type_id', $entity_type)
       ->set('field.name', $field_name);
 
-    // @todo remove.
-    $settings['field_name'] = $field_name;
     $settings['image'] = $field_image;
     $settings['view_mode'] = ($settings['view_mode'] ?? '') ?: 'default';
 
     if ($entity && $entity->hasField($field_name)) {
       $list = $entity->get($field_name);
       $definition = $list ? $list->getFieldDefinition() : NULL;
-      $field_type = $settings['field_type'] = $definition
-        ? $definition->get('field_type') : '';
+      $field_type = $definition ? $definition->get('field_type') : '';
 
       $count = count($list);
-      $settings['bundle'] = $bundle = $entity->bundle();
-      $settings['count'] = $count;
+      $bundle = $entity->bundle();
 
       $blazies->set('bundles.' . $bundle, $bundle, TRUE)
         ->set('count', $count)
@@ -403,7 +399,7 @@ class SlickFilter extends BlazyFilterBase {
    * Build the slick navigation.
    */
   private function buildNav(array &$build, array $element, $delta) {
-    $sets    = SlickDefault::toSettings($element);
+    $sets    = SlickDefault::toHashtag($element);
     $item    = $element['item'] ?? NULL;
     $caption = $sets['thumbnail_caption'] ?? NULL;
     $text    = ($caption && $item && !empty($item->{$caption}))
