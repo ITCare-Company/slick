@@ -4,6 +4,7 @@ namespace Drupal\slick;
 
 use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\blazy\BlazyManagerBaseInterface;
+use Drupal\slick\Entity\Slick;
 
 /**
  * Defines re-usable services and functions for slick plugins.
@@ -53,6 +54,17 @@ interface SlickManagerInterface extends BlazyManagerBaseInterface, TrustedCallba
    * Returns available slick skins by group.
    */
   public function getSkinsByGroup($group = '', $option = FALSE): array;
+
+  /**
+   * Load the optionset with a fallback.
+   *
+   * @param string $name
+   *   The optionset name.
+   *
+   * @return \Drupal\slick\Entity\Slick
+   *   The optionset object.
+   */
+  public function loadSafely($name): Slick;
 
   /**
    * Builds the Slick instance as a structured array ready for ::renderer().

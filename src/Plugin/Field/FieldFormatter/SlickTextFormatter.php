@@ -69,4 +69,13 @@ class SlickTextFormatter extends BlazyTextFormatter {
     return ['vanilla' => TRUE] + $this->traitBuildSettings();
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getPluginScopes(): array {
+    return [
+      'no_thumb_effects' => TRUE,
+    ] + parent::getPluginScopes();
+  }
+
 }

@@ -145,6 +145,13 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function loadSafely($name): Slick {
+    return Slick::loadSafely($name);
+  }
+
+  /**
    * Builds the Slick instance as a structured array ready for ::renderer().
    */
   public function preRenderSlick(array $element): array {
@@ -382,7 +389,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
     if ($blazies->is('nav')) {
       $options['asNavFor'] = "#{$thumb_id}-slider";
-      $optionset_tn = Slick::loadSafely($settings['optionset_thumbnail']);
+      $optionset_tn = $this->loadSafely($settings['optionset_thumbnail']);
       $wheel = $optionset_tn->getSetting('mouseWheel');
       $vertical_tn = $optionset_tn->getSetting('vertical');
 

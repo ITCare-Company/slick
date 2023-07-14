@@ -17,13 +17,13 @@ class SlickForm extends SlickFormBase {
    * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
-    $form  = parent::form($form, $form_state);
+    // $form  = parent::form($form, $form_state);
     $path  = $this->manager->getPath('module', 'slick');
     $slick = $this->entity;
 
     // Satisfy phpstan.
     if (!($slick instanceof SlickInterface)) {
-      return $form;
+      return parent::form($form, $form_state);
     }
 
     $options   = $slick->getOptions() ?: [];
@@ -32,6 +32,7 @@ class SlickForm extends SlickFormBase {
     $is_help   = $this->manager()->moduleExists('help');
     $readme    = $is_help ? Url::fromRoute('help.page', $route)->toString() : Url::fromUri('base:' . $path . '/docs/README.md')->toString();
     $admin_css = $this->manager->config('admin_css', 'blazy.settings');
+    $_default  = $slick->id() == 'default';
 
     $form['label'] = [
       '#type'          => 'textfield',
@@ -41,7 +42,6 @@ class SlickForm extends SlickFormBase {
       '#required'      => TRUE,
       '#description'   => $this->t("Label for the Slick optionset."),
       '#attributes'    => $tooltip,
-      '#prefix'        => '<div class="form__header form__half form__half--first has-tooltip clearfix">',
     ];
 
     // Keep the legacy CTools ID, i.e.: name as ID.
@@ -54,8 +54,7 @@ class SlickForm extends SlickFormBase {
         'exists' => '\Drupal\slick\Entity\Slick::load',
       ],
       '#attributes'    => $tooltip,
-      '#disabled'      => !$slick->isNew(),
-      '#suffix'        => '</div>',
+      '#disabled'      => ($_default || !$slick->isNew()) && $this->operation != 'duplicate',
     ];
 
     $form['skin'] = [
@@ -66,7 +65,7 @@ class SlickForm extends SlickFormBase {
       '#default_value' => $slick->getSkin(),
       '#description'   => $this->t('Skins allow swappable layouts like next/prev links, split image and caption, etc. However a combination of skins and options may lead to unpredictable layouts, get yourself dirty. See main <a href="@url">README</a> for details on Skins. Only useful for custom work, and ignored/overridden by slick formatters or sub-modules. If you are using Slick Lightbox, this is the only option to change its skin at the Slick Lightbox optionset.', ['@url' => $readme]),
       '#attributes'    => $tooltip,
-      '#prefix'        => '<div class="form__header form__half form__half--last has-tooltip clearfix">',
+      '#prefix'        => '<div class="form__header form__half form__half--last b-tooltip clearfix">',
     ];
 
     $form['group'] = [
@@ -110,16 +109,24 @@ class SlickForm extends SlickFormBase {
       '#wrapper_attributes' => ['class' => ['form-item--tooltip-wide']],
     ];
 
-    if ($slick->id() == 'default') {
-      $form['breakpoints']['#suffix'] = '</div>';
-    }
-    else {
-      $form['optimized']['#suffix'] = '</div>';
-    }
-
     if ($admin_css) {
-      $form['optimized']['#field_suffix'] = '&nbsp;';
+      // $form['optimized']['#field_suffix'] = '&nbsp;';
       $form['optimized']['#title_display'] = 'before';
+
+      $form['skin']['#prefix'] = '<div class="b-nativegrid b-nativegrid--form b-tooltip is-b-gapless">';
+      if ($_default) {
+        $form['breakpoints']['#suffix'] = '</div>';
+      }
+      else {
+        $form['optimized']['#suffix'] = '</div>';
+      }
+
+      foreach (['skin', 'group', 'breakpoints', 'optimized'] as $key) {
+        $attrs = &$form[$key]['#wrapper_attributes'];
+        $attrs['class'][] = 'grid';
+        $attrs['class'][] = 'b-tooltip__bottom';
+        $attrs['data-b-w'] = 3;
+      }
     }
 
     // Options.
@@ -134,7 +141,7 @@ class SlickForm extends SlickFormBase {
       '#type'       => 'details',
       '#tree'       => TRUE,
       '#title'      => $this->t('Settings'),
-      '#attributes' => ['class' => ['details--settings', 'has-tooltip']],
+      '#attributes' => ['class' => ['details--settings', 'b-tooltip']],
       '#group'      => 'options',
       '#parents'    => ['options', 'settings'],
     ];
@@ -154,10 +161,11 @@ class SlickForm extends SlickFormBase {
         '#default_value' => $default_value,
       ];
 
+      $formsets = &$form['settings'][$name];
       if ($element_type) {
-        $form['settings'][$name]['#type'] = $element_type;
+        $formsets['#type'] = $element_type;
         if ($element_type != 'hidden') {
-          $form['settings'][$name]['#attributes'] = $tooltip;
+          $formsets['#attributes'] = $tooltip;
         }
         else {
           // Ensures hidden element doesn't screw up the states.
@@ -165,44 +173,48 @@ class SlickForm extends SlickFormBase {
         }
 
         if ($element_type == 'textfield') {
-          $form['settings'][$name]['#size'] = 20;
-          $form['settings'][$name]['#maxlength'] = 255;
+          $formsets['#size'] = 20;
+          $formsets['#maxlength'] = 255;
         }
       }
 
       if (isset($element['options'])) {
-        $form['settings'][$name]['#options'] = $element['options'];
+        $formsets['#options'] = $element['options'];
       }
 
       if (isset($element['empty_option'])) {
-        $form['settings'][$name]['#empty_option'] = $element['empty_option'];
+        $formsets['#empty_option'] = $element['empty_option'];
       }
 
       if (isset($element['description'])) {
-        $form['settings'][$name]['#description'] = $element['description'];
+        $formsets['#description'] = $element['description'];
       }
 
       if (isset($element['states'])) {
-        $form['settings'][$name]['#states'] = $element['states'];
+        $formsets['#states'] = $element['states'];
       }
 
       // Expand textfield for easy edit.
       if (in_array($name, ['prevArrow', 'nextArrow'])) {
-        $form['settings'][$name]['#default_value'] = trim(strip_tags($default_value));
+        $formsets['#default_value'] = trim(strip_tags($default_value));
       }
 
       if (isset($element['field_suffix'])) {
-        $form['settings'][$name]['#field_suffix'] = $element['field_suffix'];
+        $formsets['#field_suffix'] = $element['field_suffix'];
       }
 
       if (is_int($element['default'])) {
-        $form['settings'][$name]['#maxlength'] = 60;
-        $form['settings'][$name]['#attributes']['class'][] = 'form-text--int';
+        $formsets['#maxlength'] = 60;
+        $formsets['#attributes']['class'][] = 'form-text--int';
       }
 
       if ($admin_css && !isset($element['field_suffix']) && is_bool($element['default'])) {
-        $form['settings'][$name]['#field_suffix'] = '&nbsp;';
-        $form['settings'][$name]['#title_display'] = 'before';
+        // $formsets['#field_suffix'] = '&nbsp;';
+        $formsets['#title_display'] = 'before';
+      }
+
+      if (in_array($name, ['mobileFirst', 'asNavFor', 'accessibility'])) {
+        $formsets['#wrapper_attributes']['class'][] = 'form-item--tooltip-bottom';
       }
     }
 
@@ -226,7 +238,7 @@ class SlickForm extends SlickFormBase {
       '#parents'    => ['options', 'responsives', 'responsive'],
       '#prefix'     => '<div id="edit-breakpoints-ajax-wrapper">',
       '#suffix'     => '</div>',
-      '#attributes' => ['class' => ['has-tooltip', 'details--responsive--ajax']],
+      '#attributes' => ['class' => ['b-tooltip', 'details--responsive--ajax']],
     ];
 
     // Add some information to the form state for easier form altering.
@@ -258,7 +270,7 @@ class SlickForm extends SlickFormBase {
             'class' => [
               'details--responsive',
               'details--breakpoint-' . $i,
-              'has-tooltip',
+              'b-tooltip',
             ],
           ],
         ];
@@ -276,22 +288,33 @@ class SlickForm extends SlickFormBase {
                 '#attributes'    => $tooltip,
               ];
 
+              $detroyable = &$form['responsives']['responsive'][$i][$key];
+              $attrs = &$detroyable['#wrapper_attributes'];
               if ($responsive['type'] == 'textfield') {
-                $form['responsives']['responsive'][$i][$key]['#size'] = 20;
-                $form['responsives']['responsive'][$i][$key]['#maxlength'] = 255;
+                $detroyable['#size'] = 20;
+                $detroyable['#maxlength'] = 255;
               }
 
               if (is_int($responsive['default'])) {
-                $form['responsives']['responsive'][$i][$key]['#maxlength'] = 60;
+                $detroyable['#maxlength'] = 60;
               }
 
               if (isset($responsive['field_suffix'])) {
-                $form['responsives']['responsive'][$i][$key]['#field_suffix'] = $responsive['field_suffix'];
+                $detroyable['#field_suffix'] = $responsive['field_suffix'];
               }
 
               if ($admin_css && !isset($responsive['field_suffix']) && $responsive['type'] == 'checkbox') {
-                $form['responsives']['responsive'][$i][$key]['#field_suffix'] = '&nbsp;';
-                $form['responsives']['responsive'][$i][$key]['#title_display'] = 'before';
+                // $detroyable['#field_suffix'] = '&nbsp;';
+                $detroyable['#title_display'] = 'before';
+              }
+
+              $attrs['class'][] = 'grid';
+              $attrs['class'][] = 'form-item--tooltip-bottom';
+              if ($key == 'breakpoint') {
+                $detroyable['#prefix'] = '<div class="b-nativegrid b-nativegrid--form b-tooltip is-b-gapless">';
+              }
+              else {
+                $detroyable['#suffix'] = '</div>';
               }
               break;
 
@@ -306,7 +329,7 @@ class SlickForm extends SlickFormBase {
                   'class' => [
                     'details--settings',
                     'details--breakpoint-' . $i,
-                    'has-tooltip',
+                    'b-tooltip',
                   ],
                 ],
               ];
@@ -323,8 +346,9 @@ class SlickForm extends SlickFormBase {
                   '#attributes'    => $tooltip,
                 ];
 
+                $subsets = &$form['responsives']['responsive'][$i][$key][$k];
                 if (isset($item['type'])) {
-                  $form['responsives']['responsive'][$i][$key][$k]['#type'] = $item['type'];
+                  $subsets['#type'] = $item['type'];
                 }
 
                 // Specify proper states for the breakpoint form elements.
@@ -356,26 +380,31 @@ class SlickForm extends SlickFormBase {
                   }
 
                   if ($states) {
-                    $form['responsives']['responsive'][$i][$key][$k]['#states'] = $states;
+                    $subsets['#states'] = $states;
                   }
                 }
 
                 if (isset($item['options'])) {
-                  $form['responsives']['responsive'][$i][$key][$k]['#options'] = $item['options'];
+                  $subsets['#options'] = $item['options'];
                 }
 
                 if (isset($item['empty_option'])) {
-                  $form['responsives']['responsive'][$i][$key][$k]['#empty_option'] = $item['empty_option'];
+                  $subsets['#empty_option'] = $item['empty_option'];
                 }
 
                 if (isset($item['field_suffix'])) {
-                  $form['responsives']['responsive'][$i][$key][$k]['#field_suffix'] = $item['field_suffix'];
+                  $subsets['#field_suffix'] = $item['field_suffix'];
                 }
 
                 if ($admin_css && !isset($item['field_suffix']) && is_bool($item['default'])) {
-                  $form['responsives']['responsive'][$i][$key][$k]['#field_suffix'] = '&nbsp;';
-                  $form['responsives']['responsive'][$i][$key][$k]['#title_display'] = 'before';
+                  // $subsets['#field_suffix'] = '&nbsp;';
+                  $subsets['#title_display'] = 'before';
                 }
+
+                if (in_array($k, ['adaptiveHeight', 'autoplay', 'arrows'])) {
+                  $subsets['#wrapper_attributes']['class'][] = 'form-item--tooltip-bottom';
+                }
+
               }
               break;
 
@@ -386,7 +415,7 @@ class SlickForm extends SlickFormBase {
       }
     }
 
-    return $form;
+    return parent::form($form, $form_state);
   }
 
   /**

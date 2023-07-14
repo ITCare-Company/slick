@@ -81,6 +81,14 @@ class SlickAdmin implements SlickAdminInterface {
     $definition['grid_required']    = FALSE;
     $definition['no_grid_header']   = FALSE;
     $definition['slider']           = TRUE;
+    $definition['grid_header_desc'] = $this->gridHeaderDescription();
+
+    $effects = $definition['_thumbnail_effect'] ?? [];
+    $defaults = [
+      'hover' => $this->t('Hoverable'),
+      'grid'  => $this->t('Static grid'),
+    ];
+    $definition['thumbnail_effect'] = $effects = array_merge($defaults, $effects);
 
     foreach (['optionsets', 'skins'] as $key) {
       if (isset($definition[$key]['default'])) {
@@ -272,13 +280,6 @@ class SlickAdmin implements SlickAdminInterface {
     $definition['thumbnail_style'] = $definition['thumbnail_style'] ?? TRUE;
     $definition['ratios'] = $definition['ratios'] ?? TRUE;
 
-    $effects = $definition['_thumbnail_effect'] ?? [];
-    $defaults = [
-      'hover' => $this->t('Hoverable'),
-      'grid'  => $this->t('Static grid'),
-    ];
-    $definition['thumbnail_effect'] = array_merge($defaults, $effects);
-
     if (!isset($form['image_style'])) {
       $this->blazyAdmin->imageStyleForm($form, $definition);
 
@@ -287,10 +288,6 @@ class SlickAdmin implements SlickAdminInterface {
 
     if (isset($form['thumbnail_style'])) {
       $form['thumbnail_style']['#description'] = $this->t('Usages: <ol><li>If <em>Optionset thumbnail</em> provided, it is for asNavFor thumbnail navigation.</li><li>For <em>Thumbnail effect</em>.</li><li>Photobox thumbnail.</li><li>Custom work via the provided data-thumb attributes: arrows with thumbnails, Photoswipe thumbnail, etc.</li></ol>Leave empty to not use thumbnails.');
-    }
-
-    if (isset($form['thumbnail_effect'])) {
-      $form['thumbnail_effect']['#description'] = $this->t('Dependent on a Skin, Dots and Thumbnail style options. No asnavfor/ Optionset thumbnail is needed. <ol><li><strong>Hoverable</strong>: Dots pager are kept, and thumbnail will be hidden and only visible on dot mouseover, default to min-width 120px.</li><li><strong>Static grid</strong>: Dots are hidden, and thumbnails are displayed as a static grid acting like dots pager.</li></ol>Alternative to asNavFor aka separate thumbnails as slider.');
     }
 
     if (isset($form['background'])) {
@@ -322,11 +319,14 @@ class SlickAdmin implements SlickAdminInterface {
       $this->blazyAdmin->gridForm($form, $definition);
     }
 
-    $header = $this->t('Group individual item as block grid?<small>An older alternative to core <strong>Rows</strong> option. Only works if the total items &gt; <strong>Visible slides</strong>. <br />block grid != slidesToShow option, yet both can work in tandem.<br />block grid = Rows option, yet the first is module feature, the later core.</small>');
-
-    $form['grid_header']['#markup'] = '<h3 class="form__title form__title--grid">' . $header . '</h3>';
-
     $form['grid']['#description'] = $this->t('The amount of block grid columns for large monitors 64.063em - 90em. <br /><strong>Requires</strong>:<ol><li>Visible items,</li><li>Skin Grid for starter,</li><li>A reasonable amount of contents,</li><li>Optionset with Rows and slidesPerRow = 1.</li></ol>This is module feature, older than core Rows, and offers more flexibility. Leave empty to DIY, or to not build grids.');
+  }
+
+  /**
+   * Returns grid header description.
+   */
+  protected function gridHeaderDescription() {
+    return $this->t('An older alternative to core <strong>Rows</strong> option. Only works if the total items &gt; <strong>Visible slides</strong>. <br />block grid != slidesToShow option, yet both can work in tandem.<br />block grid = Rows option, yet the first is module feature, the later core.');
   }
 
   /**
@@ -363,6 +363,19 @@ class SlickAdmin implements SlickAdminInterface {
         ],
       ],
     ];
+
+    // Bring in dots thumbnail effect normally used by Slick Image formatter.
+    if (empty($definition['no_thumb_effects'])
+      && $effects = $definition['thumbnail_effect'] ?? []) {
+      $form['thumbnail_effect'] = [
+        '#type'         => 'select',
+        '#title'        => $this->t('Dots thumbnail effect'),
+        '#options'      => $effects,
+        '#empty_option' => $this->t('- None -'),
+        '#description'  => $this->t('Dependent on a Skin, Dots and Thumbnail image options. No asnavfor/ Optionset thumbnail is needed. <ol><li><strong>Hoverable</strong>: Dots pager are kept, and thumbnail will be hidden and only visible on dot mouseover, default to min-width 120px.</li><li><strong>Static grid</strong>: Dots are hidden, and thumbnails are displayed as a static grid acting like dots pager.</li></ol>Alternative to asNavFor aka separate thumbnails as slider.'),
+        '#weight'       => -100,
+      ];
+    }
 
     $this->blazyAdmin->closingForm($form, $definition);
   }
