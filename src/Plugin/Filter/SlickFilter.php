@@ -326,17 +326,8 @@ class SlickFilter extends BlazyFilterBase {
       // Can only have the first found for the main slide stage.
       $child = self::getValidNode($children);
 
-      // @todo use this post Blazy:2.10, and remove the three build below.
       // Build item settings, image, and caption.
-      // $this->buildItemContent($build, $child, $delta);
-      // Provides individual item settings.
-      $this->buildItemSettings($build, $child, $delta);
-
-      // Extracts image item from SRC attribute.
-      $this->buildImageItem($build, $child, $delta);
-
-      // Extracts image caption if available.
-      $this->buildImageCaption($build, $child);
+      $this->buildItemContent($build, $child, $delta);
 
       $uri = $sets['uri'] ?? '';
       $uri = $blazies ? $blazies->get('image.uri', $uri) : $uri;

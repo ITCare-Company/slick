@@ -231,9 +231,8 @@ class SlickForm extends SlickFormBase {
     ];
 
     $form['responsives']['responsive'] = [
-      '#type'       => 'details',
+      '#type'       => 'container',
       '#title'      => $this->t('Responsive'),
-      '#open'       => TRUE,
       '#group'      => 'responsives',
       '#parents'    => ['options', 'responsives', 'responsive'],
       '#prefix'     => '<div id="edit-breakpoints-ajax-wrapper">',
@@ -311,7 +310,7 @@ class SlickForm extends SlickFormBase {
               $attrs['class'][] = 'grid';
               $attrs['class'][] = 'form-item--tooltip-bottom';
               if ($key == 'breakpoint') {
-                $detroyable['#prefix'] = '<div class="b-nativegrid b-nativegrid--form b-tooltip is-b-gapless">';
+                $detroyable['#prefix'] = '<div class="b-nativegrid b-nativegrid--auto b-nativegrid--form b-tooltip is-b-gapless">';
               }
               else {
                 $detroyable['#suffix'] = '</div>';
