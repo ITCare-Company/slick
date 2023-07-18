@@ -137,10 +137,10 @@ function template_preprocess_slick(&$variables) {
       continue;
     }
 
-    $item_sets = Defaults::toHashtag($item);
+    $item_sets = slick()->toHashtag($item);
     $item_sets += $sets;
-    $item_attrs = Defaults::toHashtag($item, 'attributes');
-    $item_content_attrs = Defaults::toHashtag($item, 'content_attributes');
+    $item_attrs = slick()->toHashtag($item, 'attributes');
+    $item_content_attrs = slick()->toHashtag($item, 'content_attributes');
     $item_sets['current_item'] = $display;
 
     // @todo refactor for hashed keys at 3.x to avoid this in the first place.
@@ -238,7 +238,7 @@ function template_preprocess_slick_slide(&$variables) {
 
   // All slide types -- main, thumbnail, grid, overlay -- may have captions.
   foreach (['alt', 'data', 'link', 'overlay', 'title'] as $key) {
-    $variables['item']['caption'][$key] = Defaults::toHashtag($variables['item']['caption'] ?? [], $key);
+    $variables['item']['caption'][$key] = $variables['item']['caption'][$key] ?? [];
   }
 
   $item = &$variables['item'];

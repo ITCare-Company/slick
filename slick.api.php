@@ -63,10 +63,10 @@
  *   // Pass the $items to the array.
  *   $build['items'] = $items;
  *
- *   // If no optionset name is provided via $build['settings'], slick will
+ *   // If no optionset name is provided via $build['#settings'], slick will
  *   // fallback to 'default'.
  *   // Optionally override 'default' optionset with custom JS options.
- *   $build['options'] = [
+ *   $build['#options'] = [
  *     'autoplay' => TRUE,
  *     'dots'     => TRUE,
  *     'arrows'   => FALSE,
@@ -113,7 +113,7 @@
  *   // Provides HTML settings with optionset name and ID, none of JS related.
  *   // To add JS key:value pairs, use #options below instead.
  *   // @see \Drupal\slick\SlickDefault for most supported settings.
- *   $build['settings'] = [
+ *   $build['#settings'] = [
  *     // Optional optionset name, otherwise fallback to default.
  *     // 'optionset' => 'blog',
  *     // Optional skin name fetched from hook_slick_skins_info(), else none.
@@ -152,7 +152,7 @@
  *       // Individual slide supports some useful settings like layout, classes,
  *       // etc.
  *       // Meaning each slide can have different layout, or classes.
- *       'settings' => [
+ *       '#settings' => [
  *
  *         // Optionally add a custom layout, can be a static uniform value, or
  *         // dynamic one based on the relevant field value.
@@ -172,7 +172,7 @@
  *   // Optional specific JS options, to re-use one optionset, can be removed.
  *   // Play with speed and options to achieve desired result.
  *   // @see config/install/slick.optionset.default.yml
- *   $build['options'] = [
+ *   $build['#options'] = [
  *     'arrows'    => FALSE,
  *     'autoplay'  => TRUE,
  *     'vertical'  => TRUE,
@@ -199,15 +199,15 @@
  *
  * The only requirement for asNavFor is optionset and optionset_thumbnail IDs:
  * @code
- * $build['settings']['optionset'] = 'optionset_name';
- * $build['settings']['optionset_thumbnail'] = 'optionset_thumbnail_name';
+ * $build['#settings']['optionset'] = 'optionset_name';
+ * $build['#settings']['optionset_thumbnail'] = 'optionset_thumbnail_name';
  * @endcode
  *
  * The rest are optional, and will fallback to default:
- *   - $build['settings']['optionset_thumbnail'] = 'optionset_thumbnail_name';
+ *   - $build['#settings']['optionset_thumbnail'] = 'optionset_thumbnail_name';
  *     Defined at the main settings.
  *
- *   - $build['settings']['id'] = 'slick-asnavfor';
+ *   - $build['#settings']['id'] = 'slick-asnavfor';
  *     Only main display ID is needed. The thumbnail ID will be
  *     automatically created: 'slick-asnavfor-thumbnail', including the content
  *     attributes accordingly. If none provided, will fallback to incremented
@@ -271,7 +271,7 @@
  *   }
  *
  *   // Optionally override the optionset.
- *   $build['options'] = [
+ *   $build['#options'] = [
  *     'arrows'        => FALSE,
  *     'centerMode'    => TRUE,
  *     'centerPadding' => '',
@@ -279,7 +279,7 @@
  *
  *   // Satisfy the asnavfor main settings.
  *   // @see \Drupal\slick\SlickDefault for most supported settings.
- *   $build['settings'] = [
+ *   $build['#settings'] = [
  *     // The only required is 'optionset_thumbnail'.
  *     // Define both main and thumbnail optionset names at the main display.
  *     'optionset' => 'optionset_main_name',
@@ -310,7 +310,7 @@
  *   }
  *
  *   // Optionally override 'optionset_thumbnail_name' with custom JS options.
- *   $build['thumb']['options'] = [
+ *   $build['thumb']['#options'] = [
  *     'arrows'        => TRUE,
  *     'centerMode'    => TRUE,
  *     'centerPadding' => '10px',
@@ -575,7 +575,11 @@ function hook_slick_options_alter(array &$options, array $settings, Slick $slick
  * @ingroup slick_api
  */
 function hook_slick_settings_alter(array &$build, $items) {
-  $settings = &$build['settings'];
+  // Most configurable settings are put as direct key-value pairs.
+  // Before blazy:2.17, the key is plain.
+  // $settings = &$build['settings'];
+  // Since blazy:2.17, the key is hashed to avoid leaks/ render errors.
+  $settings = &$build['#settings'];
 
   // See blazy_blazy_settings_alter() at blazy.module for existing samples.
   // First check the $settings array. Slick Views may have different array.

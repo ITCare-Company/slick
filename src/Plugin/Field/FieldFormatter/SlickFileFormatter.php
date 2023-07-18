@@ -29,9 +29,7 @@ class SlickFileFormatter extends SlickFileFormatterBase {
    */
   public function buildElement(array &$build, $entity) {
     $build['#entity'] = $entity;
-
-    // @todo remove second params post blazy:2.17.
-    $this->blazyOembed->build($build, $entity);
+    $this->blazyOembed->build($build);
   }
 
   /**

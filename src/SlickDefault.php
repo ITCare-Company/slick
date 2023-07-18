@@ -160,23 +160,4 @@ class SlickDefault extends BlazyDefault {
     ];
   }
 
-  /**
-   * Returns the commonly used path, or just the base path.
-   *
-   * @todo remove for Blazy::getPath().
-   */
-  public static function getPath($type, $name, $absolute = FALSE): string {
-    return Blazy::getPath($type, $name, $absolute);
-  }
-
-  /**
-   * A helper to gradually convert things to #things to avoid render error.
-   *
-   * @todo refactor at 3.x, to solve out of sync module like BVEF, etc.
-   * No real problems found so far even with BVEF, just minimize issues.
-   */
-  public static function toHashtag(array $data, $key = 'settings') {
-    return $data["#$key"] ?? $data[$key] ?? [];
-  }
-
 }

@@ -76,7 +76,8 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    */
   public function build(array $build): array {
     foreach (SlickDefault::themeProperties() as $key => $default) {
-      $build[$key] = $build[$key] ?? $default;
+      $k = $key == 'items' ? $key : "#$key";
+      $build[$k] = $this->toHashtag($build, $key, $default);
     }
 
     $slick = [
@@ -88,7 +89,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
       'items'       => [],
     ];
 
-    $this->moduleHandler->alter('slick_build', $slick, $build['settings']);
+    $this->moduleHandler->alter('slick_build', $slick, $build['#settings']);
     return empty($build['items']) ? [] : $slick;
   }
 
@@ -97,18 +98,18 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    */
   public function buildGrid(array $items, array &$settings): array {
     $blazies = $settings['blazies'];
-    $slicks = $settings['slicks'];
+    $config = $settings['slicks'];
     $grids = [];
 
     // Enforces unslick with less items.
-    if (!$slicks->is('unslick') && $count = $blazies->get('count', 0)) {
+    if (!$config->is('unslick') && $count = $blazies->get('count', 0)) {
       $settings['unslick'] = $unslick = $count < $settings['visible_items'];
-      $slicks->set('is.unslick', $unslick);
+      $config->set('is.unslick', $unslick);
     }
 
     // Display all items if unslick is enforced for plain grid to lightbox.
     // Or when the total is less than visible_items.
-    if ($slicks->is('unslick')) {
+    if ($config->is('unslick')) {
       $settings['display']      = 'main';
       $settings['current_item'] = 'grid';
       $settings['count']        = $count = 2;
@@ -158,11 +159,11 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $build = $element['#build'];
     unset($element['#build']);
 
-    $settings  = &$build['settings'];
+    $settings  = &$build['#settings'];
     $settings += SlickDefault::htmlSettings();
     $defaults  = Slick::defaultSettings();
-    $optionset = &$build['optionset'];
-    $slicks    = $settings['slicks'];
+    $optionset = &$build['#optionset'];
+    $config    = $settings['slicks'];
 
     // Adds helper class if thumbnail on dots hover provided.
     if (!empty($settings['thumbnail_effect']) && (!empty($settings['thumbnail_style']) || !empty($settings['thumbnail']))) {
@@ -196,7 +197,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
     // Checks for breaking changes: Slick 1.8.1 - 1.9.0 / Accessible Slick.
     // @todo Remove this once the library has permanent solutions.
-    if ($slicks->is('breaking')) {
+    if ($config->is('breaking')) {
       if ($optionset->getSetting('rows') == 1) {
         $js['rows'] = 0;
       }
@@ -216,13 +217,13 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
       }
     }
 
-    $build['attributes'] = $this->prepareAttributes($build);
-    $build['options'] = array_merge($build['options'], (array) ($js ?? []));
+    $build['#attributes'] = $this->prepareAttributes($build);
+    $build['#options'] = array_merge($build['#options'], (array) ($js ?? []));
 
     $this->moduleHandler->alter('slick_optionset', $optionset, $settings);
 
     foreach (SlickDefault::themeProperties() as $key => $default) {
-      $element["#$key"] = $build[$key] ?? $default;
+      $element["#$key"] = $this->toHashtag($build, $key, $default);
     }
 
     return $element;
@@ -239,9 +240,9 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $settings = $this->prepareSettings($element, $build);
 
     // Checks if we have thumbnail navigation.
-    $thumbs  = $build['thumb'] ?? [];
+    $thumbs  = $build['thumb']['items'] ?? [];
     $blazies = $settings['blazies'];
-    $slicks  = $settings['slicks'];
+    $config  = $settings['slicks'];
 
     // Prevents unused thumb going through the main display.
     unset($build['thumb']);
@@ -256,7 +257,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     }
 
     // Reverse slicks if thumbnail position is provided to get CSS float work.
-    if ($slicks->get('navpos')) {
+    if ($config->get('navpos')) {
       $slick = array_reverse($slick);
     }
 
@@ -272,14 +273,14 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    * Returns items as a grid item display.
    */
   protected function buildGridItem(array $items, $delta, array $settings): array {
-    $slicks = $settings['slicks'];
+    $config = $settings['slicks'];
     $output = $this->generateGridItem($items, $settings);
     $result = $this->toGrid($output, $settings);
 
-    $result['#attributes']['class'][] = $slicks->is('unslick')
+    $result['#attributes']['class'][] = $config->is('unslick')
       ? 'slick__grid' : 'slide__content';
 
-    $build = ['slide' => $result, 'settings' => $settings];
+    $build = ['slide' => $result, '#settings' => $settings];
 
     $this->moduleHandler->alter('slick_grid_item', $build, $settings);
     return $build;
@@ -289,8 +290,8 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    * Prepare attributes for the known module features, not necessarily users'.
    */
   protected function prepareAttributes(array $build): array {
-    $settings = $build['settings'];
-    $attributes = $build['attributes'] ?? [];
+    $settings   = $this->toHashtag($build);
+    $attributes = $this->toHashtag($build, 'attributes');
 
     if ($settings['display'] == 'main') {
       Blazy::containerAttributes($attributes, $settings);
@@ -336,15 +337,18 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    * Prepare settings for the known module features, not necessarily users'.
    */
   protected function prepareSettings(array &$element, array &$build): array {
-    $settings  = &$build['settings'];
+    $this->hashtag($build);
+    $this->hashtag($build, 'options');
+
+    $settings  = &$build['#settings'];
     $settings += SlickDefault::htmlSettings();
-    $options   = &$build['options'];
+    $options   = &$build['#options'];
 
     Blazy::verify($settings);
 
     $optionset = Slick::verifyOptionset($build, $settings['optionset']);
     $blazies   = $settings['blazies'];
-    $slicks    = $settings['slicks'];
+    $config    = $settings['slicks'];
     $id        = $settings['id'] ?? NULL;
     $id        = $settings['id'] = Blazy::getHtmlId('slick', $id);
     $thumb_id  = $id . '-thumbnail';
@@ -374,7 +378,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     foreach ($data as $key => $value) {
       // @todo remove settings after migration.
       $settings[$key] = $value;
-      $slicks->set(is_bool($value) ? 'is.' . $key : $key, $value);
+      $config->set(is_bool($value) ? 'is.' . $key : $key, $value);
     }
 
     // Few dups are generic and needed by Blazy to interop Slick and Splide.
@@ -393,15 +397,15 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
       $wheel = $optionset_tn->getSetting('mouseWheel');
       $vertical_tn = $optionset_tn->getSetting('vertical');
 
-      $build['optionset_tn'] = $optionset_tn;
+      $build['#optionset_tn'] = $optionset_tn;
       $settings['vertical_tn'] = $vertical_tn;
-      $slicks->set('is.vertical_tn', $vertical_tn);
+      $config->set('is.vertical_tn', $vertical_tn);
     }
     else {
       // Pass extra attributes such as those from Commerce product variations to
       // theme_slick() since we have no asNavFor wrapper here.
       if ($attributes = $element['#attributes'] ?? []) {
-        $build['attributes'] = $this->merge($attributes, $build, 'attributes');
+        $build['#attributes'] = $this->merge($attributes, $build, 'attributes');
       }
     }
 
@@ -422,7 +426,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $settings['mousewheel'] = $wheel;
     $settings['down_arrow'] = $down_arrow = $optionset->getSetting('downArrow');
 
-    $slicks->set('is.mousewheel', $wheel)
+    $config->set('is.mousewheel', $wheel)
       ->set('is.down_arrow', $down_arrow);
 
     $element['#settings'] = $settings;
@@ -433,27 +437,24 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   /**
    * Returns slick navigation with the structured array similar to main display.
    */
-  protected function buildNavigation(array &$build, array $thumbs): array {
-    $settings = $build['settings'];
-    foreach (['items', 'options', 'settings'] as $key) {
-      $build[$key] = $thumbs[$key] ?? [];
-    }
-
-    $settings              = array_merge($settings, $build['settings']);
-    $options               = &$build['options'];
+  protected function buildNavigation(array &$build, array $items): array {
+    $settings              = $this->toHashtag($build);
+    $options               = $build['#options'];
     $settings['optionset'] = $settings['optionset_thumbnail'];
     $settings['skin']      = $settings['skin_thumbnail'];
     $settings['display']   = 'thumbnail';
-    $build['optionset']    = $build['optionset_tn'];
-    $build['settings']     = $settings;
     $options['asNavFor']   = "#" . $settings['id'] . '-slider';
+    $data['items']         = $items;
+    $data['#optionset']    = $this->toHashtag($build, 'optionset_tn');
+    $data['#options']      = $options;
+    $data['#settings']     = $settings;
 
     // Disabled irrelevant options when lacking of slides.
     $this->unslick($options, $settings);
 
-    // The slick thumbnail navigation has the same structure as the main one.
-    unset($build['optionset_tn']);
-    return $this->slick($build);
+    // The navigation has the same structure as the main one.
+    unset($build['#optionset_tn']);
+    return $this->slick($data);
   }
 
   /**
@@ -471,7 +472,8 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    */
   protected function slick(array $build) {
     foreach (SlickDefault::themeProperties() as $key => $default) {
-      $build[$key] = $build[$key] ?? $default;
+      $k = $key == 'items' ? $key : "#$key";
+      $build[$k] = $this->toHashtag($build, $key, $default);
     }
 
     return empty($build['items']) ? [] : [
@@ -487,23 +489,31 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    */
   private function generateGridItem(array $items, array $settings): \Generator {
     $blazies = $settings['blazies'];
-    $slicks = $settings['slicks'];
+    $config = $settings['slicks'];
 
     foreach ($items as $delta => $item) {
       if (!is_array($item)) {
         continue;
       }
 
-      $sets = SlickDefault::toHashtag($item);
+      $sets = $this->toHashtag($item);
       $sets += $settings;
-      $attrs = SlickDefault::toHashtag($item, 'attributes');
-      $content_attrs = SlickDefault::toHashtag($item, 'content_attributes');
+      $attrs = $this->toHashtag($item, 'attributes');
+      $content_attrs = $this->toHashtag($item, 'content_attributes');
       $sets['current_item'] = 'grid';
       $sets['delta'] = $delta;
 
-      unset($item['settings'], $item['attributes'], $item['content_attributes']);
+      $blazy = $sets['blazies']->reset($sets);
+      $blazy->set('delta', $delta);
 
-      if (!$slicks->is('unslick')) {
+      // @todo remove after migrations.
+      unset(
+        $item['settings'],
+        $item['attributes'],
+        $item['content_attributes'],
+        $item['item_attributes']
+      );
+      if (!$config->is('unslick')) {
         $attrs['class'][] = 'slide__grid';
       }
 
@@ -539,9 +549,9 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
       $slide = [
         'content' => $content,
-        'attributes' => $attrs,
-        'content_attributes' => $content_attrs,
-        'settings' => $sets,
+        '#attributes' => $attrs,
+        '#content_attributes' => $content_attrs,
+        '#settings' => $sets,
       ];
 
       yield $slide;
@@ -555,13 +565,53 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    * `settings.unslick` can be overriden as needed unless being forced.
    */
   private function unslick(array &$options, array $settings) {
-    $slicks = $settings['slicks'];
-    if ($slicks->get('count') < 2) {
+    $config = $settings['slicks'];
+    if ($config->get('count') < 2) {
       $options['arrows'] = FALSE;
       $options['dots'] = FALSE;
       $options['draggable'] = FALSE;
       $options['infinite'] = FALSE;
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @todo remove post blazy:2.17.
+   */
+  public function hashtag(array &$data, $key = 'settings', $unset = FALSE): void {
+    if (!isset($data["#$key"])) {
+      $data["#$key"] = $data[$key] ?? [];
+    }
+
+    // Temporary failsafe.
+    if ($unset) {
+      unset($data[$key]);
+    }
+
+    $blazy = "#blazy";
+    if ($key == 'settings' && isset($data[$blazy])) {
+      $data["#$key"] = $data[$blazy];
+
+      // Temporary failsafe.
+      if ($unset) {
+        unset($data[$blazy]);
+      }
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @todo remove post blazy:2.17.
+   */
+  public function toHashtag(array $data, $key = 'settings', $default = []) {
+    $newbies = $data["#$key"] ?? [];
+    $result = $newbies ?: ($data[$key] ?? $default);
+    if (!$result && $key == 'settings') {
+      $result = $data["#blazy"] ?? $default;
+    }
+    return $result;
   }
 
 }

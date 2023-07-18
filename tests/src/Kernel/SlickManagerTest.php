@@ -123,7 +123,7 @@ class SlickManagerTest extends BlazyKernelTestBase {
    * @dataProvider providerTestSlickBuild
    */
   public function testBuild($items, array $settings, array $options, $expected) {
-    $manager = $this->slickManager;
+    $manager  = $this->slickManager;
     $defaults = $this->getFormatterSettings() + SlickDefault::htmlSettings();
     $settings = array_merge($defaults, $settings);
 
@@ -135,15 +135,15 @@ class SlickManagerTest extends BlazyKernelTestBase {
     $optionset = Slick::loadSafely($settings['optionset']);
     $build = [
       'items'     => $items,
-      'settings'  => $settings,
-      'options'   => $options,
-      'optionset' => $optionset,
+      '#settings'  => $settings,
+      '#options'   => $options,
+      '#optionset' => $optionset,
     ];
 
-    $slick['#build']['settings'] = $settings;
     $slick['#build']['items'] = $items;
-    $slick['#build']['options'] = [];
-    $slick['#build']['optionset'] = $optionset;
+    $slick['#build']['#settings'] = $settings;
+    $slick['#build']['#options'] = [];
+    $slick['#build']['#optionset'] = $optionset;
 
     $element = $manager->preRenderSlick($slick);
     $this->assertEquals($expected, !empty($element));
@@ -151,8 +151,8 @@ class SlickManagerTest extends BlazyKernelTestBase {
     if (!empty($settings['optionset_thumbnail'])) {
       $build['thumb'] = [
         'items'    => $items,
-        'settings' => $settings,
-        'options'  => $options,
+        '#settings' => $settings,
+        '#options'  => $options,
       ];
     }
 
@@ -160,11 +160,11 @@ class SlickManagerTest extends BlazyKernelTestBase {
     $this->assertEquals($expected, !empty($slicks));
 
     $slicks['#build']['items'] = $items;
-    $slicks['#build']['settings'] = $settings;
+    $slicks['#build']['#settings'] = $settings;
 
     if (!empty($settings['optionset_thumbnail'])) {
       $slicks['#build']['thumb']['items'] = $build['thumb']['items'];
-      $slicks['#build']['thumb']['settings'] = $build['thumb']['settings'];
+      $slicks['#build']['thumb']['#settings'] = $build['thumb']['#settings'];
     }
 
     $elements = $manager->preRenderSlickWrapper($slicks);

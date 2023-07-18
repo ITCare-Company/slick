@@ -47,15 +47,16 @@ abstract class SlickEntityReferenceFormatterBase extends BlazyEntityReferenceBas
    */
   public function buildElementThumbnail(array &$build, $element, $entity, $delta) {
     // The settings in $element has updated metadata extracted from media.
-    $settings  = SlickDefault::toHashtag($element);
+    $settings  = $this->formatter->toHashtag($element);
     $item_id   = $this->itemId;
     $view_mode = $settings['view_mode'] ?? '';
     $caption   = $settings['thumbnail_caption'] ?? NULL;
+    $item      = $this->formatter->toHashtag($element, 'item', NULL);
 
     if (!empty($settings['nav'])) {
       // Thumbnail usages: asNavFor pagers, dot, arrows, photobox thumbnails.
       $element[$item_id] = empty($settings['thumbnail_style'])
-        ? [] : $this->formatter->getThumbnail($settings, $element['item']);
+        ? [] : $this->formatter->getThumbnail($settings, $item);
 
       $element['caption'] = $caption
         ? BlazyField::view($entity, $caption, $view_mode)

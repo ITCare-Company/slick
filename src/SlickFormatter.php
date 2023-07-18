@@ -14,10 +14,12 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
    * {@inheritdoc}
    */
   public function buildSettings(array &$build, $items) {
-    $settings = &$build['settings'];
+    $this->hashtag($build);
+
+    $settings  = &$build['#settings'];
     $settings += SlickDefault::htmlSettings();
-    $blazies = $settings['blazies'];
-    $slicks = $settings['slicks'];
+    $blazies   = $settings['blazies'];
+    $slicks    = $settings['slicks'];
 
     // Prepare integration with Blazy.
     $settings['_unload'] = FALSE;
@@ -59,7 +61,8 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
   public function preBuildElements(array &$build, $items, array $entities = []) {
     parent::preBuildElements($build, $items, $entities);
 
-    $settings = &$build['settings'];
+    $this->hashtag($build);
+    $settings = &$build['#settings'];
 
     // Only trim overridables options if disabled.
     if (empty($settings['override']) && isset($settings['overridables'])) {

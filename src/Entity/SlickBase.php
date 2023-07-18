@@ -165,11 +165,13 @@ abstract class SlickBase extends ConfigEntityBase implements SlickBaseInterface 
    *   The optionset object.
    */
   public static function verifyOptionset(array &$build, $name) {
-    if (empty($build['optionset'])) {
-      $build['optionset'] = self::loadSafely($name);
+    // The element is normally present at template_preprocess, not builders.
+    $key = isset($build['element']) ? 'optionset' : '#optionset';
+    if (empty($build[$key])) {
+      $build[$key] = self::loadSafely($name);
     }
     // Also returns it for convenient.
-    return $build['optionset'];
+    return $build[$key];
   }
 
   /**

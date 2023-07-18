@@ -28,6 +28,16 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
   /**
    * {@inheritdoc}
    */
+  protected $captionId = 'caption';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $navId = 'thumb';
+
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
     return self::injectServices($instance, $container, 'image');
@@ -56,59 +66,40 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
 
   /**
    * {@inheritdoc}
-   *
-   * @todo use array for $caption_id post blazy:2.17.
    */
   public function buildElements(array &$build, $files, $langcode) {
-    $settings   = SlickDefault::toHashtag($build);
+    $settings   = $this->formatter->toHashtag($build);
     $blazies    = $settings['blazies'];
     $item_id    = $this->itemId;
-    $caption_id = 'caption';
+    $caption_id = $this->captionId;
+    $nav_id     = $this->navId;
     $tn_caption = $settings['thumbnail_caption'] ?? NULL;
+    $tn_style   = $settings['thumbnail_style'] ?? NULL;
     $is_nav     = $blazies->is('nav') ?: $settings['nav'] ?? FALSE;
-    $elements   = $this->getElements($build, $files, $caption_id);
+    $elements   = $this->getElements($build, $files);
 
     foreach ($elements as $element) {
-      $sets = SlickDefault::toHashtag($element);
-      $captions = $element[$caption_id] ?? [];
-
-      // Do not pass captions to theme_blazy().
-      unset($element[$caption_id]);
-
-      // Image with responsive image, lazyLoad, and lightbox supports.
-      $blazy = $this->formatter->getBlazy($element);
-      $element[$item_id] = $blazy;
-
-      // Build captions if so configured.
-      $element[$caption_id] = $captions;
+      $sets = $this->formatter->toHashtag($element);
 
       // Build individual slick item.
       $build['items'][] = $element;
 
       // Build individual slick thumbnail.
       if ($is_nav) {
-        $item = $element['item'];
-
-        // Update with blazy processed settings such as unstyled extensions.
-        $item_build = $blazy['#build'] ?? [];
-        if ($blazysets = SlickDefault::toHashtag($item_build)) {
-          $sets['blazies']->merge($blazysets['blazies']->storage());
-        }
-
-        $nav = ['settings' => $sets];
+        $item = $this->formatter->toHashtag($element, 'item', NULL);
+        $nav  = ['#settings' => $sets];
 
         // Thumbnail usages: asNavFor pagers, dot, arrows, photobox thumbnails.
-        $nav[$item_id] = empty($sets['thumbnail_style'])
-          ? []
-          : $this->formatter->getThumbnail($sets, $item);
+        $nav[$item_id] = $tn_style
+          ? $this->formatter->getThumbnail($sets, $item)
+          : [];
 
-        $markup = empty($item->{$tn_caption})
-          ? []
-          : ['#markup' => Xss::filterAdmin($item->{$tn_caption})];
+        if ($item && $text = $item->{$tn_caption} ?? NULL) {
+          $caption = ['#markup' => Xss::filterAdmin($text)];
+          $nav[$caption_id] = $caption;
+        }
 
-        $nav[$caption_id] = $tn_caption ? $markup : [];
-
-        $build['thumb']['items'][] = $nav;
+        $build[$nav_id]['items'][] = $nav;
       }
     }
   }
