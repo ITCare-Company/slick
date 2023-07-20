@@ -122,18 +122,6 @@ class SlickFilter extends BlazyFilterBase {
   /**
    * {@inheritdoc}
    */
-  public function buildSettings($text) {
-    $settings = parent::buildSettings($text);
-
-    $this->manager->moduleHandler()->alter('slick_filter_settings', $settings, $this->settings);
-    $this->manager->postSettingsAlter($settings);
-
-    return $settings;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   protected function preSettings(array &$settings, $text) {
     // @todo remove post blazy:2.17.
     $settings['no_item_container'] = TRUE;

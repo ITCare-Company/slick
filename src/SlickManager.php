@@ -52,20 +52,6 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
   /**
    * {@inheritdoc}
-   *
-   * @todo use self::attachments(array &$load, array $attach) post blazy:2.17.
-   */
-  public function attach(array $attach = []) {
-    $load = parent::attach($attach);
-
-    $this->skinManager->attach($load, $attach);
-
-    $this->moduleHandler->alter('slick_attach', $load, $attach);
-    return $load;
-  }
-
-  /**
-   * {@inheritdoc}
    */
   public function attachSkin(array &$load, array $attach): void {
     $this->skinManager->attachSkin($load, $attach);
@@ -267,6 +253,16 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
     unset($build);
     return $element;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function attachments(array &$load, array $attach, $blazies): void {
+    // @todo enable post 2.17: parent::attachments($load, $attach, $blazies);
+    $this->skinManager->attach($load, $attach);
+
+    $this->moduleHandler->alter('slick_attach', $load, $attach, $blazies);
   }
 
   /**

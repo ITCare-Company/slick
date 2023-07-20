@@ -31,6 +31,17 @@ The module supports Slick 1.6 above until 1.8.1. Versions 1.9.0 and above are
 not currently supported. Slick 2.x is just out 9/21/15, and hasn't been
 officially supported now, Jan 2020.
 
+***
+## <a name="first"> </a>FIRST THINGS FIRST!
+Blazy and its sub-modules are tightly coupled. Be sure to have the latest
+release date or matching versions in the least. DEV for DEV, Beta for Beta,
+etc. Mismatched versions may lead to errors. Mismatched branches will surely
+be errors. What is `coupled`? Blazy sub-modules are dependent on Blazy, just
+like Blazy depends on core Media. If core Media is not installed, Blazy is not
+usable. In the case of Blazy, it is a bit `tighter` since it also acts as a DRY
+buster for many similar sub-modules with some degree of difference.
+We tried to minimize this issue, but if that happens you are well informed.
+
 
 ***
 ## <a name="requirements"> </a>REQUIREMENTS
