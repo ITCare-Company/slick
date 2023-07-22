@@ -29,17 +29,27 @@ class SlickTextFormatter extends BlazyTextFormatter {
   /**
    * {@inheritdoc}
    */
-  protected $namespace = 'slick';
+  protected static $namespace = 'slick';
 
   /**
    * {@inheritdoc}
    */
-  protected $itemId = 'slide';
+  protected static $itemId = 'slide';
 
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  protected static $itemPrefix = 'slide';
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(
+    ContainerInterface $container,
+    array $configuration,
+    $plugin_id,
+    $plugin_definition
+  ) {
     $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
     return self::injectServices($instance, $container, 'text');
   }
@@ -49,17 +59,6 @@ class SlickTextFormatter extends BlazyTextFormatter {
    */
   public static function defaultSettings() {
     return SlickDefault::baseSettings() + SlickDefault::gridSettings();
-  }
-
-  /**
-   * {@inheritdoc}
-   *
-   * @todo remove post blazy:2.17.
-   */
-  public function buildElements(array &$build, $items, $langcode) {
-    foreach ($this->getElements($items) as $element) {
-      $build['items'][] = $element;
-    }
   }
 
   /**

@@ -22,12 +22,27 @@ abstract class SlickEntityFormatterBase extends BlazyEntityVanillaBase {
   /**
    * {@inheritdoc}
    */
-  protected $namespace = 'slick';
+  protected static $namespace = 'slick';
 
   /**
    * {@inheritdoc}
    */
-  protected $itemId = 'slide';
+  protected static $itemId = 'slide';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $itemPrefix = 'slide';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $captionId = 'caption';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $navId = 'thumb';
 
   /**
    * {@inheritdoc}

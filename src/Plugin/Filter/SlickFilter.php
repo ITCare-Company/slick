@@ -38,17 +38,27 @@ class SlickFilter extends BlazyFilterBase {
    *
    * @see https://www.php.net/manual/en/reserved.keywords.php
    */
-  protected $namespace = 'slick';
+  protected static $namespace = 'slick';
 
   /**
    * {@inheritdoc}
    */
-  protected $itemId = 'slide';
+  protected static $itemId = 'slide';
 
   /**
    * {@inheritdoc}
    */
-  protected $shortcode = 'slide';
+  protected static $itemPrefix = 'slide';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $captionId = 'caption';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $shortcode = 'slide';
 
   /**
    * The slick admin service.
@@ -125,13 +135,13 @@ class SlickFilter extends BlazyFilterBase {
   protected function preSettings(array &$settings, $text) {
     // @todo remove post blazy:2.17.
     $settings['no_item_container'] = TRUE;
-    $settings['item_id'] = $this->itemId;
-    $settings['namespace'] = $this->namespace;
+    $settings['item_id'] = static::$itemId;
+    $settings['namespace'] = static::$namespace;
     $settings['visible_items'] = 0;
 
     $blazies = $settings['blazies'];
-    $blazies->set('item.id', $this->itemId)
-      ->set('namespace', $this->namespace)
+    $blazies->set('item.id', static::$itemId)
+      ->set('namespace', static::$namespace)
       ->set('no.item_container', TRUE);
 
     parent::preSettings($settings, $text);

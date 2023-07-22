@@ -28,7 +28,7 @@ class SlickFileFormatter extends SlickFileFormatterBase {
    * {@inheritdoc}
    */
   public function buildElement(array &$build, $entity) {
-    $build['#entity'] = $entity;
+    // @todo remove, already set upstream: $$build['#entity'] = $entity;
     $this->blazyOembed->build($build);
   }
 

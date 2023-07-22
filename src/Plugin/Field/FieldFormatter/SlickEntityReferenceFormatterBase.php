@@ -20,12 +20,27 @@ abstract class SlickEntityReferenceFormatterBase extends BlazyEntityReferenceBas
   /**
    * {@inheritdoc}
    */
-  protected $namespace = 'slick';
+  protected static $namespace = 'slick';
 
   /**
    * {@inheritdoc}
    */
-  protected $itemId = 'slide';
+  protected static $itemId = 'slide';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $itemPrefix = 'slide';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $captionId = 'caption';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $navId = 'thumb';
 
   /**
    * {@inheritdoc}
@@ -48,21 +63,23 @@ abstract class SlickEntityReferenceFormatterBase extends BlazyEntityReferenceBas
   public function buildElementThumbnail(array &$build, $element, $entity, $delta) {
     // The settings in $element has updated metadata extracted from media.
     $settings  = $this->formatter->toHashtag($element);
-    $item_id   = $this->itemId;
+    $blazies   = $settings['blazies'];
     $view_mode = $settings['view_mode'] ?? '';
     $caption   = $settings['thumbnail_caption'] ?? NULL;
+    $tn_style  = $settings['thumbnail_style'] ?? NULL;
     $item      = $this->formatter->toHashtag($element, 'item', NULL);
+    $is_nav    = $blazies->is('nav') ?: $settings['nav'] ?? FALSE;
 
-    if (!empty($settings['nav'])) {
+    if ($is_nav) {
       // Thumbnail usages: asNavFor pagers, dot, arrows, photobox thumbnails.
-      $element[$item_id] = empty($settings['thumbnail_style'])
-        ? [] : $this->formatter->getThumbnail($settings, $item);
+      $element[static::$itemId] = $tn_style
+        ? $this->formatter->getThumbnail($settings, $item) : [];
 
-      $element['caption'] = $caption
+      $element[static::$captionId] = $caption
         ? BlazyField::view($entity, $caption, $view_mode)
         : [];
 
-      $build['thumb']['items'][$delta] = $element;
+      $build[static::$navId]['items'][$delta] = $element;
     }
   }
 

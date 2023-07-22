@@ -137,3 +137,10 @@ function slick_update_8207() {
     $config->save(TRUE);
   }
 }
+
+/**
+ * Matching a more relevant module version.
+ */
+function slick_update_8210() {
+  // Do nothing to clear cache.
+}
