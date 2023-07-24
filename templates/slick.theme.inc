@@ -35,8 +35,9 @@ function template_preprocess_slick(&$variables) {
   $variables[$key] = $element["#$key"] ?? new Attribute();
 
   // Shortcuts.
-  $sets      = &$variables['settings'];
-  $sets     += Defaults::htmlSettings();
+  $sets = &$variables['settings'];
+  slick()->verify($sets);
+
   $optionset = Slick::verifyOptionset($variables, $sets['optionset']);
   $js        = &$variables['options'];
   $js       += $optionset->getSettings();
@@ -190,7 +191,9 @@ function template_preprocess_slick_wrapper(&$variables) {
   }
 
   // Shortcuts for easy calls.
-  $sets = $variables['settings'];
+  $sets = &$variables['settings'];
+  slick()->verify($sets);
+
   $variables['blazies'] = $sets['blazies']->storage();
   $variables['slicks'] = $sets['slicks']->storage();
 }

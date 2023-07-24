@@ -83,9 +83,11 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    * Returns items as a grid display.
    */
   public function buildGrid(array $items, array &$settings): array {
+    $this->verify($settings);
+
     $blazies = $settings['blazies'];
-    $config = $settings['slicks'];
-    $grids = [];
+    $config  = $settings['slicks'];
+    $grids   = [];
 
     // Enforces unslick with less items.
     if (!$config->is('unslick') && $count = $blazies->get('count', 0)) {
@@ -145,8 +147,9 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $build = $element['#build'];
     unset($element['#build']);
 
-    $settings  = &$build['#settings'];
-    $settings += SlickDefault::htmlSettings();
+    $settings = &$build['#settings'];
+    $this->verify($settings);
+
     $defaults  = Slick::defaultSettings();
     $optionset = &$build['#optionset'];
     $config    = $settings['slicks'];
@@ -258,8 +261,30 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   /**
    * {@inheritdoc}
    */
+  public function verify(array &$settings): void {
+    // @todo use parent::verify($settings); post blazy 2.17.
+    Blazy::verify($settings);
+
+    $config = $settings['slicks'] ?? NULL;
+
+    if (!$config) {
+      $settings += SlickDefault::htmlSettings();
+      $config = $settings['slicks'];
+    }
+
+    if (!$config->get('ui')) {
+      $ui = $this->configMultiple('slick.settings');
+      $config->set('ui', $ui);
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function attachments(array &$load, array $attach, $blazies): void {
     // @todo enable post 2.17: parent::attachments($load, $attach, $blazies);
+    $this->verify($attach);
+
     $this->skinManager->attach($load, $attach);
 
     $this->moduleHandler->alter('slick_attach', $load, $attach, $blazies);
@@ -336,12 +361,10 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $this->hashtag($build);
     $this->hashtag($build, 'options');
 
-    $settings  = &$build['#settings'];
-    $settings += SlickDefault::htmlSettings();
+    $settings = &$build['#settings'];
+    $this->verify($settings);
+
     $options   = &$build['#options'];
-
-    Blazy::verify($settings);
-
     $optionset = Slick::verifyOptionset($build, $settings['optionset']);
     $blazies   = $settings['blazies'];
     $config    = $settings['slicks'];
@@ -365,6 +388,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
       'library'    => $this->config('library', 'slick.settings'),
       'breaking'   => $this->skinManager->isBreaking(),
       'count'      => $count,
+      'total'      => $total,
       'nav'        => $nav,
       'navpos'     => ($nav && $navpos) ? $navpos : '',
       'vertical'   => $optionset->getSetting('vertical'),
@@ -401,7 +425,8 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
       // Pass extra attributes such as those from Commerce product variations to
       // theme_slick() since we have no asNavFor wrapper here.
       if ($attributes = $element['#attributes'] ?? []) {
-        $build['#attributes'] = $this->merge($attributes, $build, 'attributes');
+        $attrs = $this->toHashtag($build, 'attributes');
+        $build['#attributes'] = $this->merge($attributes, $attrs);
       }
     }
 
@@ -412,12 +437,6 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
       $this->isBlazy($settings, $data);
     }
 
-    // Formatters might have checked this, but not views, nor custom works.
-    // Why the formatters should check it first? It is so known to children.
-    if (empty($settings['_lazy'])) {
-      $optionset->whichLazy($settings);
-    }
-
     // @todo remove settings after migration.
     $settings['mousewheel'] = $wheel;
     $settings['down_arrow'] = $down_arrow = $optionset->getSetting('downArrow');
@@ -425,6 +444,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $config->set('is.mousewheel', $wheel)
       ->set('is.down_arrow', $down_arrow);
 
+    $optionset->whichLazy($settings);
     $element['#settings'] = $settings;
 
     return $settings;

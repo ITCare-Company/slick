@@ -76,4 +76,11 @@ interface SlickManagerInterface extends BlazyManagerBaseInterface, TrustedCallba
    */
   public function preRenderSlickWrapper($element): array;
 
+  /**
+   * Verifies `slicks` exists since few may be called outside the workflow.
+   *
+   * @todo remove post blazy:2.17.
+   */
+  public function verify(array &$settings): void;
+
 }
