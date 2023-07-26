@@ -222,11 +222,12 @@ class SlickAdmin implements SlickAdminInterface {
       ];
     }
 
-    if (!empty($definition['thumb_captions'])) {
+    if ($captions = $definition['thumb_captions'] ?? []) {
+      $captions += ['title' => $this->t('Image Title')];
       $form['thumbnail_caption'] = [
         '#type'        => 'select',
         '#title'       => $this->t('Thumbnail caption'),
-        '#options'     => $definition['thumb_captions'],
+        '#options'     => $captions,
         '#description' => $this->t('Thumbnail caption maybe just title/ plain text. If Thumbnail image style is not provided, the thumbnail pagers will be just text like regular tabs.'),
         '#states' => [
           'visible' => [

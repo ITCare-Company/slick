@@ -2,6 +2,7 @@
 
 namespace Drupal\slick\Plugin\Field\FieldFormatter;
 
+use Drupal\Component\Utility\Xss;
 use Drupal\blazy\Field\BlazyEntityReferenceBase;
 use Drupal\blazy\Field\BlazyField;
 use Drupal\slick\SlickDefault;
@@ -60,27 +61,38 @@ abstract class SlickEntityReferenceFormatterBase extends BlazyEntityReferenceBas
   /**
    * {@inheritdoc}
    */
-  public function buildElementThumbnail(array &$build, $element, $entity, $delta) {
+  protected function buildElementThumbnail(array &$build, array $element, $entity, $delta) {
     // The settings in $element has updated metadata extracted from media.
     $settings  = $this->formatter->toHashtag($element);
     $blazies   = $settings['blazies'];
-    $view_mode = $settings['view_mode'] ?? '';
-    $caption   = $settings['thumbnail_caption'] ?? NULL;
-    $tn_style  = $settings['thumbnail_style'] ?? NULL;
+    $is_nav    = $blazies->is('nav') || !empty($settings['nav']);
     $item      = $this->formatter->toHashtag($element, 'item', NULL);
-    $is_nav    = $blazies->is('nav') ?: $settings['nav'] ?? FALSE;
+    $view_mode = $settings['view_mode'] ?? '';
+    $_caption  = $settings['thumbnail_caption'] ?? NULL;
+    $_style    = $settings['thumbnail_style'] ?? NULL;
+    $caption   = [];
 
-    if ($is_nav) {
-      // Thumbnail usages: asNavFor pagers, dot, arrows, photobox thumbnails.
-      $element[static::$itemId] = $tn_style
-        ? $this->formatter->getThumbnail($settings, $item) : [];
-
-      $element[static::$captionId] = $caption
-        ? BlazyField::view($entity, $caption, $view_mode)
-        : [];
-
-      $build[static::$navId]['items'][$delta] = $element;
+    // @todo recheck any other places calling this method, and remove this.
+    if (!$is_nav) {
+      return;
     }
+
+    // Thumbnail usages: asNavFor pagers, dot, arrows, photobox thumbnails.
+    $element[static::$itemId] = $_style
+      ? $this->formatter->getThumbnail($settings, $item) : [];
+
+    if ($_caption) {
+      if ($item && $text = trim($item->{$_caption} ?? '')) {
+        $caption = ['#markup' => Xss::filterAdmin($text)];
+      }
+      else {
+        $caption = BlazyField::view($entity, $_caption, $view_mode);
+      }
+    }
+
+    $element[static::$captionId] = $caption;
+
+    $build[static::$navId]['items'][$delta] = $element;
   }
 
   /**

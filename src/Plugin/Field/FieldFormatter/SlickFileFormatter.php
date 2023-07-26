@@ -42,12 +42,12 @@ class SlickFileFormatter extends SlickFileFormatterBase {
   /**
    * {@inheritdoc}
    */
-  public function getScopedFormElements() {
+  protected function getPluginScopes(): array {
     return [
       'fieldable_form' => TRUE,
       'multimedia'     => TRUE,
       'view_mode'      => $this->viewMode,
-    ] + parent::getScopedFormElements();
+    ] + parent::getPluginScopes();
   }
 
   /**

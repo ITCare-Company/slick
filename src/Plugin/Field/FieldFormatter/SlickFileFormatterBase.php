@@ -115,7 +115,7 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
   /**
    * {@inheritdoc}
    */
-  public function getScopedFormElements() {
+  protected function getPluginScopes(): array {
     $captions = ['title' => $this->t('Title'), 'alt' => $this->t('Alt')];
 
     return [
@@ -123,7 +123,7 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
       'nav'             => TRUE,
       'thumb_captions'  => $captions,
       'thumb_positions' => TRUE,
-    ] + parent::getScopedFormElements();
+    ] + parent::getPluginScopes();
   }
 
 }

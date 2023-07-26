@@ -368,8 +368,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $optionset = Slick::verifyOptionset($build, $settings['optionset']);
     $blazies   = $settings['blazies'];
     $config    = $settings['slicks'];
-    $id        = $settings['id'] ?? NULL;
-    $id        = $settings['id'] = Blazy::getHtmlId('slick', $id);
+    $id        = $settings['id'] = Blazy::getHtmlId('slick', $settings['id'] ?? NULL);
     $thumb_id  = $id . '-thumbnail';
     $count     = $blazies->get('count') ?: $settings['count'] ?? 0;
     $total     = count($build['items']);
@@ -403,7 +402,8 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
     // Few dups are generic and needed by Blazy to interop Slick and Splide.
     // The total is the original unmodified count, tricked at grids.
-    $blazies->set('count', $count)
+    $blazies->set('css.id', $id)
+      ->set('count', $count)
       ->set('total', $total)
       ->set('is.nav', $nav);
 
