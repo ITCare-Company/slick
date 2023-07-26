@@ -590,44 +590,4 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     }
   }
 
-  /**
-   * {@inheritdoc}
-   *
-   * @todo remove post blazy:2.17.
-   */
-  public function hashtag(array &$data, $key = 'settings', $unset = FALSE): void {
-    if (!isset($data["#$key"])) {
-      $data["#$key"] = $data[$key] ?? [];
-    }
-
-    // Temporary failsafe.
-    if ($unset) {
-      unset($data[$key]);
-    }
-
-    $blazy = "#blazy";
-    if ($key == 'settings' && isset($data[$blazy])) {
-      $data["#$key"] = $data[$blazy];
-
-      // Temporary failsafe.
-      if ($unset) {
-        unset($data[$blazy]);
-      }
-    }
-  }
-
-  /**
-   * {@inheritdoc}
-   *
-   * @todo remove post blazy:2.17.
-   */
-  public function toHashtag(array $data, $key = 'settings', $default = []) {
-    $newbies = $data["#$key"] ?? [];
-    $result = $newbies ?: ($data[$key] ?? $default);
-    if (!$result && $key == 'settings') {
-      $result = $data["#blazy"] ?? $default;
-    }
-    return $result;
-  }
-
 }
