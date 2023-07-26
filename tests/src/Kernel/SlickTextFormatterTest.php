@@ -91,8 +91,8 @@ class SlickTextFormatterTest extends BlazyKernelTestBase {
     $render_empty = $this->slickManager->renderer()->renderRoot($build_empty[$this->testEmptyName]);
     $this->assertEmpty($render_empty);
 
-    $scopes = $this->formatterInstance->getScopedFormElements();
-    $this->assertEquals($this->testPluginId, $scopes['plugin_id']);
+    $scopes = $this->formatterInstance->buildSettings();
+    $this->assertEquals($this->testPluginId, $scopes['blazies']->get('field.plugin_id'));
 
     $form = [];
     $form_state = new FormState();
