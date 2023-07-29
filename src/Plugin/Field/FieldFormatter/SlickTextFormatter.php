@@ -44,6 +44,11 @@ class SlickTextFormatter extends BlazyTextFormatter {
   /**
    * {@inheritdoc}
    */
+  protected static $fieldType = 'text';
+
+  /**
+   * {@inheritdoc}
+   */
   public static function create(
     ContainerInterface $container,
     array $configuration,
@@ -51,7 +56,7 @@ class SlickTextFormatter extends BlazyTextFormatter {
     $plugin_definition
   ) {
     $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
-    return self::injectServices($instance, $container, 'text');
+    return static::injectServices($instance, $container, static::$fieldType);
   }
 
   /**

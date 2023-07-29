@@ -3,9 +3,7 @@
 namespace Drupal\slick\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FieldItemListInterface;
-// @todo enabled post Blazy:2.10:
-// use Drupal\blazy\Field\BlazyEntityVanillaBase;
-use Drupal\blazy\Dejavu\BlazyEntityBase as BlazyEntityVanillaBase;
+use Drupal\blazy\Field\BlazyEntityVanillaBase;
 use Drupal\slick\SlickDefault;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -47,9 +45,14 @@ abstract class SlickEntityFormatterBase extends BlazyEntityVanillaBase {
   /**
    * {@inheritdoc}
    */
+  protected static $fieldType = 'entity';
+
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
-    return self::injectServices($instance, $container, 'entity');
+    return static::injectServices($instance, $container, static::$fieldType);
   }
 
   /**

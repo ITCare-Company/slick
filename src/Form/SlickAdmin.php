@@ -39,7 +39,10 @@ class SlickAdmin implements SlickAdminInterface {
    * @param \Drupal\slick\SlickManagerInterface $manager
    *   The slick manager service.
    */
-  public function __construct(BlazyAdminInterface $blazy_admin, SlickManagerInterface $manager) {
+  public function __construct(
+    BlazyAdminInterface $blazy_admin,
+    SlickManagerInterface $manager
+  ) {
     $this->blazyAdmin = $blazy_admin;
     $this->manager = $manager;
   }
@@ -49,8 +52,7 @@ class SlickAdmin implements SlickAdminInterface {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      // @todo use $container->get('blazy.admin.formatter'), post blazy:2.17.
-      $container->get('blazy.admin.extended'),
+      $container->get('blazy.admin.formatter'),
       $container->get('slick.manager')
     );
   }

@@ -56,8 +56,7 @@ class SlickAdminUnitTest extends UnitTestCase {
     $exception = ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE;
 
     $map = [
-      // @todo use blazy.admin.formatter post blazy:2.17.
-      ['blazy.admin.extended', $exception, $this->blazyAdmin],
+      ['blazy.admin.formatter', $exception, $this->blazyAdmin],
       ['slick.manager', $exception, $this->slickManager],
     ];
 

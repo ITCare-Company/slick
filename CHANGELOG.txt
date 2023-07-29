@@ -1,4 +1,11 @@
 
+Slick 8.x-2.0-dev, 2023-07-29
+-----------------------------
+- Reduced more boilerplates.
+- Updated deprecated admin service parameter.
+- Added supports for SVG Image Field module.
+- Re-purposed Slick Image with VEF (deprecated) formatter for SVG (WIP).
+
 Slick 8.x-2.0-dev, 2023-07-26
 -----------------------------
 - Added image title for thumbnail captions.

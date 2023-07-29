@@ -3,10 +3,8 @@
 namespace Drupal\slick\Plugin\Field\FieldFormatter;
 
 use Drupal\Component\Utility\Xss;
-use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\blazy\Plugin\Field\FieldFormatter\BlazyFileFormatterBase;
 use Drupal\slick\SlickDefault;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Base class for slick image and file ER formatters.
@@ -43,37 +41,8 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(
-    ContainerInterface $container,
-    array $configuration,
-    $plugin_id,
-    $plugin_definition
-  ) {
-    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
-    return self::injectServices($instance, $container, 'image');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public static function defaultSettings() {
-    return SlickDefault::imageSettings();
-  }
-
-  /**
-   * {@inheritdoc}
-   *
-   * @todo remove post blazy:2.17, no real difference this far.
-   */
-  public function viewElements(FieldItemListInterface $items, $langcode) {
-    $entities = $this->getEntitiesToView($items, $langcode);
-
-    // Early opt-out if the field is empty.
-    if (empty($entities)) {
-      return [];
-    }
-
-    return $this->commonViewElements($items, $langcode, $entities);
+    return SlickDefault::imageSettings() + parent::defaultSettings();
   }
 
   /**

@@ -3,33 +3,53 @@
 namespace Drupal\slick\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FieldDefinitionInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\slick\SlickDefault;
 
 /**
- * Plugin implementation of the 'Slick File' formatter to get ME within images.
+ * Plugin implementation of the 'Slick File' to get image/ SVG from files.
  *
- * This is not 'Slick Media', instead a simple mix of image and optional video.
+ * This was previously for deprecated VEF, since 2.10 re-purposed for SVG, WIP!
  *
- * @todo TBD; deprecate for core Media and remove post/ prior to 3.x release.
- * @todo deprecated in blazy:8.x-2.0 and is removed from blazy:8.x-3.0. Use
- *   \Drupal\slick\Plugin\Field\FieldFormatter\SlickMediaFormatter instead.
+ * @FieldFormatter(
+ *   id = "slick_file",
+ *   label = @Translation("Slick File/SVG"),
+ *   field_types = {
+ *     "entity_reference",
+ *     "file",
+ *     "image",
+ *     "svg_image_field",
+ *   }
+ * )
+ *
+ * @todo remove `image` at 3.x, unless dedicated for SVG (forms and displays).
  */
 class SlickFileFormatter extends SlickFileFormatterBase {
 
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
-    return self::injectServices($instance, $container, 'entity');
+  protected static $fieldType = 'entity';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $useSvg = TRUE;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function defaultSettings() {
+    return SlickDefault::svgSettings() + parent::defaultSettings();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildElement(array &$build, $entity) {
-    // @todo remove, already set upstream: $$build['#entity'] = $entity;
-    $this->blazyOembed->build($build);
+  public function buildElement(array &$element, $entity) {
+    $this->blazyOembed->build($element);
+
+    // Might need image item from OEmbed service.
+    parent::buildElement($element, $entity);
   }
 
   /**
@@ -43,10 +63,13 @@ class SlickFileFormatter extends SlickFileFormatterBase {
    * {@inheritdoc}
    */
   protected function getPluginScopes(): array {
+    // @todo use $this->getEntityScopes() post blazy:2.17.
     return [
-      'fieldable_form' => TRUE,
-      'multimedia'     => TRUE,
-      'view_mode'      => $this->viewMode,
+      'fieldable_form'   => TRUE,
+      'multimedia'       => TRUE,
+      'no_loading'       => TRUE,
+      'no_preload'       => TRUE,
+      'responsive_image' => FALSE,
     ] + parent::getPluginScopes();
   }
 

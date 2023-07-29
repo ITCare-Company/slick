@@ -160,4 +160,20 @@ class SlickDefault extends BlazyDefault {
     ];
   }
 
+  /**
+   * Returns svg-related field formatter settings.
+   *
+   * @todo remove post blazy:2.17.
+   */
+  public static function svgSettings() {
+    return [
+      'svg_inline' => FALSE,
+      'svg_fill' => FALSE,
+      'svg_sanitize' => TRUE,
+      'svg_sanitize_remote' => FALSE,
+      'svg_hide_caption' => FALSE,
+      'svg_attributes' => '',
+    ];
+  }
+
 }

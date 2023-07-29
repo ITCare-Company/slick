@@ -41,7 +41,7 @@ class SlickCrudTest extends BlazyKernelTestBase {
     $this->installConfig(static::$modules);
     $this->installEntitySchema('slick');
 
-    $this->blazyAdmin     = $this->container->get('blazy.admin.extended');
+    $this->blazyAdmin     = $this->container->get('blazy.admin.formatter');
     $this->slickManager   = $this->container->get('slick.manager');
     $this->slickFormatter = $this->container->get('slick.formatter');
     $this->slickAdmin     = $this->container->get('slick.admin');
