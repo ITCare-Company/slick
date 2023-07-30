@@ -119,8 +119,9 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
   /**
    * {@inheritdoc}
    */
-  public function attach(array &$load, array $attach): void {
-    if (!empty($attach['lazy'])) {
+  public function attach(array &$load, array $attach, $blazies = NULL): void {
+    $blazies = $blazies ?: $attach['blazies'] ?? NULL;
+    if ($blazies && !$blazies->is('unlazy')) {
       $load['library'][] = 'blazy/loading';
     }
 
@@ -150,7 +151,7 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
     }
 
     if (!empty($attach['skin'])) {
-      $this->attachSkin($load, $attach);
+      $this->attachSkin($load, $attach, $blazies);
     }
 
     // Attach default JS settings to allow responsive displays have a lookup,
@@ -163,7 +164,7 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
   /**
    * Provides skins only if required.
    */
-  public function attachSkin(array &$load, array $attach): void {
+  public function attachSkin(array &$load, array $attach, $blazies = NULL): void {
     if ($this->config('slick_css')) {
       $load['library'][] = 'slick/slick.css';
     }

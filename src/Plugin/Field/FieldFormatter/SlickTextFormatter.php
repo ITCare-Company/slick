@@ -4,7 +4,6 @@ namespace Drupal\slick\Plugin\Field\FieldFormatter;
 
 use Drupal\blazy\Plugin\Field\FieldFormatter\BlazyTextFormatter;
 use Drupal\slick\SlickDefault;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Plugin implementation of the 'Slick Text' formatter.
@@ -45,19 +44,6 @@ class SlickTextFormatter extends BlazyTextFormatter {
    * {@inheritdoc}
    */
   protected static $fieldType = 'text';
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(
-    ContainerInterface $container,
-    array $configuration,
-    $plugin_id,
-    $plugin_definition
-  ) {
-    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
-    return static::injectServices($instance, $container, static::$fieldType);
-  }
 
   /**
    * {@inheritdoc}

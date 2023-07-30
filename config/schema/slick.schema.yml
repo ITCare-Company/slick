@@ -17,6 +17,9 @@ slick.settings:
     disable_old_skins:
       type: boolean
       label: 'Disable old skins'
+    use_theme_blazy:
+      type: boolean
+      label: 'Use theme_blazy()'
     sitewide:
       type: integer
       label: 'Load slick globally'

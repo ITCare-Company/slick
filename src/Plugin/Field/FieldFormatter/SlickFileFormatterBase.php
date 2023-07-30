@@ -8,6 +8,8 @@ use Drupal\slick\SlickDefault;
 
 /**
  * Base class for slick image and file ER formatters.
+ *
+ * @todo extends BlazyFileSvgFormatterBase post blazy:2.17, or split.
  */
 abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
 
@@ -51,11 +53,18 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
   public function buildElements(array &$build, $files, $langcode) {
     $settings   = $this->formatter->toHashtag($build);
     $blazies    = $settings['blazies'];
+    $config     = $settings['slicks'];
     $tn_caption = $settings['thumbnail_caption'] ?? NULL;
     $tn_style   = $settings['thumbnail_style'] ?? NULL;
     $is_nav     = $blazies->is('nav') ?: $settings['nav'] ?? FALSE;
-    $elements   = $this->getElements($build, $files);
 
+    // Use theme_blazy() is so configured.
+    // @todo remove at blazy:3.x for being enforced.
+    if ($config->ui('use_theme_blazy')) {
+      $blazies->set('use.theme_blazy', TRUE);
+    }
+
+    $elements = $this->getElements($build, $files);
     foreach ($elements as $element) {
       // Build individual item.
       $build['items'][] = $element;

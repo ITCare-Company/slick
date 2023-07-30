@@ -24,8 +24,10 @@ interface SlickSkinManagerInterface {
    *   The loaded libraries being modified.
    * @param array $attach
    *   The settings which determine what library to attach.
+   * @param object $blazies
+   *   The settings.blazies object for convenient, optional for BC.
    */
-  public function attach(array &$load, array $attach): void;
+  public function attach(array &$load, array $attach, $blazies = NULL): void;
 
   /**
    * Provides core libraries.
@@ -34,8 +36,10 @@ interface SlickSkinManagerInterface {
    *   The loaded libraries being modified.
    * @param array $attach
    *   The settings which determine what library to attach.
+   * @param object $blazies
+   *   The settings.blazies object for convenient, optional for BC.
    */
-  public function attachSkin(array &$load, array $attach): void;
+  public function attachSkin(array &$load, array $attach, $blazies = NULL): void;
 
   /**
    * Returns slick config shortcut.

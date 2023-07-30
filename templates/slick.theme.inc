@@ -69,7 +69,6 @@ function template_preprocess_slick(&$variables) {
 
   // Blazy can still lazyload an unslick.
   // The lazy supercedes JS lazyLoad for background, breakpoints, media, etc.
-  $sets['lazy'] = $sets['lazy'] ?: $js['lazyLoad'];
   if ($display != 'thumbnail') {
     if ($blazies->is('blazy') && !$blazies->is('unlazy')) {
       $js['lazyLoad'] = 'blazy';
@@ -252,10 +251,11 @@ function template_preprocess_slick_slide(&$variables) {
   // fullwidth: If full skins, add wrappers to hold caption and overlay.
   // detroy: Remove .slide__content if it is an enforced unslick grid.
   // wrapper: Don't add divities for a single item to have clean markups.
-  $item['slide']     = $item['slide'] ?? [];
-  $item['caption']   = array_filter($item['caption']);
-  $sets['split']     = !empty($item) && (!empty($sets['caption']) || !empty($sets['title']));
-  $sets['data']      = !empty($item['caption']['alt']) || !empty($item['caption']['title']) || !empty($item['caption']['data']);
+  $unslick           = !empty($sets['unslick']);
+  $item['slide']     = $slide = $item['slide'] ?? [];
+  $item['caption']   = $caption = array_filter($item['caption']);
+  $sets['split']     = $slide && !$unslick && (!empty($sets['caption']) || !empty($sets['title']));
+  $sets['data']      = !empty($caption['alt']) || !empty($caption['title']) || !empty($caption['data']);
   $sets['fullwidth'] = !empty($sets['skin']) && strpos($sets['skin'], 'full') !== FALSE;
   $sets['grid']      = empty($sets['grid']) ? FALSE : $sets['grid'];
   $sets['detroy']    = $sets['current_item'] == 'main' && !empty($sets['grid']) && !empty($sets['unslick']);

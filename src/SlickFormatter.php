@@ -71,4 +71,13 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
     $this->moduleHandler->alter('slick_settings', $build, $items);
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function verify(array &$settings): void {
+    parent::verify($settings);
+
+    SlickDefault::verify($settings, $this);
+  }
+
 }

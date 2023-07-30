@@ -56,7 +56,7 @@
     width: 22%;
   }
 
-  .slick--skin--classic .slide__caption .slide__data {
+  .slick--skin--classic .slide__caption > .slide__data {
     box-sizing: border-box; /* dups due to csslint ignoring inheritance */
     margin: 0 !important; /* csslint allow: known-properties, important */
     padding: 15px;

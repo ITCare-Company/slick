@@ -53,8 +53,8 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   /**
    * {@inheritdoc}
    */
-  public function attachSkin(array &$load, array $attach): void {
-    $this->skinManager->attachSkin($load, $attach);
+  public function attachSkin(array &$load, array $attach, $blazies = NULL): void {
+    $this->skinManager->attachSkin($load, $attach, $blazies);
   }
 
   /**
@@ -261,31 +261,42 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   /**
    * {@inheritdoc}
    */
-  public function verify(array &$settings): void {
-    // @todo use parent::verify($settings); post blazy 2.17.
-    Blazy::verify($settings);
+  public function toBlazy(array &$data, array &$captions, $delta): void {
+    $settings = $this->toHashtag($data);
+    $skin     = $settings['skin'] ?? '';
+    $prefix   = 'slide';
 
-    $config = $settings['slicks'] ?? NULL;
-
-    if (!$config) {
-      $settings += SlickDefault::htmlSettings();
-      $config = $settings['slicks'];
+    // Only if it has captions.
+    if ($captions) {
+      $data['#media_attributes']['class'][] = $prefix . '__media';
+      if (strpos($skin, 'full') !== FALSE) {
+        $data['#caption_wrapper_attributes']['class'][] = $prefix . '__constrained';
+      }
     }
 
-    if (!$config->get('ui')) {
-      $ui = $this->configMultiple('slick.settings');
-      $config->set('ui', $ui);
+    // Grid already has grid__content wrapper, skip.
+    if (empty($settings['grid'])) {
+      $data['#wrapper_attributes']['class'][] = $prefix . '__content';
     }
   }
 
   /**
    * {@inheritdoc}
    */
+  public function verify(array &$settings): void {
+    parent::verify($settings);
+
+    SlickDefault::verify($settings, $this);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function attachments(array &$load, array $attach, $blazies): void {
-    // @todo enable post 2.17: parent::attachments($load, $attach, $blazies);
+    parent::attachments($load, $attach, $blazies);
     $this->verify($attach);
 
-    $this->skinManager->attach($load, $attach);
+    $this->skinManager->attach($load, $attach, $blazies);
 
     $this->moduleHandler->alter('slick_attach', $load, $attach, $blazies);
   }

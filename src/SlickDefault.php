@@ -176,4 +176,20 @@ class SlickDefault extends BlazyDefault {
     ];
   }
 
+  /**
+   * Verify the settings.
+   */
+  public static function verify(array &$settings, $manager): void {
+    $config = $settings['slicks'] ?? NULL;
+    if (!$config) {
+      $settings += self::htmlSettings();
+      $config = $settings['slicks'];
+    }
+
+    if (!$config->get('ui')) {
+      $ui = $manager->configMultiple('slick.settings');
+      $config->set('ui', $ui);
+    }
+  }
+
 }

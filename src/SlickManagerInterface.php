@@ -21,7 +21,7 @@ interface SlickManagerInterface extends BlazyManagerBaseInterface, TrustedCallba
   /**
    * Provides a shortcut to attach skins only if required.
    */
-  public function attachSkin(array &$load, array $attach): void;
+  public function attachSkin(array &$load, array $attach, $blazies = NULL): void;
 
   /**
    * Returns a renderable array of both main and thumbnail slick instances.
