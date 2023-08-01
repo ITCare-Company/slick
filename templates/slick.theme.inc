@@ -38,20 +38,21 @@ function template_preprocess_slick(&$variables) {
   $sets = &$variables['settings'];
   slick()->verify($sets);
 
+  $blazies   = $sets['blazies'];
+  $slicks    = $sets['slicks'];
   $optionset = Slick::verifyOptionset($variables, $sets['optionset']);
   $js        = &$variables['options'];
   $js       += $optionset->getSettings();
   $display   = $variables['display'] = $sets['display'];
-  $id        = empty($sets['id']) ? Blazy::getHtmlId('slick') : $sets['id'];
-  $blazies   = $sets['blazies'];
-  $slicks    = $sets['slicks'];
+  $id        = $blazies->get('css.id', $sets['id'] ?? NULL);
+  $id        = $sets['id'] = Blazy::getHtmlId('slick', $id);
+  $real_id   = $display == 'thumbnail' ? $id . '-nav' : $id;
 
   // Prepare attributes, since Twig prepends, not appends, causing BEM problems.
   $attrs          = &$variables['attributes'];
   $content_attrs  = &$variables['content_attributes'];
   $classes        = (array) ($attrs['class'] ?? []);
   $attrs['class'] = array_merge(['slick'], $classes);
-  $attrs['id']    = $display == 'thumbnail' ? $id . '-thumbnail' : $id;
 
   // @see SlickManager::buildGrid(), and this should make sense.
   $sets['count']   = $count = $blazies->get('count') ?: count($element['#items']);
@@ -87,7 +88,7 @@ function template_preprocess_slick(&$variables) {
 
   // Prevents broken slick when only one item given, or an enforced unslick.
   if (!$slicks->is('unslick')) {
-    $content_attrs->setAttribute('id', $attrs['id'] . '-slider');
+    $content_attrs->setAttribute('id', $real_id);
 
     $variables['arrow_attributes'] = new Attribute();
     $variables['arrow_attributes']['role'] = 'navigation';

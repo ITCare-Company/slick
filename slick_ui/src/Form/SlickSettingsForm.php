@@ -84,13 +84,6 @@ class SlickSettingsForm extends BlazyConfigFormBase {
       '#default_value' => $config->get('disable_old_skins'),
     ];
 
-    $form['use_theme_blazy'] = [
-      '#type'          => 'checkbox',
-      '#title'         => $this->t('Use theme_blazy()'),
-      '#description'   => $this->t('Check to use theme_blazy() specific for theme_slick_slide() contents with images/media. This will be forced at blazy:3.x. You can help starting the migrations by enabling this to spot problems. Currently WIP. Please disable and report if any issues.'),
-      '#default_value' => $config->get('use_theme_blazy'),
-    ];
-
     $form['sitewide'] = [
       '#type'         => 'select',
       '#title'        => $this->t('Load slick globally'),
@@ -119,7 +112,6 @@ class SlickSettingsForm extends BlazyConfigFormBase {
       ->set('library', $form_state->getValue('library'))
       ->set('slick_css', $form_state->getValue('slick_css'))
       ->set('module_css', $form_state->getValue('module_css'))
-      ->set('use_theme_blazy', $form_state->getValue('use_theme_blazy'))
       ->set('disable_old_skins', $form_state->getValue('disable_old_skins'))
       ->set('sitewide', (int) $form_state->getValue('sitewide'))
       ->save();

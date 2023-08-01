@@ -232,6 +232,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $thumbs  = $build['thumb']['items'] ?? [];
     $blazies = $settings['blazies'];
     $config  = $settings['slicks'];
+    $id      = $blazies->get('css.id', $settings['id'] ?? NULL);
 
     // Prevents unused thumb going through the main display.
     unset($build['thumb']);
@@ -242,7 +243,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     // Build the thumbnail Slick.
     // Using $blazies so that elevatezoomplus, etc. can swap Slick/Splide once.
     if ($blazies->is('nav') && $thumbs) {
-      $slick[1] = $this->buildNavigation($build, $thumbs);
+      $slick[1] = $this->buildNavigation($build, $thumbs, $id);
     }
 
     // Reverse slicks if thumbnail position is provided to get CSS float work.
@@ -263,8 +264,14 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    */
   public function toBlazy(array &$data, array &$captions, $delta): void {
     $settings = $this->toHashtag($data);
-    $skin     = $settings['skin'] ?? '';
-    $prefix   = 'slide';
+    $this->verify($settings);
+
+    $blazies = $settings['blazies'];
+    $skin    = $settings['skin'] ?? '';
+    $prefix  = 'slide';
+
+    $blazies->set('item.id', $prefix)
+      ->set('item.prefix', $prefix);
 
     // Only if it has captions.
     if ($captions) {
@@ -379,8 +386,10 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $optionset = Slick::verifyOptionset($build, $settings['optionset']);
     $blazies   = $settings['blazies'];
     $config    = $settings['slicks'];
-    $id        = $settings['id'] = Blazy::getHtmlId('slick', $settings['id'] ?? NULL);
-    $thumb_id  = $id . '-thumbnail';
+    $id        = $blazies->get('css.id', $settings['id'] ?? NULL);
+    $id        = Blazy::getHtmlId('slick', $id);
+    $id        = $settings['id'] = 'slick-' . substr(md5($id), 0, 11);
+    $thumb_id  = $id . '-nav';
     $count     = $blazies->get('count') ?: $settings['count'] ?? 0;
     $total     = count($build['items']);
     $count     = $count ?: $total;
@@ -423,7 +432,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $this->prepareOptions($optionset, $options, $settings);
 
     if ($blazies->is('nav')) {
-      $options['asNavFor'] = "#{$thumb_id}-slider";
+      $options['asNavFor'] = "#{$thumb_id}";
       $optionset_tn = $this->loadSafely($settings['optionset_thumbnail']);
       $wheel = $optionset_tn->getSetting('mouseWheel');
       $vertical_tn = $optionset_tn->getSetting('vertical');
@@ -464,13 +473,13 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   /**
    * Returns slick navigation with the structured array similar to main display.
    */
-  protected function buildNavigation(array &$build, array $items): array {
+  protected function buildNavigation(array &$build, array $items, $id): array {
     $settings              = $this->toHashtag($build);
     $options               = $build['#options'];
     $settings['optionset'] = $settings['optionset_thumbnail'];
     $settings['skin']      = $settings['skin_thumbnail'];
     $settings['display']   = 'thumbnail';
-    $options['asNavFor']   = "#" . $settings['id'] . '-slider';
+    $options['asNavFor']   = "#" . $id;
     $data['items']         = $items;
     $data['#optionset']    = $this->toHashtag($build, 'optionset_tn');
     $data['#options']      = $options;

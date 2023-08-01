@@ -59,6 +59,8 @@ class SlickDefault extends BlazyDefault {
   public static function extendedSettings() {
     return [
       'thumbnail' => '',
+      // @todo remove post 2.10.
+      'use_theme_blazy' => FALSE,
     ] + self::imageSettings() + parent::extendedSettings();
   }
 

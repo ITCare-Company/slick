@@ -66,7 +66,9 @@ abstract class SlickEntityFormatterBase extends BlazyEntityVanillaBase {
    * {@inheritdoc}
    */
   public static function defaultSettings() {
-    return ['view_mode' => ''] + SlickDefault::baseSettings();
+    return ['view_mode' => '']
+      + SlickDefault::baseSettings()
+      + parent::defaultSettings();
   }
 
   /**

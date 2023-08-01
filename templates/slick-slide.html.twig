@@ -46,7 +46,10 @@
   {%- if use_blazy -%}
     {{- item -}}
   {% else %}
-    {# @todo remove all below at 3.x for theme_blazy(). #}
+    {# @todo remove all below at 3.x for theme_blazy(). If you need to modify
+    anything, please use MYTHEME_preprocess_blazy() instead, starting at 3.x,
+    or better just use CSS for more reliable theming. FYI, theme_blazy()
+    offers greater possibility and versatility, that is why it is deprecated. #}
     {% set slide %}
       {% block slick_slide %}
         {%- if settings.split -%}

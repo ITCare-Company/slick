@@ -31,7 +31,10 @@ If you don't find the below solve your issues, check out:
    provided by sub-modules do not appear immediately.
 
 6. Lightboxes under `Media switcher` option are permanently cached. Clear cache
-   if new lightbox modules installed do not appear immediately.   
+   if new lightbox modules installed do not appear immediately.  
+
+7. Do not use ID for theming. Use more reliable CSS classes, instead. ID is
+   more useful for machines than themers. In Slick, it is to sync navigation.
 
 
 ## KNOWN ISSUES

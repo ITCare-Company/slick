@@ -16,10 +16,11 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
   public function buildSettings(array &$build, $items) {
     $this->hashtag($build);
 
-    $settings  = &$build['#settings'];
-    $settings += SlickDefault::htmlSettings();
-    $blazies   = $settings['blazies'];
-    $slicks    = $settings['slicks'];
+    $settings = &$build['#settings'];
+    $this->verify($settings);
+
+    $blazies = $settings['blazies'];
+    $config  = $settings['slicks'];
 
     // Prepare integration with Blazy.
     $settings['_unload'] = FALSE;
@@ -43,7 +44,7 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
     // Dups to allow one swap to all sliders as seen at ElevateZoomPlus.
     $settings['nav'] = $nav;
     $blazies->set('is.nav', $nav);
-    $slicks->set('is.nav', $nav);
+    $config->set('is.nav', $nav);
 
     // Do not bother for SlickTextFormatter, or when vanilla is on.
     if (empty($settings['vanilla'])) {
@@ -62,6 +63,7 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
 
     $this->hashtag($build);
     $settings = &$build['#settings'];
+    $this->verify($settings);
 
     // Only trim overridables options if disabled.
     if (empty($settings['override']) && isset($settings['overridables'])) {

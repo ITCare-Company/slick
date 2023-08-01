@@ -61,6 +61,11 @@ class SlickFilter extends BlazyFilterBase {
   protected static $shortcode = 'slide';
 
   /**
+   * {@inheritdoc}
+   */
+  protected static $navId = 'thumb';
+
+  /**
    * The slick admin service.
    *
    * @var \Drupal\slick\Form\SlickAdminInterface
@@ -208,6 +213,9 @@ class SlickFilter extends BlazyFilterBase {
       elseif ($type == 'image') {
         $formatter = 'slick_image';
       }
+      elseif (in_array($type, ['file', 'svg_image_field'])) {
+        $formatter = 'slick_file';
+      }
       elseif (in_array($type, $texts)) {
         $formatter = 'slick_text';
       }
@@ -264,8 +272,8 @@ class SlickFilter extends BlazyFilterBase {
 
       if (isset($sets['blazies'])) {
         $blazies = $sets['blazies']->reset($sets);
-        $blazies->set('delta', $delta);
-        $blazies->set('thumbnail.uri', $tn_uri);
+        $blazies->set('delta', $delta)
+          ->set('thumbnail.uri', $tn_uri);
       }
 
       $element = ['caption' => [], '#item' => NULL, '#settings' => $sets];

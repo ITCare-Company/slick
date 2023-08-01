@@ -1,4 +1,12 @@
 
+Slick 8.x-2.0-dev, 2023-08-01
+-----------------------------
+- Removed Slick UI option `Use theme_blazy()` into Blazy UI.
+
+Slick 8.x-2.0-dev, 2023-07-31
+-----------------------------
+- Simplified the notorious ID, only useful for machines, not themers.
+
 Slick 8.x-2.0-dev, 2023-07-29
 -----------------------------
 - Updated theme_slick_slide() to be replaced by theme_blazy() at 3.x to DRY.
