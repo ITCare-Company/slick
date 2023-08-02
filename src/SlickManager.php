@@ -87,10 +87,11 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
     $blazies = $settings['blazies'];
     $config  = $settings['slicks'];
+    $count   = $blazies->get('count', 0);
     $grids   = [];
 
     // Enforces unslick with less items.
-    if (!$config->is('unslick') && $count = $blazies->get('count', 0)) {
+    if (!$config->is('unslick')) {
       $settings['unslick'] = $unslick = $count < $settings['visible_items'];
       $config->set('is.unslick', $unslick);
     }
@@ -102,7 +103,11 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
       $settings['current_item'] = 'grid';
       $settings['count']        = $count = 2;
 
-      $blazies->set('count', $count);
+      // Requests to refresh grid and re-attach libraries when destroyed.
+      $blazies->set('count', $count)
+        ->set('is.grid', TRUE)
+        ->set('is.grid_refresh', TRUE);
+
       $grids[0] = $this->buildGridItem($items, 0, $settings);
     }
     else {
@@ -116,6 +121,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
         $grids[] = $this->buildGridItem($grid_item, $delta, $settings);
       }
     }
+
     return $grids;
   }
 
@@ -312,12 +318,12 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    * Returns items as a grid item display.
    */
   protected function buildGridItem(array $items, $delta, array $settings): array {
-    $config = $settings['slicks'];
-    $output = $this->generateGridItem($items, $settings);
-    $result = $this->toGrid($output, $settings);
+    $config  = $settings['slicks'];
+    $output  = $this->generateGridItem($items, $settings);
+    $result  = $this->toGrid($output, $settings);
+    $unslick = $config->is('unslick');
 
-    $result['#attributes']['class'][] = $config->is('unslick')
-      ? 'slick__grid' : 'slide__content';
+    $result['#attributes']['class'][] = $unslick ? 'slick__grid' : 'slide__content';
 
     $build = ['slide' => $result, '#settings' => $settings];
 
@@ -525,7 +531,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    */
   private function generateGridItem(array $items, array $settings): \Generator {
     $blazies = $settings['blazies'];
-    $config = $settings['slicks'];
+    $config  = $settings['slicks'];
 
     foreach ($items as $delta => $item) {
       if (!is_array($item)) {
@@ -554,6 +560,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
       }
 
       $attrs['class'][] = 'grid--' . $delta;
+
       foreach (['type', 'media_switch'] as $key) {
         if (!empty($sets[$key])) {
           $value = $sets[$key];
@@ -565,16 +572,17 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
       }
 
       // Listens to signaled attributes via hook_alters.
-      // @todo use Blazy::gridCheckAttributes($attrs, $content_attrs,
-      // $blazies, FALSE); post blazy:2.17.
+      Blazy::gridCheckAttributes($attrs, $content_attrs,
+      $blazies, FALSE);
+
+      /*
       if ($attrs_alter = $blazies->get('grid.item_attributes') ?: []) {
         $attrs = $this->merge($attrs, $attrs_alter);
       }
-
       if ($content_attrs_alter = $blazies->get('grid.content_attributes') ?: []) {
         $content_attrs = $this->merge($content_attrs, $content_attrs_alter);
       }
-
+      */
       $theme = empty($settings['vanilla']) ? 'slide' : 'vanilla';
       $content = [
         '#theme' => 'slick_' . $theme,
