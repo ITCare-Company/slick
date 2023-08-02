@@ -75,7 +75,7 @@ class SlickFilter extends BlazyFilterBase {
   /**
    * The slick formatter.
    *
-   * @var \Drupal\slick\SlickFormatterInterface
+   * @var \Drupal\slick\SlickManagerInterface
    */
   protected $manager;
 
@@ -86,7 +86,7 @@ class SlickFilter extends BlazyFilterBase {
     $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
 
     $instance->admin = $container->get('slick.admin');
-    $instance->manager = $container->get('slick.formatter');
+    $instance->manager = $container->get('slick.manager');
     return $instance;
   }
 
@@ -335,7 +335,7 @@ class SlickFilter extends BlazyFilterBase {
       $uri = $sets['uri'] ?? '';
       $uri = $blazies ? $blazies->get('image.uri', $uri) : $uri;
       if ($uri) {
-        $build['slide'] = $this->manager->getBlazy($build);
+        $build['slide'] = $this->blazyManager->getBlazy($build);
       }
     }
   }
@@ -361,6 +361,7 @@ class SlickFilter extends BlazyFilterBase {
   private function prepareBuild(array &$build, $node) {
     $sets    = &$build['#settings'];
     $blazies = $sets['blazies'];
+    $slicks  = $sets['slicks'];
     $count   = $sets['count'] ?? 0;
     $count   = $blazies->get('count', 0) ?: $count;
     $options = [];
@@ -380,11 +381,19 @@ class SlickFilter extends BlazyFilterBase {
       $sets['nav'] = (!empty($sets['optionset_thumbnail']) && $count > 1);
     }
 
-    $sets['_grid'] = !empty($sets['style']) && !empty($sets['grid']);
-    $sets['visible_items'] = $sets['_grid'] && empty($sets['visible_items']) ? 6 : $sets['visible_items'];
+    $nav = $sets['nav'];
+    $grid = !empty($sets['style']) && !empty($sets['grid']);
+    $sets['visible_items'] = $grid && empty($sets['visible_items']) ? 6 : $sets['visible_items'];
 
-    $blazies->set('is.nav', $sets['nav'])
-      ->set('is.grid', $sets['_grid']);
+    $blazies->set('is.nav', $nav)
+      ->set('is.grid', $grid);
+
+    $slicks->set('is.nav', $nav);
+
+    // Ensures disabling nav, also removing the its optionset.
+    if (!$nav) {
+      $sets['optionset_thumbnail'] = '';
+    }
 
     $build['#options'] = $options;
   }

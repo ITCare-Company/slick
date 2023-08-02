@@ -31,6 +31,8 @@ class SlickMediaFormatter extends SlickEntityReferenceFormatterBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @todo remove post blazy:2.17, no differences so far.
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
     $entities = $this->getEntitiesToView($items, $langcode);

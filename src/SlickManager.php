@@ -505,9 +505,9 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    * @param array $build
    *   An associative array containing:
    *   - items: An array of slick contents: text, image or media.
-   *   - options: An array of key:value pairs of custom JS overrides.
-   *   - optionset: The cached optionset object to avoid multiple invocations.
-   *   - settings: An array of key:value pairs of HTML/layout related settings.
+   *   - #options: An array of key:value pairs of custom JS overrides.
+   *   - #optionset: The cached optionset object to avoid multiple invocations.
+   *   - #settings: An array of key:value pairs of HTML/layout related settings.
    *
    * @return array
    *   The cacheable renderable array of a slick instance, or empty array.
@@ -530,8 +530,9 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    * Generates items as a grid item display.
    */
   private function generateGridItem(array $items, array $settings): \Generator {
-    $blazies = $settings['blazies'];
-    $config  = $settings['slicks'];
+    $blazies   = $settings['blazies'];
+    $config    = $settings['slicks'];
+    $add_class = !$blazies->ui('wrapper_class');
 
     foreach ($items as $delta => $item) {
       if (!is_array($item)) {
@@ -561,28 +562,21 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
       $attrs['class'][] = 'grid--' . $delta;
 
-      foreach (['type', 'media_switch'] as $key) {
-        if (!empty($sets[$key])) {
-          $value = $sets[$key];
-          $attrs['class'][] = 'grid--' . str_replace('_', '-', $value);
-          if ($key == 'media_switch' && mb_strpos($value, 'box') !== FALSE) {
-            $attrs['class'][] = 'grid--litebox';
+      if ($add_class) {
+        foreach (['type', 'media_switch'] as $key) {
+          if (!empty($sets[$key])) {
+            $value = $sets[$key];
+            $attrs['class'][] = 'grid--' . str_replace('_', '-', $value);
+            if ($key == 'media_switch' && mb_strpos($value, 'box') !== FALSE) {
+              $attrs['class'][] = 'grid--litebox';
+            }
           }
         }
       }
 
       // Listens to signaled attributes via hook_alters.
-      Blazy::gridCheckAttributes($attrs, $content_attrs,
-      $blazies, FALSE);
+      Blazy::gridCheckAttributes($attrs, $content_attrs, $blazies, FALSE);
 
-      /*
-      if ($attrs_alter = $blazies->get('grid.item_attributes') ?: []) {
-        $attrs = $this->merge($attrs, $attrs_alter);
-      }
-      if ($content_attrs_alter = $blazies->get('grid.content_attributes') ?: []) {
-        $content_attrs = $this->merge($content_attrs, $content_attrs_alter);
-      }
-      */
       $theme = empty($settings['vanilla']) ? 'slide' : 'vanilla';
       $content = [
         '#theme' => 'slick_' . $theme,

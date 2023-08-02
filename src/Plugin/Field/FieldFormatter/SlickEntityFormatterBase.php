@@ -49,6 +49,8 @@ abstract class SlickEntityFormatterBase extends BlazyEntityVanillaBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @todo remove post blazy:2.17, no differences so far.
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
@@ -73,6 +75,8 @@ abstract class SlickEntityFormatterBase extends BlazyEntityVanillaBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @todo remove post blazy:2.17, no differences so far.
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
     $entities = $this->getEntitiesToView($items, $langcode);
