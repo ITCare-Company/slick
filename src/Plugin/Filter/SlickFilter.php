@@ -75,6 +75,13 @@ class SlickFilter extends BlazyFilterBase {
   /**
    * The slick formatter.
    *
+   * @var \Drupal\slick\SlickFormatterInterface
+   */
+  protected $formatter;
+
+  /**
+   * The slick manager.
+   *
    * @var \Drupal\slick\SlickManagerInterface
    */
   protected $manager;
@@ -87,6 +94,9 @@ class SlickFilter extends BlazyFilterBase {
 
     $instance->admin = $container->get('slick.admin');
     $instance->manager = $container->get('slick.manager');
+
+    // For consistent call against ecosystem shared methods:
+    $instance->formatter = $container->get('slick.formatter');
     return $instance;
   }
 
@@ -106,15 +116,15 @@ class SlickFilter extends BlazyFilterBase {
     $this->result = $result = new FilterProcessResult($text);
     $this->langcode = $langcode;
 
-    if (empty($text) || stristr($text, '[slick') === FALSE) {
+    if (empty($text) || stristr($text, '[' . static::$namespace) === FALSE) {
       return $result;
     }
 
     $attachments = [];
     $settings = $this->buildSettings($text);
-    $text = Util::unwrap($text, 'slick', 'slide');
+    $text = Util::unwrap($text, static::$namespace, static::$itemId);
     $dom = Html::load($text);
-    $nodes = Util::validNodes($dom, ['slick']);
+    $nodes = Util::validNodes($dom, [static::$namespace]);
 
     if (count($nodes) > 0) {
       foreach ($nodes as $node) {
@@ -241,7 +251,7 @@ class SlickFilter extends BlazyFilterBase {
     }
 
     $dom = Html::load($text);
-    $nodes = Util::getNodes($dom, '//slide');
+    $nodes = Util::getNodes($dom, '//' . static::$itemId);
     if ($nodes->length == 0) {
       return [];
     }
@@ -261,8 +271,7 @@ class SlickFilter extends BlazyFilterBase {
         continue;
       }
 
-      $sets   = $build['#settings'];
-      $sets  += SlickDefault::htmlSettings();
+      $sets = $build['#settings'];
       $tn_uri = $node->getAttribute('data-thumb');
 
       $sets['delta'] = $delta;
@@ -276,12 +285,16 @@ class SlickFilter extends BlazyFilterBase {
           ->set('thumbnail.uri', $tn_uri);
       }
 
-      $element = ['caption' => [], '#item' => NULL, '#settings' => $sets];
+      $element = [
+        static::$captionId => [],
+        '#item' => NULL,
+        '#settings' => $sets,
+      ];
 
       $this->buildDomItem($element, $node, $delta);
 
-      if (empty($element['slide'])) {
-        $element['slide'] = ['#markup' => $dom->saveHtml($node)];
+      if (empty($element[static::$itemId])) {
+        $element[static::$itemId] = ['#markup' => $dom->saveHtml($node)];
       }
 
       $build['items'][$delta] = $element;
@@ -306,7 +319,6 @@ class SlickFilter extends BlazyFilterBase {
 
     $tn_uri   = $node->getAttribute('data-thumb');
     $sets     = &$build['#settings'];
-    $sets    += SlickDefault::htmlSettings();
     $dom      = Html::load($text);
     $xpath    = new \DOMXPath($dom);
     $children = $xpath->query("//iframe | //img");
@@ -335,21 +347,34 @@ class SlickFilter extends BlazyFilterBase {
       $uri = $sets['uri'] ?? '';
       $uri = $blazies ? $blazies->get('image.uri', $uri) : $uri;
       if ($uri) {
-        $build['slide'] = $this->blazyManager->getBlazy($build);
+        $blazy = $this->formatter->getBlazy($build);
+        $build[static::$itemId] = $blazy;
+
+        // @todo remove check post blazy:2.17.
+        if (method_exists($this->formatter, 'postBlazy')) {
+          $this->formatter->postBlazy($build, $blazy);
+        }
+
+        if ($blazies->use('theme_blazy')) {
+          unset($build['captions']);
+        }
       }
     }
   }
 
   /**
    * {@inheritdoc}
-   *
-   * @todo change into protected post blazy:2.17.
    */
-  public function buildImageCaption(array &$build, &$node) {
-    $item = parent::buildImageCaption($build, $node);
+  protected function buildImageCaption(array &$build, &$node) {
+    $item    = parent::buildImageCaption($build, $node);
+    $sets    = &$build['#settings'];
+    $blazies = $sets['blazies'];
 
-    if (!empty($build['captions'])) {
-      $build['caption'] = $build['captions'];
+    if ($blazies->use('theme_blazy')) {
+      unset($build[static::$captionId]);
+    }
+    elseif ($captions = $build['captions'] ?? []) {
+      $build[static::$captionId] = $captions;
       unset($build['captions']);
     }
     return $item;
@@ -378,7 +403,7 @@ class SlickFilter extends BlazyFilterBase {
     $this->extractSettings($node, $sets);
 
     if (!isset($sets['nav'])) {
-      $sets['nav'] = (!empty($sets['optionset_thumbnail']) && $count > 1);
+      $sets['nav'] = !empty($sets['optionset_thumbnail']) && $count > 1;
     }
 
     $nav = $sets['nav'];
@@ -390,7 +415,7 @@ class SlickFilter extends BlazyFilterBase {
 
     $slicks->set('is.nav', $nav);
 
-    // Ensures disabling nav, also removing the its optionset.
+    // Ensures disabling nav, also removing its optionset.
     if (!$nav) {
       $sets['optionset_thumbnail'] = '';
     }
@@ -411,11 +436,11 @@ class SlickFilter extends BlazyFilterBase {
     // Thumbnail usages: asNavFor pagers, dot, arrows, photobox thumbnails.
     $thumb = [
       '#settings' => $sets,
-      'slide' => $this->manager->getThumbnail($sets, $item),
-      'caption' => $text,
+      static::$itemId => $this->manager->getThumbnail($sets, $item),
+      static::$captionId => $text,
     ];
 
-    $build['thumb']['items'][$delta] = $thumb;
+    $build[static::$navId]['items'][$delta] = $thumb;
     unset($thumb);
   }
 
@@ -426,27 +451,7 @@ class SlickFilter extends BlazyFilterBase {
     $caption = parent::getCaptionElement($node);
 
     if (empty($caption) && $node->parentNode) {
-      // @todo use post Blazy 2.10.
-      // $caption = $this->getCaptionFallback($node);
-      $parent = $node->parentNode->parentNode;
-      if ($parent && $grandpa = $parent->parentNode) {
-        if ($grandpa->parentNode) {
-          $divs = $grandpa->parentNode->getElementsByTagName('div');
-        }
-        else {
-          $divs = $grandpa->getElementsByTagName('div');
-        }
-
-        if ($divs) {
-          foreach ($divs as $div) {
-            $class = $div->getAttribute('class');
-            if ($class == 'blazy__caption') {
-              $caption = $div;
-              break;
-            }
-          }
-        }
-      }
+      $caption = $this->getCaptionFallback($node);
     }
     return $caption;
   }
