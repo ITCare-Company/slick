@@ -171,16 +171,16 @@ class SlickFilter extends BlazyFilterBase {
     if (!empty($dataset) && mb_strpos($dataset, ":") !== FALSE) {
       $dataset = strip_tags($dataset);
       $object->setAttribute('data', '');
-      return $this->byEntity($object, $settings, $dataset);
+      return $this->byEntityShortcode($object, $settings, $dataset);
     }
 
-    return $this->byDom($object, $settings);
+    return $this->byDomShortcode($object, $settings);
   }
 
   /**
    * Build the slick using the node ID and field_name.
    */
-  private function byEntity(\DOMElement $object, array &$settings, $attribute) {
+  private function byEntityShortcode(\DOMElement $object, array $settings, $attribute) {
     $list = $this->formatterSettings($settings, $attribute);
 
     if (!$list) {
@@ -243,7 +243,7 @@ class SlickFilter extends BlazyFilterBase {
   /**
    * Build the slick using the DOM lookups.
    */
-  private function byDom(\DOMElement $object, array $settings) {
+  private function byDomShortcode(\DOMElement $object, array $settings) {
     $text = Util::getHtml($object);
 
     if (empty($text)) {
@@ -272,32 +272,24 @@ class SlickFilter extends BlazyFilterBase {
       }
 
       $sets = $build['#settings'];
-      $tn_uri = $node->getAttribute('data-thumb');
+      $blazies = $sets['blazies']->reset($sets);
 
       $sets['delta'] = $delta;
-      if ($tn_uri) {
-        $sets['thumbnail_uri'] = $tn_uri;
+      $blazies->set('delta', $delta);
+
+      if ($thumb = $node->getAttribute('data-thumb')) {
+        $sets['thumbnail_uri'] = $thumb;
+        $blazies->set('thumbnail.uri', $thumb);
       }
 
-      if (isset($sets['blazies'])) {
-        $blazies = $sets['blazies']->reset($sets);
-        $blazies->set('delta', $delta)
-          ->set('thumbnail.uri', $tn_uri);
-      }
-
-      $element = [
-        static::$captionId => [],
-        '#item' => NULL,
-        '#settings' => $sets,
-      ];
-
-      $this->buildDomItem($element, $node, $delta);
+      $data = ['#item' => NULL, '#settings' => $sets];
+      $element = $this->domToElement($data, $node, $delta);
 
       if (empty($element[static::$itemId])) {
         $element[static::$itemId] = ['#markup' => $dom->saveHtml($node)];
       }
 
-      $build['items'][$delta] = $element;
+      $build['items'][] = $element;
 
       // Build individual slick thumbnail.
       if (!empty($sets['nav'])) {
@@ -311,29 +303,19 @@ class SlickFilter extends BlazyFilterBase {
   /**
    * Build the slide item.
    */
-  private function buildDomItem(array &$build, $node, $delta) {
-    $text = Util::getHtml($node);
+  private function domToElement(array $build, $node, $delta): array {
+    $element = [];
+    $text    = Util::getHtml($node);
+
     if (empty($text)) {
-      return;
+      return $element;
     }
 
-    $tn_uri   = $node->getAttribute('data-thumb');
     $sets     = &$build['#settings'];
+    $blazies  = $sets['blazies'];
     $dom      = Html::load($text);
     $xpath    = new \DOMXPath($dom);
     $children = $xpath->query("//iframe | //img");
-    $blazies  = $sets['blazies'] ?? NULL;
-
-    $sets['delta'] = $delta;
-    if ($tn_uri) {
-      $sets['thumbnail_uri'] = $tn_uri;
-    }
-
-    if ($blazies) {
-      $blazies = $sets['blazies']->reset($sets);
-      $blazies->set('delta', $delta);
-      $blazies->set('thumbnail.uri', $tn_uri);
-    }
 
     $this->buildItemAttributes($build, $node, $delta);
 
@@ -345,39 +327,29 @@ class SlickFilter extends BlazyFilterBase {
       $this->buildItemContent($build, $child, $delta);
 
       $uri = $sets['uri'] ?? '';
-      $uri = $blazies ? $blazies->get('image.uri', $uri) : $uri;
+      $uri = $blazies->get('image.uri') ?: $uri;
       if ($uri) {
-        $blazy = $this->formatter->getBlazy($build);
-        $build[static::$itemId] = $blazy;
-
         // @todo remove check post blazy:2.17.
-        if (method_exists($this->formatter, 'postBlazy')) {
-          $this->formatter->postBlazy($build, $blazy);
+        if (method_exists($this, 'toElement')) {
+          $element = $this->toElement($blazies, $build);
         }
+        else {
+          // @todo remove post blazy:2.17, already taken care of upstream.
+          $captions = $build['captions'] ?? [];
+          $element = $build;
+          if ($blazies->use('theme_blazy')) {
+            unset($element['captions']);
+          }
+          else {
+            $element[static::$captionId] = $captions;
+            unset($element['captions'], $build['captions']);
+          }
 
-        if ($blazies->use('theme_blazy')) {
-          unset($build['captions']);
+          $element[static::$itemId] = $this->formatter->getBlazy($build);
         }
       }
     }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function buildImageCaption(array &$build, &$node) {
-    $item    = parent::buildImageCaption($build, $node);
-    $sets    = &$build['#settings'];
-    $blazies = $sets['blazies'];
-
-    if ($blazies->use('theme_blazy')) {
-      unset($build[static::$captionId]);
-    }
-    elseif ($captions = $build['captions'] ?? []) {
-      $build[static::$captionId] = $captions;
-      unset($build['captions']);
-    }
-    return $item;
+    return $element;
   }
 
   /**
@@ -442,18 +414,6 @@ class SlickFilter extends BlazyFilterBase {
 
     $build[static::$navId]['items'][$delta] = $thumb;
     unset($thumb);
-  }
-
-  /**
-   * Returns the expected caption DOMelement.
-   */
-  protected function getCaptionElement($node) {
-    $caption = parent::getCaptionElement($node);
-
-    if (empty($caption) && $node->parentNode) {
-      $caption = $this->getCaptionFallback($node);
-    }
-    return $caption;
   }
 
   /**

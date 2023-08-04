@@ -244,9 +244,17 @@ function template_preprocess_slick_slide(&$variables) {
     $variables['item']['caption'][$key] = $variables['item']['caption'][$key] ?? [];
   }
 
-  $item = &$variables['item'];
-  $sets = &$variables['settings'];
+  $item    = &$variables['item'];
+  $sets    = &$variables['settings'];
+  $blazies = $sets['blazies'];
+
   $variables['caption_attributes'] = new Attribute();
+
+  // @todo remove the first check at 3.x.
+  if ($blazies->use('theme_blazy')
+    && $attrs = $blazies->get('item.attributes', [])) {
+    $variables['attributes'] = slick()->merge($variables['attributes'], $attrs);
+  }
 
   // split: Split image from captions if we do have captions, and main image.
   // fullwidth: If full skins, add wrappers to hold caption and overlay.
@@ -261,7 +269,7 @@ function template_preprocess_slick_slide(&$variables) {
   $sets['grid']      = empty($sets['grid']) ? FALSE : $sets['grid'];
   $sets['detroy']    = $sets['current_item'] == 'main' && !empty($sets['grid']) && !empty($sets['unslick']);
   $sets['wrapper']   = $sets['count'] > 1 && $sets['current_item'] != 'grid';
-  $sets['use_ca']    = empty($sets['grid']) || !empty($variables['content_attributes']);
+  $sets['use_ca']    = $sets['wrapper'] && (empty($sets['grid']) || !empty($variables['content_attributes']));
 }
 
 /**

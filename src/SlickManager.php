@@ -159,6 +159,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $defaults  = Slick::defaultSettings();
     $optionset = &$build['#optionset'];
     $config    = $settings['slicks'];
+    $blazies   = $settings['blazies'];
 
     // Adds helper class if thumbnail on dots hover provided.
     if (!empty($settings['thumbnail_effect']) && (!empty($settings['thumbnail_style']) || !empty($settings['thumbnail']))) {
@@ -207,9 +208,11 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
       }
 
       // Build the Slick grid if provided.
+      $blazies->set('is.grid_nested', TRUE);
       if (!empty($settings['grid']) && !empty($settings['visible_items'])) {
         $build['items'] = $this->buildGrid($build['items'], $settings);
       }
+      $blazies->set('is.grid_nested', FALSE);
     }
 
     $build['#attributes'] = $this->prepareAttributes($build);
@@ -288,9 +291,14 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     }
 
     // Grid already has grid__content wrapper, skip.
-    if (empty($settings['grid'])) {
+    $attrs = $blazies->get('item.wrapper_attributes', []);
+    if (empty($settings['grid']) || $attrs) {
       $data['#wrapper_attributes']['class'][] = $prefix . '__content';
+      if ($attrs) {
+        $data['#wrapper_attributes'] = $this->merge($data['#wrapper_attributes'], $attrs);
+      }
     }
+    // @todo enable blazy:2.17: parent::toBlazy($data, $captions, $delta);
   }
 
   /**

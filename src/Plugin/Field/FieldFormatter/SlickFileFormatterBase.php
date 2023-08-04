@@ -57,8 +57,7 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
     $tn_style   = $settings['thumbnail_style'] ?? NULL;
     $is_nav     = $blazies->is('nav') ?: $settings['nav'] ?? FALSE;
 
-    $elements = $this->getElements($build, $files);
-    foreach ($elements as $element) {
+    foreach ($this->getElements($build, $files) as $element) {
       // Build individual item.
       $build['items'][] = $element;
 
