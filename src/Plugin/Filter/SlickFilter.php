@@ -28,8 +28,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   },
  *   weight = 4
  * )
- *
- * @todo remove `blazies` checks and deprecated settings post Blazy:2.10.
  */
 class SlickFilter extends BlazyFilterBase {
 
@@ -146,6 +144,8 @@ class SlickFilter extends BlazyFilterBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @todo add return type :void post blazy:2.17.
    */
   protected function preSettings(array &$settings, $text) {
     // @todo remove post blazy:2.17.
@@ -159,7 +159,7 @@ class SlickFilter extends BlazyFilterBase {
       ->set('namespace', static::$namespace)
       ->set('no.item_container', TRUE);
 
-    parent::preSettings($settings, $text);
+    // @todo re-enable parent::preSettings($settings, $text);
   }
 
   /**
@@ -171,16 +171,16 @@ class SlickFilter extends BlazyFilterBase {
     if (!empty($dataset) && mb_strpos($dataset, ":") !== FALSE) {
       $dataset = strip_tags($dataset);
       $object->setAttribute('data', '');
-      return $this->byEntityShortcode($object, $settings, $dataset);
+      return $this->withEntityShortcode($object, $settings, $dataset);
     }
 
-    return $this->byDomShortcode($object, $settings);
+    return $this->withDomShortcode($object, $settings);
   }
 
   /**
    * Build the slick using the node ID and field_name.
    */
-  private function byEntityShortcode(\DOMElement $object, array $settings, $attribute) {
+  private function withEntityShortcode(\DOMElement $object, array $settings, $attribute): array {
     $list = $this->formatterSettings($settings, $attribute);
 
     if (!$list) {
@@ -243,7 +243,7 @@ class SlickFilter extends BlazyFilterBase {
   /**
    * Build the slick using the DOM lookups.
    */
-  private function byDomShortcode(\DOMElement $object, array $settings) {
+  private function withDomShortcode(\DOMElement $object, array $settings): array {
     $text = Util::getHtml($object);
 
     if (empty($text)) {
@@ -283,7 +283,7 @@ class SlickFilter extends BlazyFilterBase {
       }
 
       $data = ['#item' => NULL, '#settings' => $sets];
-      $element = $this->domToElement($data, $node, $delta);
+      $element = $this->withDomElement($data, $node, $delta);
 
       if (empty($element[static::$itemId])) {
         $element[static::$itemId] = ['#markup' => $dom->saveHtml($node)];
@@ -293,7 +293,7 @@ class SlickFilter extends BlazyFilterBase {
 
       // Build individual slick thumbnail.
       if (!empty($sets['nav'])) {
-        $this->buildNav($build, $element, $delta);
+        $this->withNavigation($build, $element, $delta);
       }
     }
 
@@ -303,7 +303,7 @@ class SlickFilter extends BlazyFilterBase {
   /**
    * Build the slide item.
    */
-  private function domToElement(array $build, $node, $delta): array {
+  private function withDomElement(array $build, $node, $delta): array {
     $element = [];
     $text    = Util::getHtml($node);
 
@@ -355,7 +355,7 @@ class SlickFilter extends BlazyFilterBase {
   /**
    * Prepares the slick.
    */
-  private function prepareBuild(array &$build, $node) {
+  private function prepareBuild(array &$build, $node): void {
     $sets    = &$build['#settings'];
     $blazies = $sets['blazies'];
     $slicks  = $sets['slicks'];
@@ -398,7 +398,7 @@ class SlickFilter extends BlazyFilterBase {
   /**
    * Build the slick navigation.
    */
-  private function buildNav(array &$build, array $element, $delta) {
+  private function withNavigation(array &$build, array $element, $delta): void {
     $sets    = $this->manager->toHashtag($element);
     $item    = $this->manager->toHashtag($element, 'item', NULL);
     $caption = $sets['thumbnail_caption'] ?? NULL;

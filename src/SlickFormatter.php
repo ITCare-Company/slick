@@ -13,6 +13,21 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
   /**
    * {@inheritdoc}
    */
+  protected static $namespace = 'slick';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $itemId = 'slide';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $itemPrefix = 'slide';
+
+  /**
+   * {@inheritdoc}
+   */
   public function buildSettings(array &$build, $items) {
     $this->hashtag($build);
 

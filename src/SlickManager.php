@@ -13,6 +13,21 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
   /**
+   * {@inheritdoc}
+   */
+  protected static $namespace = 'slick';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $itemId = 'slide';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $itemPrefix = 'slide';
+
+  /**
    * The slick skin manager service.
    *
    * @var \Drupal\slick\SlickSkinManagerInterface
