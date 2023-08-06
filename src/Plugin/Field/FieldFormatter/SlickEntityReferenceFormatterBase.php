@@ -77,16 +77,13 @@ abstract class SlickEntityReferenceFormatterBase extends BlazyEntityReferenceBas
     $view_mode = $settings['view_mode'] ?? '';
     $_caption  = $settings['thumbnail_caption'] ?? NULL;
     $_style    = $settings['thumbnail_style'] ?? NULL;
+    $use_blazy = $blazies->use('theme_thumbnail');
     $caption   = [];
 
     // @todo recheck any other places calling this method, and remove this.
     if (!$is_nav) {
       return;
     }
-
-    // Thumbnail usages: asNavFor pagers, dot, arrows, photobox thumbnails.
-    $element[static::$itemId] = $_style
-      ? $this->formatter->getThumbnail($settings, $item) : [];
 
     if ($_caption) {
       if ($item && $text = trim($item->{$_caption} ?? '')) {
@@ -97,7 +94,19 @@ abstract class SlickEntityReferenceFormatterBase extends BlazyEntityReferenceBas
       }
     }
 
-    $element[static::$captionId] = $caption;
+    $tn = $_style
+      ? $this->formatter->getThumbnail($settings, $item, $caption)
+      : [];
+
+    // Thumbnail usages: asNavFor pagers, dot, arrows, photobox thumbnails.
+    if ($use_blazy) {
+      $element = $tn;
+    }
+    else {
+      // @todo remove at blazy:3.x to minimize more dups.
+      $element[static::$itemId] = $tn;
+      $element[static::$captionId] = $caption;
+    }
 
     $build[static::$navId]['items'][$delta] = $element;
   }

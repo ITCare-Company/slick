@@ -143,26 +143,6 @@ class SlickFilter extends BlazyFilterBase {
   }
 
   /**
-   * {@inheritdoc}
-   *
-   * @todo add return type :void post blazy:2.17.
-   */
-  protected function preSettings(array &$settings, $text) {
-    // @todo remove post blazy:2.17.
-    $settings['no_item_container'] = TRUE;
-    $settings['item_id'] = static::$itemId;
-    $settings['namespace'] = static::$namespace;
-    $settings['visible_items'] = 0;
-
-    $blazies = $settings['blazies'];
-    $blazies->set('item.id', static::$itemId)
-      ->set('namespace', static::$namespace)
-      ->set('no.item_container', TRUE);
-
-    // @todo re-enable parent::preSettings($settings, $text);
-  }
-
-  /**
    * Build the slick.
    */
   private function build(&$object, array $settings): array {
@@ -282,7 +262,11 @@ class SlickFilter extends BlazyFilterBase {
         $blazies->set('thumbnail.uri', $thumb);
       }
 
-      $data = ['#item' => NULL, '#settings' => $sets];
+      $data = [
+        '#delta' => $delta,
+        '#item' => NULL,
+        '#settings' => $sets,
+      ];
       $element = $this->withDomElement($data, $node, $delta);
 
       if (empty($element[static::$itemId])) {
@@ -399,18 +383,28 @@ class SlickFilter extends BlazyFilterBase {
    * Build the slick navigation.
    */
   private function withNavigation(array &$build, array $element, $delta): void {
-    $sets    = $this->manager->toHashtag($element);
-    $item    = $this->manager->toHashtag($element, 'item', NULL);
-    $caption = $sets['thumbnail_caption'] ?? NULL;
-    $text    = ($caption && $item && !empty($item->{$caption}))
+    $sets      = $this->manager->toHashtag($element);
+    $item      = $this->manager->toHashtag($element, 'item', NULL);
+    $blazies   = $sets['blazies'];
+    $caption   = $sets['thumbnail_caption'] ?? NULL;
+    $use_blazy = $blazies->use('theme_thumbnail');
+    $text      = ($caption && $item && !empty($item->{$caption}))
       ? ['#markup' => Xss::filterAdmin($item->{$caption})] : [];
 
     // Thumbnail usages: asNavFor pagers, dot, arrows, photobox thumbnails.
-    $thumb = [
-      '#settings' => $sets,
-      static::$itemId => $this->manager->getThumbnail($sets, $item),
-      static::$captionId => $text,
-    ];
+    $tn = $this->manager->getThumbnail($sets, $item, $text);
+
+    if ($use_blazy) {
+      $thumb = $tn;
+    }
+    else {
+      // @todo remove this at 3.x.
+      $thumb = [
+        '#settings' => array_filter($sets),
+        static::$itemId => $tn,
+        static::$captionId => $text,
+      ];
+    }
 
     $build[static::$navId]['items'][$delta] = $thumb;
     unset($thumb);

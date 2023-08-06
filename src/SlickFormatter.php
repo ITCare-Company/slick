@@ -59,6 +59,7 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
     // Dups to allow one swap to all sliders as seen at ElevateZoomPlus.
     $settings['nav'] = $nav;
     $blazies->set('is.nav', $nav);
+
     $config->set('is.nav', $nav);
 
     // Do not bother for SlickTextFormatter, or when vanilla is on.
