@@ -292,7 +292,7 @@ class SlickFilter extends BlazyFilterBase {
     $text    = Util::getHtml($node);
 
     if (empty($text)) {
-      return $element;
+      return $build;
     }
 
     $sets     = &$build['#settings'];
@@ -332,6 +332,11 @@ class SlickFilter extends BlazyFilterBase {
           $element[static::$itemId] = $this->formatter->getBlazy($build);
         }
       }
+    }
+
+    // At least provide the settings.
+    if (!$element) {
+      $element['#settings'] = $sets;
     }
     return $element;
   }
