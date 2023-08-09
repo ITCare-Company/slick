@@ -18,6 +18,9 @@
   var _isPlaying = 'is-playing';
   var _isPaused = 'is-paused';
   var _hidden = 'visually-hidden';
+  // @todo remove data-thumb for data-b-thumb at 3.x.
+  var _dataThumb = 'data-thumb';
+  var _dataBThumb = 'data-b-thumb';
   var _blazy = Drupal.blazy || {};
 
   /**
@@ -280,8 +283,15 @@
         nextArrow: $('.slick-next', a),
         appendArrows: a,
         customPaging: function (slick, i) {
-          var container = slick.$slides.eq(i).find('[data-thumb]') || null;
-          var img = '<img alt="' + Drupal.t(container.find('img').attr('alt')) + '" src="' + container.data('thumb') + '">';
+          var slide = slick.$slides.eq(i);
+          var container = slide.find('[' + _dataThumb + ']');
+          var dataThumb = _dataThumb;
+
+          if (!container.length) {
+            container = slide.find('[' + _dataBThumb + ']');
+            dataThumb = _dataBThumb;
+          }
+          var img = '<img alt="' + Drupal.t(container.find('img').attr('alt')) + '" src="' + container.attr(dataThumb) + '">';
           var dotsThumb = container.length && o.dotsClass.indexOf('thumbnail') > 0 ?
             '<div class="slick-dots__thumbnail">' + img + '</div>' : '';
           var paging = slick.defaults.customPaging(slick, i);

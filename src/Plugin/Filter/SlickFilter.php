@@ -257,7 +257,14 @@ class SlickFilter extends BlazyFilterBase {
       $sets['delta'] = $delta;
       $blazies->set('delta', $delta);
 
-      if ($thumb = $node->getAttribute('data-thumb')) {
+      $thumb = $node->getAttribute('data-b-thumb');
+
+      // @todo remove data-thumb for data-b-thumb at 3.x.
+      if (!$thumb) {
+        $thumb = $node->getAttribute('data-thumb');
+      }
+
+      if ($thumb) {
         $sets['thumbnail_uri'] = $thumb;
         $blazies->set('thumbnail.uri', $thumb);
       }
@@ -287,7 +294,7 @@ class SlickFilter extends BlazyFilterBase {
   /**
    * Build the slide item.
    */
-  private function withDomElement(array $build, $node, $delta): array {
+  private function withDomElement(array &$build, $node, $delta): array {
     $element = [];
     $text    = Util::getHtml($node);
 
@@ -312,6 +319,7 @@ class SlickFilter extends BlazyFilterBase {
 
       $uri = $sets['uri'] ?? '';
       $uri = $blazies->get('image.uri') ?: $uri;
+
       if ($uri) {
         // @todo remove check post blazy:2.17.
         if (method_exists($this, 'toElement')) {
@@ -388,13 +396,16 @@ class SlickFilter extends BlazyFilterBase {
    * Build the slick navigation.
    */
   private function withNavigation(array &$build, array $element, $delta): void {
-    $sets      = $this->manager->toHashtag($element);
+    $sets      = &$element['#settings'];
     $item      = $this->manager->toHashtag($element, 'item', NULL);
     $blazies   = $sets['blazies'];
     $caption   = $sets['thumbnail_caption'] ?? NULL;
     $use_blazy = $blazies->use('theme_thumbnail');
-    $text      = ($caption && $item && !empty($item->{$caption}))
-      ? ['#markup' => Xss::filterAdmin($item->{$caption})] : [];
+    $text      = [];
+
+    if ($caption && $item && $check = $item->{$caption} ?? NULL) {
+      $text = ['#markup' => Xss::filterAdmin($check)];
+    }
 
     // Thumbnail usages: asNavFor pagers, dot, arrows, photobox thumbnails.
     $tn = $this->manager->getThumbnail($sets, $item, $text);

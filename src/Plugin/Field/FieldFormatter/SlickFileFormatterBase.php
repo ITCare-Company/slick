@@ -83,7 +83,7 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
         }
         else {
           // @todo remove at blazy:3.x to minimize more dups.
-          $nav[static::$itemId] = $$tn;
+          $nav[static::$itemId] = $tn;
           $nav[static::$captionId] = $caption;
         }
 

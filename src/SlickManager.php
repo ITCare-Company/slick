@@ -306,8 +306,10 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     }
 
     // Grid already has grid__content wrapper, skip.
-    $attrs = $blazies->get('item.wrapper_attributes', []);
-    if (empty($settings['grid']) || $attrs) {
+    $attrs   = $blazies->get('item.wrapper_attributes', []);
+    $wrapper = $blazies->count() > 1;
+    $use_ca  = $wrapper && (empty($settings['grid']) || $attrs);
+    if ($use_ca) {
       $data['#wrapper_attributes']['class'][] = $prefix . '__content';
       if ($attrs) {
         $data['#wrapper_attributes'] = $this->merge($data['#wrapper_attributes'], $attrs);
@@ -633,6 +635,15 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
       $options['draggable'] = FALSE;
       $options['infinite'] = FALSE;
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @todo remove post blazy:2.17.
+   */
+  public function verifyItem(array &$element, $delta): void {
+    // Do nothing.
   }
 
 }
