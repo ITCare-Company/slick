@@ -2,8 +2,9 @@
 
 namespace Drupal\slick;
 
-use Drupal\slick\Entity\Slick;
+use Drupal\blazy\Blazy;
 use Drupal\blazy\BlazyFormatter;
+use Drupal\slick\Entity\Slick;
 
 /**
  * Provides Slick field formatters utilities.
@@ -32,7 +33,7 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
     $this->hashtag($build);
 
     $settings = &$build['#settings'];
-    $this->verify($settings);
+    $this->verifySafely($settings);
 
     $blazies = $settings['blazies'];
     $config  = $settings['slicks'];
@@ -79,7 +80,7 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
 
     $this->hashtag($build);
     $settings = &$build['#settings'];
-    $this->verify($settings);
+    $this->verifySafely($settings);
 
     // Only trim overridables options if disabled.
     if (empty($settings['override']) && isset($settings['overridables'])) {
@@ -91,11 +92,23 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
 
   /**
    * {@inheritdoc}
+   *
+   * @todo remove at 3.x.
    */
   public function verify(array &$settings): void {
     parent::verify($settings);
 
     SlickDefault::verify($settings, $this);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function verifySafely(array &$settings, $key = 'blazies', array $defaults = []) {
+    SlickDefault::verify($settings, $this);
+
+    // @todo at 3.x: return parent::verifySafely($settings, $key, $defaults);
+    return Blazy::verify($settings, $key, $defaults);
   }
 
 }

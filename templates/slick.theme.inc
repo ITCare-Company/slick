@@ -36,7 +36,7 @@ function template_preprocess_slick(&$variables) {
 
   // Shortcuts.
   $sets = &$variables['settings'];
-  slick()->verify($sets);
+  slick()->verifySafely($sets);
 
   $blazies   = $sets['blazies'];
   $slicks    = $sets['slicks'];
@@ -192,7 +192,7 @@ function template_preprocess_slick_wrapper(&$variables) {
 
   // Shortcuts for easy calls.
   $sets = &$variables['settings'];
-  slick()->verify($sets);
+  slick()->verifySafely($sets);
 
   $variables['blazies'] = $sets['blazies']->storage();
   $variables['slicks'] = $sets['slicks']->storage();

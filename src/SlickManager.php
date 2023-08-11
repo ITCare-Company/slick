@@ -98,7 +98,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    * Returns items as a grid display.
    */
   public function buildGrid(array $items, array &$settings): array {
-    $this->verify($settings);
+    $this->verifySafely($settings);
 
     $blazies = $settings['blazies'];
     $config  = $settings['slicks'];
@@ -169,7 +169,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     unset($element['#build']);
 
     $settings = &$build['#settings'];
-    $this->verify($settings);
+    $this->verifySafely($settings);
 
     $defaults  = Slick::defaultSettings();
     $optionset = &$build['#optionset'];
@@ -288,7 +288,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    */
   public function toBlazy(array &$data, array &$captions, $delta): void {
     $settings = $this->toHashtag($data);
-    $this->verify($settings);
+    $this->verifySafely($settings);
 
     $blazies = $settings['blazies'];
     $skin    = $settings['skin'] ?? '';
@@ -320,6 +320,8 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
   /**
    * {@inheritdoc}
+   *
+   * @todo remove at 3.x.
    */
   public function verify(array &$settings): void {
     parent::verify($settings);
@@ -330,9 +332,19 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   /**
    * {@inheritdoc}
    */
+  public function verifySafely(array &$settings, $key = 'blazies', array $defaults = []) {
+    SlickDefault::verify($settings, $this);
+
+    // @todo at 3.x: return parent::verifySafely($settings, $key, $defaults);
+    return Blazy::verify($settings, $key, $defaults);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function attachments(array &$load, array $attach, $blazies): void {
     parent::attachments($load, $attach, $blazies);
-    $this->verify($attach);
+    $this->verifySafely($attach);
 
     $this->skinManager->attach($load, $attach, $blazies);
 
@@ -411,7 +423,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $this->hashtag($build, 'options');
 
     $settings = &$build['#settings'];
-    $this->verify($settings);
+    $this->verifySafely($settings);
 
     $options   = &$build['#options'];
     $optionset = Slick::verifyOptionset($build, $settings['optionset']);
