@@ -44,8 +44,7 @@ function slick_ui_help($route_name) {
       $output .= file_get_contents(dirname(dirname(dirname(__FILE__))) . "/docs/{$key}.md");
     }
 
-    // @todo use slick()->markdown($output) post blazy:2.17.
-    return blazy_parse_markdown($output);
+    return blazy()->markdown($output);
   }
   return '';
 }

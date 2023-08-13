@@ -299,7 +299,7 @@
  *     // Each item has keys: slide, caption, settings.
  *     $build['thumb']['items'][] = [
  *       // Use $formatter->getThumbnail($settings) where $settings contain:
- *       // uri, image_style, height, width, alt, title.
+ *       // image_style, and uri, height, width, alt, title via blazies object.
  *       'slide'   => '<img src="/path/to/image-0' . $key . '.jpg">',
  *
  *       // Thumbnail caption accepts direct markup or custom renderable array

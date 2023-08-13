@@ -54,9 +54,7 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
     $settings   = $this->formatter->toHashtag($build);
     $blazies    = $settings['blazies'];
     $tn_caption = $settings['thumbnail_caption'] ?? NULL;
-    $tn_style   = $settings['thumbnail_style'] ?? NULL;
     $is_nav     = $blazies->is('nav') ?: $settings['nav'] ?? FALSE;
-    $use_blazy  = $blazies->use('theme_thumbnail');
 
     foreach ($this->getElements($build, $files) as $element) {
       // Build individual item.
@@ -66,28 +64,15 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
       if ($is_nav) {
         $sets = $this->formatter->toHashtag($element);
         $item = $this->formatter->toHashtag($element, 'item', NULL);
-        $nav = ['#settings' => $sets];
         $caption = [];
 
         if ($tn_caption && $item && $text = $item->{$tn_caption} ?? NULL) {
           $caption = ['#markup' => Xss::filterAdmin($text)];
         }
 
-        $tn = $tn_style
-          ? $this->formatter->getThumbnail($sets, $item, $caption)
-          : [];
-
-        // Thumbnail usages: asNavFor pagers, dot, arrows, photobox thumbnails.
-        if ($use_blazy) {
-          $nav = $tn;
-        }
-        else {
-          // @todo remove at blazy:3.x to minimize more dups.
-          $nav[static::$itemId] = $tn;
-          $nav[static::$captionId] = $caption;
-        }
-
-        $build[static::$navId]['items'][] = $nav;
+        // Thumbnail usages: asNavFor pagers, dot, arrows thumbnails.
+        $tn = $this->formatter->getThumbnail($sets, $item, $caption);
+        $build[static::$navId]['items'][] = $tn;
       }
     }
   }

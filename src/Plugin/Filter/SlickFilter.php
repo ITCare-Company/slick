@@ -396,12 +396,10 @@ class SlickFilter extends BlazyFilterBase {
    * Build the slick navigation.
    */
   private function withNavigation(array &$build, array $element, $delta): void {
-    $sets      = &$element['#settings'];
-    $item      = $this->manager->toHashtag($element, 'item', NULL);
-    $blazies   = $sets['blazies'];
-    $caption   = $sets['thumbnail_caption'] ?? NULL;
-    $use_blazy = $blazies->use('theme_thumbnail');
-    $text      = [];
+    $sets    = &$element['#settings'];
+    $item    = $this->manager->toHashtag($element, 'item', NULL);
+    $caption = $sets['thumbnail_caption'] ?? NULL;
+    $text    = [];
 
     if ($caption && $item && $check = $item->{$caption} ?? NULL) {
       $text = ['#markup' => Xss::filterAdmin($check)];
@@ -409,21 +407,7 @@ class SlickFilter extends BlazyFilterBase {
 
     // Thumbnail usages: asNavFor pagers, dot, arrows, photobox thumbnails.
     $tn = $this->manager->getThumbnail($sets, $item, $text);
-
-    if ($use_blazy) {
-      $thumb = $tn;
-    }
-    else {
-      // @todo remove this at 3.x.
-      $thumb = [
-        '#settings' => array_filter($sets),
-        static::$itemId => $tn,
-        static::$captionId => $text,
-      ];
-    }
-
-    $build[static::$navId]['items'][$delta] = $thumb;
-    unset($thumb);
+    $build[static::$navId]['items'][$delta] = $tn;
   }
 
   /**

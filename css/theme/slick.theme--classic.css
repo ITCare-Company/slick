@@ -23,6 +23,11 @@
   width: 100%;
 }
 
+/* Fixed for Olivero dark title. */
+.slick--skin--classic .slide__title {
+  color: #fff;
+}
+
 .slick--skin--classic .slide__description {
   margin: 0;
 }

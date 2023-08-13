@@ -76,8 +76,6 @@ abstract class SlickEntityReferenceFormatterBase extends BlazyEntityReferenceBas
     $item      = $this->formatter->toHashtag($element, 'item', NULL);
     $view_mode = $settings['view_mode'] ?? '';
     $_caption  = $settings['thumbnail_caption'] ?? NULL;
-    $_style    = $settings['thumbnail_style'] ?? NULL;
-    $use_blazy = $blazies->use('theme_thumbnail');
     $caption   = [];
 
     // @todo recheck any other places calling this method, and remove this.
@@ -94,21 +92,9 @@ abstract class SlickEntityReferenceFormatterBase extends BlazyEntityReferenceBas
       }
     }
 
-    $tn = $_style
-      ? $this->formatter->getThumbnail($settings, $item, $caption)
-      : [];
-
-    // Thumbnail usages: asNavFor pagers, dot, arrows, photobox thumbnails.
-    if ($use_blazy) {
-      $element = $tn;
-    }
-    else {
-      // @todo remove at blazy:3.x to minimize more dups.
-      $element[static::$itemId] = $tn;
-      $element[static::$captionId] = $caption;
-    }
-
-    $build[static::$navId]['items'][$delta] = $element;
+    // Thumbnail usages: asNavFor pagers, dot, arrows thumbnails.
+    $tn = $this->formatter->getThumbnail($settings, $item, $caption);
+    $build[static::$navId]['items'][$delta] = $tn;
   }
 
   /**
