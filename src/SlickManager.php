@@ -335,8 +335,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   public function verifySafely(array &$settings, $key = 'blazies', array $defaults = []) {
     SlickDefault::verify($settings, $this);
 
-    // @todo at 3.x: return parent::verifySafely($settings, $key, $defaults);
-    return Blazy::verify($settings, $key, $defaults);
+    return parent::verifySafely($settings, $key, $defaults);
   }
 
   /**
@@ -430,7 +429,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $blazies   = $settings['blazies'];
     $config    = $settings['slicks'];
     $id        = $blazies->get('css.id', $settings['id'] ?? NULL);
-    $id        = Blazy::getHtmlId('slick', $id);
+    $id        = $this->getHtmlId('slick', $id);
     $id        = $settings['id'] = 'slick-' . substr(md5($id), 0, 11);
     $thumb_id  = $id . '-nav';
     $count     = $blazies->get('count') ?: $settings['count'] ?? 0;

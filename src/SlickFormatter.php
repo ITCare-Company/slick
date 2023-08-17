@@ -2,7 +2,6 @@
 
 namespace Drupal\slick;
 
-use Drupal\blazy\Blazy;
 use Drupal\blazy\BlazyFormatter;
 use Drupal\slick\Entity\Slick;
 
@@ -107,8 +106,7 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
   public function verifySafely(array &$settings, $key = 'blazies', array $defaults = []) {
     SlickDefault::verify($settings, $this);
 
-    // @todo at 3.x: return parent::verifySafely($settings, $key, $defaults);
-    return Blazy::verify($settings, $key, $defaults);
+    return parent::verifySafely($settings, $key, $defaults);
   }
 
 }

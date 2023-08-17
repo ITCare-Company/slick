@@ -11,7 +11,6 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\blazy\Blazy;
 use Drupal\slick\Entity\Slick;
 
 /**
@@ -76,6 +75,13 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
    * @var bool
    */
   protected $isBreaking;
+
+  /**
+   * The skin methods.
+   *
+   * @var array
+   */
+  protected static $methods = ['skins', 'arrows', 'dots'];
 
   /**
    * {@inheritdoc}
@@ -219,27 +225,20 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
    */
   public function getEasingPath(): ?string {
     if (!isset($this->easingPath)) {
-      if ($manager = Blazy::service('slick.manager')) {
-        if ($manager->getLibrariesPath('easing')
-          || $manager->getLibrariesPath('jquery.easing')) {
-          $library_easing = $manager->getLibrariesPath('easing')
-          ?: $manager->getLibrariesPath('jquery.easing');
-          if ($library_easing) {
-            $easing_path = $library_easing . '/jquery.easing.min.js';
-            // Composer via bower-asset puts the library within `js` directory.
-            if (!is_file($easing_path)) {
-              $easing_path = $library_easing . '/js/jquery.easing.min.js';
-            }
-          }
-        }
-        else {
-          if (is_file($this->root . '/libraries/easing/jquery.easing.min.js')) {
-            $easing_path = 'libraries/easing/jquery.easing.min.js';
+      $path = NULL;
+      if ($manager = self::service('slick.manager')) {
+        $easings = ['easing', 'jquery.easing'];
+
+        if ($check = $manager->getLibrariesPath($easings)) {
+          $path = $check . '/jquery.easing.min.js';
+          // Composer via bower-asset puts the library within `js` directory.
+          if (!is_file($this->root . '/' . $path)) {
+            $path = $check . '/js/jquery.easing.min.js';
           }
         }
       }
 
-      $this->easingPath = $easing_path ?? NULL;
+      $this->easingPath = $path;
     }
     return $this->easingPath;
   }
@@ -274,7 +273,7 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
         $this->skinDefinition = $data;
       }
       else {
-        $methods = ['skins', 'arrows', 'dots'];
+        $methods = static::$methods;
         $skins = $items = [];
         foreach ($this->loadMultiple() as $skin) {
           foreach ($methods as $method) {
@@ -298,7 +297,7 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
         $this->skinDefinition = $skins;
       }
     }
-    return $this->skinDefinition;
+    return $this->skinDefinition ?: [];
   }
 
   /**
@@ -378,14 +377,14 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
    */
   public function getSlickPath(): ?string {
     if (!isset($this->slickPath)) {
-      if ($manager = Blazy::service('slick.manager')) {
+      if ($manager = self::service('slick.manager')) {
         if ($this->config('library') == 'accessible-slick') {
-          $this->slickPath = $manager->getLibrariesPath('accessible360--accessible-slick')
-            ?: $manager->getLibrariesPath('accessible-slick');
+          $libs = ['accessible360--accessible-slick', 'accessible-slick'];
+          $this->slickPath = $manager->getLibrariesPath($libs);
         }
         else {
-          $this->slickPath = $manager->getLibrariesPath('slick-carousel')
-          ?: $manager->getLibrariesPath('slick');
+          $libs = ['slick-carousel', 'slick'];
+          $this->slickPath = $manager->getLibrariesPath($libs);
         }
       }
     }
@@ -396,11 +395,11 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
    * {@inheritdoc}
    */
   public function libraryInfoAlter(&$libraries, $extension): void {
-    if ($library_path = $this->getSlickPath()) {
+    if ($path = $this->getSlickPath()) {
       if ($this->config('library') == 'accessible-slick') {
-        $libraries['accessible-slick']['js'] = ['/' . $library_path . '/slick/slick.min.js' => ['weight' => -3]];
-        $libraries['accessible-slick']['css']['base'] = ['/' . $library_path . '/slick/slick.min.css' => []];
-        $libraries['slick.css']['css']['theme'] = ['/' . $library_path . '/slick/accessible-slick-theme.min.css' => ['weight' => -2]];
+        $libraries['accessible-slick']['js'] = ['/' . $path . '/slick/slick.min.js' => ['weight' => -3]];
+        $libraries['accessible-slick']['css']['base'] = ['/' . $path . '/slick/slick.min.css' => []];
+        $libraries['slick.css']['css']['theme'] = ['/' . $path . '/slick/accessible-slick-theme.min.css' => ['weight' => -2]];
         $libraries_to_alter = [
           'slick.load',
           'slick.colorbox',
@@ -412,21 +411,25 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
         }
       }
       else {
-        $libraries['slick']['js'] = ['/' . $library_path . '/slick/slick.min.js' => ['weight' => -3]];
-        $libraries['slick']['css']['base'] = ['/' . $library_path . '/slick/slick.css' => []];
-        $libraries['slick.css']['css']['theme'] = ['/' . $library_path . '/slick/slick-theme.css' => ['weight' => -2]];
+        $libraries['slick']['js'] = ['/' . $path . '/slick/slick.min.js' => ['weight' => -3]];
+        $libraries['slick']['css']['base'] = ['/' . $path . '/slick/slick.css' => []];
+        $libraries['slick.css']['css']['theme'] = ['/' . $path . '/slick/slick-theme.css' => ['weight' => -2]];
       }
     }
 
-    if ($library_easing = $this->getEasingPath()) {
-      $libraries['slick.easing']['js'] = ['/' . $library_easing => ['weight' => -4]];
+    if ($path = $this->getEasingPath()) {
+      $libraries['slick.easing']['js'] = ['/' . $path => ['weight' => -4]];
     }
 
-    if ($manager = Blazy::service('slick.manager')) {
-      $library_mousewheel = $manager->getLibrariesPath('mousewheel')
-        ?: $manager->getLibrariesPath('jquery-mousewheel');
-      if ($library_mousewheel) {
-        $libraries['slick.mousewheel']['js'] = ['/' . $library_mousewheel . '/jquery.mousewheel.min.js' => ['weight' => -4]];
+    if ($manager = self::service('slick.manager')) {
+      $libs = ['mousewheel', 'jquery-mousewheel', 'jquery.mousewheel'];
+      if ($mousewheel = $manager->getLibrariesPath($libs)) {
+        $path = $mousewheel . '/jquery.mousewheel.min.js';
+        // Has no .min for jquery.mousewheel 3.1.9, jquery-mousewheel 3.1.13.
+        if (!is_file($this->root . '/' . $path)) {
+          $path = $mousewheel . '/jquery.mousewheel.js';
+        }
+        $libraries['slick.mousewheel']['js'] = ['/' . $path => ['weight' => -4]];
       }
     }
   }
@@ -471,6 +474,13 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
       $skins = NestedArray::mergeDeep($skins, $items);
     }
     return $skins;
+  }
+
+  /**
+   * Returns a wrapper to pass tests, or DI where adding params is troublesome.
+   */
+  private static function service($service) {
+    return \Drupal::hasService($service) ? \Drupal::service($service) : NULL;
   }
 
 }

@@ -7,7 +7,6 @@
 
 use Drupal\Core\Template\Attribute;
 use Drupal\Component\Serialization\Json;
-use Drupal\blazy\Blazy;
 use Drupal\slick\SlickDefault as Defaults;
 use Drupal\slick\Entity\Slick;
 
@@ -45,7 +44,7 @@ function template_preprocess_slick(&$variables) {
   $js       += $optionset->getSettings();
   $display   = $variables['display'] = $sets['display'];
   $id        = $blazies->get('css.id', $sets['id'] ?? NULL);
-  $id        = $sets['id'] = Blazy::getHtmlId('slick', $id);
+  $id        = $sets['id'] = slick()->getHtmlId('slick', $id);
   $real_id   = $display == 'thumbnail' ? $id . '-nav' : $id;
 
   // Prepare attributes, since Twig prepends, not appends, causing BEM problems.

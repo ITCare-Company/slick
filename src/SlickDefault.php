@@ -2,7 +2,6 @@
 
 namespace Drupal\slick;
 
-use Drupal\blazy\Blazy;
 use Drupal\blazy\BlazyDefault;
 
 /**
@@ -12,6 +11,13 @@ use Drupal\blazy\BlazyDefault;
  * @see StylePluginBase::defineOptions()
  */
 class SlickDefault extends BlazyDefault {
+
+  /**
+   * {@inheritdoc}
+   *
+   * @todo enable post blazy:2.17, and remove dup from self::htmlSettings().
+   * protected static $id = 'slicks';
+   */
 
   /**
    * {@inheritdoc}
@@ -107,18 +113,11 @@ class SlickDefault extends BlazyDefault {
    *   The default settings.
    */
   public static function htmlSettings() {
-    $items = [];
-    foreach (self::slicks() as $key => $value) {
-      if (is_bool($value)) {
-        $items['is'][$key] = $value;
-      }
-      else {
-        $items[$key] = $value;
-      }
-    }
-
     return [
-      'slicks'    => Blazy::settings($items),
+      // @todo remove post 2.17:
+      'slicks'    => \blazy()->settings(self::values()),
+
+      // @todo remove after migrations.
       'item_id'   => 'slide',
       'namespace' => 'slick',
       // @todo remove `+ self::slicks()`.
@@ -192,6 +191,22 @@ class SlickDefault extends BlazyDefault {
       $ui = $manager->configMultiple('slick.settings');
       $config->set('ui', $ui);
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static function values(): array {
+    $items = [];
+    foreach (self::slicks() as $key => $value) {
+      if (is_bool($value)) {
+        $items['is'][$key] = $value;
+      }
+      else {
+        $items[$key] = $value;
+      }
+    }
+    return $items;
   }
 
 }
