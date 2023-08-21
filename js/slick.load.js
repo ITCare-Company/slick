@@ -144,9 +144,10 @@
       t.parent().on('click.sl', '.slick-down', function (e) {
         e.preventDefault();
         var b = $(this);
+
         $('html, body').stop().animate({
           scrollTop: $(b.data('target')).offset().top - (b.data('offset') || 0)
-        }, 800, 'easeOutQuad' in $.easing && o.easing ? o.easing : 'swing');
+        }, 800, $.easing && o.easing ? o.easing : 'swing');
       });
 
       if (o.mouseWheel) {

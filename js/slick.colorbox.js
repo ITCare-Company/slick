@@ -76,6 +76,9 @@
         }
       }
       else if (method === 'cbox_closed') {
+        var id = $slider.attr('id');
+        jump('#' + id);
+
         // DOM fix randomly weird messed up DOM (blank slides) after closing.
         window.setTimeout(function () {
           // Not consistent. This issue is somewhere, but not everywhere.
@@ -89,6 +92,20 @@
       }
     }
   };
+
+  /**
+   * Jump to the top of slick element due to weird jumping around after closing.
+   *
+   * @param {String} id
+   *   The slick element HTML ID.
+   */
+  function jump(id) {
+    // 120 is assumed fixed header height like seen at core admin menu.
+    window.scrollTo({
+      top: $(id).offset().top - 120,
+      behavior: 'smooth'
+    });
+  }
 
   /**
    * Adds each slide a reliable ordinal to get correct current with clones.
@@ -138,6 +155,7 @@
   Drupal.behaviors.slickColorbox = {
     attach: function (context) {
       var me = Drupal.slickColorbox;
+      me.context = context;
 
       _d.once(doSlickColorbox.bind(me), _idOnce, _element, context);
     },
