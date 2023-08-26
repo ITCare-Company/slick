@@ -320,17 +320,6 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
   /**
    * {@inheritdoc}
-   *
-   * @todo remove at 3.x.
-   */
-  public function verify(array &$settings): void {
-    parent::verify($settings);
-
-    SlickDefault::verify($settings, $this);
-  }
-
-  /**
-   * {@inheritdoc}
    */
   public function verifySafely(array &$settings, $key = 'blazies', array $defaults = []) {
     SlickDefault::verify($settings, $this);
@@ -438,6 +427,13 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $wheel     = $optionset->getSetting('mouseWheel');
     $nav       = $blazies->is('nav', !empty($settings['nav']));
     $navpos    = $settings['thumbnail_position'] ?? NULL;
+
+    // BC for non-required Display style. Blazy 2.5+ requires explicit style.
+    if (!empty($settings['grid'])
+      && !empty($settings['visible_items'])
+      && empty($settings['style'])) {
+      $settings['style'] = 'grid';
+    }
 
     // Make it work with ElevateZoomPlus.
     if (!$blazies->is('nav_overridden') && empty($settings['vanilla'])) {
@@ -655,6 +651,17 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    */
   public function verifyItem(array &$element, $delta): void {
     // Do nothing.
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @todo remove at 3.x.
+   */
+  public function verify(array &$settings): void {
+    parent::verify($settings);
+
+    SlickDefault::verify($settings, $this);
   }
 
 }

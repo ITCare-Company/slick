@@ -305,7 +305,7 @@ class SlickAdmin implements SlickAdminInterface {
     $this->blazyAdmin->fieldableForm($form, $definition);
 
     if (isset($form['thumbnail'])) {
-      $form['thumbnail']['#description'] = $this->t("Only needed if <em>Optionset thumbnail</em> is provided. Maybe the same field as the main image, only different instance and image style. Leave empty to not use thumbnail pager.");
+      $form['thumbnail']['#description'] = $this->t("Needed if any are required/ provided: <ol><li><em>Optionset thumbnail</em>.</li><li><em>Dots thumbnail effect</em>.</li></ol> Maybe the same field as the main image, only different instance and image style. Company logos for thumbnails vs. company offices for the Main stage, author avatars for thumbnails vs. Slideshow for overlays with its Main stage, etc. Leave empty to not use thumbnail pager, or for tabs-like/ text only navigation.");
     }
 
     if (isset($form['overlay'])) {

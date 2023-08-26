@@ -120,6 +120,10 @@ class SlickFilter extends BlazyFilterBase {
 
     $attachments = [];
     $settings = $this->buildSettings($text);
+    // @todo post blazy:2.17:
+    // $text = $this->shortcode($text, static::$namespace, static::$itemId);
+    // $dom = Html::load($text);
+    // $nodes = $this->validNodes($dom, [static::$namespace]);
     $text = Util::unwrap($text, static::$namespace, static::$itemId);
     $dom = Html::load($text);
     $nodes = Util::validNodes($dom, [static::$namespace]);
@@ -131,6 +135,8 @@ class SlickFilter extends BlazyFilterBase {
         }
       }
 
+      // @todo post blazy:2.17:
+      // $attach = $this->attach($settings);
       $attach = Util::attach($settings);
       $attachments = $this->manager->attach($attach);
     }
@@ -224,6 +230,8 @@ class SlickFilter extends BlazyFilterBase {
    * Build the slick using the DOM lookups.
    */
   private function withDomShortcode(\DOMElement $object, array $settings): array {
+    // @todo post blazy:2.17:
+    // $text = $this->getHtml($object);
     $text = Util::getHtml($object);
 
     if (empty($text)) {
@@ -231,6 +239,8 @@ class SlickFilter extends BlazyFilterBase {
     }
 
     $dom = Html::load($text);
+    // @todo post blazy:2.17:
+    // $nodes = $this->getNodes($dom, '//' . static::$itemId);
     $nodes = Util::getNodes($dom, '//' . static::$itemId);
     if ($nodes->length == 0) {
       return [];
@@ -296,7 +306,9 @@ class SlickFilter extends BlazyFilterBase {
    */
   private function withDomElement(array &$build, $node, $delta): array {
     $element = [];
-    $text    = Util::getHtml($node);
+    // @todo post blazy:2.17:
+    // $text = $this->getHtml($node);
+    $text = Util::getHtml($node);
 
     if (empty($text)) {
       return $build;
@@ -312,6 +324,8 @@ class SlickFilter extends BlazyFilterBase {
 
     if ($children->length > 0) {
       // Can only have the first found for the main slide stage.
+      // @todo post blazy:2.17:
+      // $child = $this->getValidNode($children);
       $child = Util::getValidNode($children);
 
       // Build item settings, image, and caption.
