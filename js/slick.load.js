@@ -30,7 +30,8 @@
    *   The slick HTML element.
    */
   function doSlick(elm) {
-    var t = $('> ' + _elSlider, elm).length ? $('> ' + _elSlider, elm) : $(elm);
+    var el = $(elm);
+    var t = $('> ' + _elSlider, elm).length ? $('> ' + _elSlider, elm) : el;
     var a = $('> ' + _elArrow, elm);
     var o = t.data(_id) ? $.extend({}, drupalSettings.slick, t.data(_id)) : $.extend({}, drupalSettings.slick);
     var r = $.type(o.responsive) === 'array' && o.responsive.length ? o.responsive : false;
@@ -170,6 +171,10 @@
         t.on('click.sl', _elClose, closeOut);
         t.on('click.sl', '.media__icon--play', pause);
       }
+
+      el.removeClass(function (index, css) {
+        return (css.match(/(\S+)loading/g) || []).join(' ');
+      });
     }
 
     /**
@@ -286,15 +291,22 @@
         customPaging: function (slick, i) {
           var slide = slick.$slides.eq(i);
           var container = slide.find('[' + _dataThumb + ']');
+          var dotsThumb;
           var dataThumb = _dataThumb;
 
           if (!container.length) {
             container = slide.find('[' + _dataBThumb + ']');
             dataThumb = _dataBThumb;
           }
-          var img = '<img alt="' + Drupal.t(container.find('img').attr('alt')) + '" src="' + container.attr(dataThumb) + '">';
-          var dotsThumb = container.length && o.dotsClass.indexOf('thumbnail') > 0 ?
-            '<div class="slick-dots__thumbnail">' + img + '</div>' : '';
+
+          if (container.length) {
+            var alt = container.find('img').attr('alt');
+            alt = alt ? Drupal.checkPlain(alt) : 'Preview';
+            var img = '<img alt="' + Drupal.t(alt) + '" src="' + container.attr(dataThumb) + '">';
+            dotsThumb = o.dotsClass.indexOf('thumbnail') > 0 ?
+              '<div class="slick-dots__thumbnail">' + img + '</div>' : '';
+          }
+
           var paging = slick.defaults.customPaging(slick, i);
           return dotsThumb ? paging.add(dotsThumb) : paging;
         }
@@ -314,7 +326,7 @@
     }
 
     // Add helper class for arrow visibility as they are outside slider.
-    $(elm).addClass(_mounted);
+    el.addClass(_mounted);
   }
 
   /**
