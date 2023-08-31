@@ -29,6 +29,8 @@
  *
  * @see \Drupal\slick\Plugin\Field\FieldFormatter\SlickImageFormatter
  * @see \Drupal\slick_views\Plugin\views\style\SlickViews
+ * @see https://www.drupal.org/node/3384419
+ * @see blazy/blazy.api.php
  *
  * @section sec_quick Quick sample #1
  *
@@ -72,10 +74,11 @@
  *   //   ->set('image.title', 'BLAH');
  *
  *   // Each item contains: #delta, #settings, and optional captions.
- *   // This is the simplest way to build a slide via theme_blazy(). If you need
- *   // to modify slide attributes or classes, just split them into regular
- *   // slide, and #settings, excluding captions which are already included in
- *   // theme_blazy(), e.g: $items[] = [
+ *   // This is the simplest way to build a slide via theme_blazy().
+ *   // If you need to modify slide attributes or classes, just split them into
+ *   // regular slide, and #settings, excluding captions which are already
+ *   // included in theme_blazy(), e.g:
+ *   // $items[] = [
  *   // 'slide' => $formatter->getBlazy($content),
  *   // '#attributes' => ['class' => ['slide--custom-class']],
  *    // ];
@@ -88,7 +91,7 @@
  *   $info = ['image.uri' => 'https://drupal.org/files/Two.gif'];
  *
  *   $items[] = $formatter->getBlazy([
- *     '#delta' => 0,
+ *     '#delta' => 1,
  *     '#settings' => $formatter->toSettings($settings, $info),
  *     'captions' =>  ['title' => ['#markup' => t('Description #2')]],
  *   ];
@@ -96,7 +99,7 @@
  *   $info = ['image.uri' => 'https://drupal.org/files/Three.gif'];
  *
  *   $items[] = $formatter->getBlazy([
- *     '#delta' => 0,
+ *     '#delta' => 2,
  *     '#settings' => $formatter->toSettings($settings, $info),
  *     'captions' =>  ['title' => ['#markup' => t('Description #3')]],
  *   ];
@@ -232,8 +235,8 @@
  *       // You can move it up to access `blazies` object if needed.
  *       '#settings' => $formatter->toSettings($sets, $info),
  *
- *       // Only if non-media or media that theme_blazy() does not understand
- *       // theme_file_video(), etc. or Vanilla output, put it into `content`.
+ *       // Only if non-media or media that theme_blazy() does not understand:
+ *       // texts, theme_BLAH(), etc. or vanilla output, put it into `content`.
  *       // 'content' => $row,
  *
  *       // Optional captions: alt, description, data, link, overlay, title.
