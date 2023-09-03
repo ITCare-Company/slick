@@ -91,6 +91,15 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
 
   /**
    * {@inheritdoc}
+   */
+  public function verifySafely(array &$settings, $key = 'blazies', array $defaults = []) {
+    SlickDefault::verify($settings, $this);
+
+    return parent::verifySafely($settings, $key, $defaults);
+  }
+
+  /**
+   * {@inheritdoc}
    *
    * @todo remove at 3.x.
    */
@@ -98,15 +107,6 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
     parent::verify($settings);
 
     SlickDefault::verify($settings, $this);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function verifySafely(array &$settings, $key = 'blazies', array $defaults = []) {
-    SlickDefault::verify($settings, $this);
-
-    return parent::verifySafely($settings, $key, $defaults);
   }
 
 }

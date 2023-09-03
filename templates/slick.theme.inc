@@ -5,10 +5,10 @@
  * Hooks and preprocess functions for the Slick module.
  */
 
-use Drupal\Core\Template\Attribute;
 use Drupal\Component\Serialization\Json;
-use Drupal\slick\SlickDefault as Defaults;
+use Drupal\Core\Template\Attribute;
 use Drupal\slick\Entity\Slick;
+use Drupal\slick\SlickDefault as Defaults;
 
 /**
  * Prepares variables for slick.html.twig templates.

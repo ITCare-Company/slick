@@ -17,6 +17,7 @@ use Drupal\slick\SlickDefault;
  *   |\Drupal\slick\SlickSkinManagerInterface
  *   The required Slick class instance.
  */
+// @codingStandardsIgnoreStart
 function slick($key = 'manager') {
   static $manager;
   static $skin_manager;
@@ -34,6 +35,7 @@ function slick($key = 'manager') {
       return $manager;
   }
 }
+// @codingStandardsIgnoreEnd
 
 /**
  * Implements hook_theme().

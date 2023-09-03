@@ -4,8 +4,8 @@ namespace Drupal\Tests\slick\Kernel;
 
 use Drupal\Core\Form\FormState;
 use Drupal\Tests\blazy\Kernel\BlazyKernelTestBase;
-use Drupal\Tests\slick\Traits\SlickUnitTestTrait;
 use Drupal\Tests\slick\Traits\SlickKernelTrait;
+use Drupal\Tests\slick\Traits\SlickUnitTestTrait;
 
 /**
  * Tests the Slick field rendering using the text field type.

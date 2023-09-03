@@ -2,8 +2,8 @@
 
 namespace Drupal\slick\Plugin\Field\FieldFormatter;
 
-use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\blazy\Field\BlazyEntityVanillaBase;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\slick\SlickDefault;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 

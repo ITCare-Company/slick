@@ -2,9 +2,9 @@
 
 namespace Drupal\slick;
 
-use Drupal\slick\Entity\Slick;
 use Drupal\blazy\Blazy;
 use Drupal\blazy\BlazyManagerBase;
+use Drupal\slick\Entity\Slick;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**

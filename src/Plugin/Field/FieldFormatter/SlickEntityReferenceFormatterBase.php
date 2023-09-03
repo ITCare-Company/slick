@@ -2,9 +2,9 @@
 
 namespace Drupal\slick\Plugin\Field\FieldFormatter;
 
-use Drupal\Component\Utility\Xss;
 use Drupal\blazy\Field\BlazyEntityReferenceBase;
 use Drupal\blazy\Field\BlazyField;
+use Drupal\Component\Utility\Xss;
 use Drupal\slick\SlickDefault;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -68,9 +68,11 @@ abstract class SlickEntityReferenceFormatterBase extends BlazyEntityReferenceBas
   /**
    * {@inheritdoc}
    */
-  protected function buildElementThumbnail(array &$build, array $element, $entity, $delta) {
+  protected function buildElementThumbnail(array &$build, array $element) {
     // The settings in $element has updated metadata extracted from media.
     $settings  = $this->formatter->toHashtag($element);
+    $entity    = $element['#entity'];
+    $delta     = $element['#delta'];
     $blazies   = $settings['blazies'];
     $is_nav    = $blazies->is('nav') || !empty($settings['nav']);
     $item      = $this->formatter->toHashtag($element, 'item', NULL);

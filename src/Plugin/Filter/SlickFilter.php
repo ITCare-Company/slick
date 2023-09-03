@@ -2,13 +2,12 @@
 
 namespace Drupal\slick\Plugin\Filter;
 
+use Drupal\blazy\Plugin\Filter\BlazyFilterBase;
 use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\filter\FilterProcessResult;
-use Drupal\blazy\Plugin\Filter\BlazyFilterBase;
-use Drupal\blazy\Plugin\Filter\BlazyFilterUtil as Util;
 use Drupal\slick\SlickDefault;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -120,13 +119,9 @@ class SlickFilter extends BlazyFilterBase {
 
     $attachments = [];
     $settings = $this->buildSettings($text);
-    // @todo post blazy:2.17:
-    // $text = $this->shortcode($text, static::$namespace, static::$itemId);
-    // $dom = Html::load($text);
-    // $nodes = $this->validNodes($dom, [static::$namespace]);
-    $text = Util::unwrap($text, static::$namespace, static::$itemId);
+    $text = $this->shortcode($text, static::$namespace, static::$itemId);
     $dom = Html::load($text);
-    $nodes = Util::validNodes($dom, [static::$namespace]);
+    $nodes = $this->validNodes($dom, [static::$namespace]);
 
     if (count($nodes) > 0) {
       foreach ($nodes as $node) {
@@ -135,9 +130,7 @@ class SlickFilter extends BlazyFilterBase {
         }
       }
 
-      // @todo post blazy:2.17:
-      // $attach = $this->attach($settings);
-      $attach = Util::attach($settings);
+      $attach = $this->attach($settings);
       $attachments = $this->manager->attach($attach);
     }
 
@@ -230,18 +223,15 @@ class SlickFilter extends BlazyFilterBase {
    * Build the slick using the DOM lookups.
    */
   private function withDomShortcode(\DOMElement $object, array $settings): array {
-    // @todo post blazy:2.17:
-    // $text = $this->getHtml($object);
-    $text = Util::getHtml($object);
+    $text = $this->getHtml($object);
 
     if (empty($text)) {
       return [];
     }
 
     $dom = Html::load($text);
-    // @todo post blazy:2.17:
-    // $nodes = $this->getNodes($dom, '//' . static::$itemId);
-    $nodes = Util::getNodes($dom, '//' . static::$itemId);
+    $nodes = $this->getNodes($dom, '//' . static::$itemId);
+
     if ($nodes->length == 0) {
       return [];
     }
@@ -306,9 +296,7 @@ class SlickFilter extends BlazyFilterBase {
    */
   private function withDomElement(array &$build, $node, $delta): array {
     $element = [];
-    // @todo post blazy:2.17:
-    // $text = $this->getHtml($node);
-    $text = Util::getHtml($node);
+    $text = $this->getHtml($node);
 
     if (empty($text)) {
       return $build;
@@ -324,9 +312,7 @@ class SlickFilter extends BlazyFilterBase {
 
     if ($children->length > 0) {
       // Can only have the first found for the main slide stage.
-      // @todo post blazy:2.17:
-      // $child = $this->getValidNode($children);
-      $child = Util::getValidNode($children);
+      $child = $this->getValidNode($children);
 
       // Build item settings, image, and caption.
       $this->buildItemContent($build, $child, $delta);
@@ -335,24 +321,7 @@ class SlickFilter extends BlazyFilterBase {
       $uri = $blazies->get('image.uri') ?: $uri;
 
       if ($uri) {
-        // @todo remove check post blazy:2.17.
-        if (method_exists($this, 'toElement')) {
-          $element = $this->toElement($blazies, $build);
-        }
-        else {
-          // @todo remove post blazy:2.17, already taken care of upstream.
-          $captions = $build['captions'] ?? [];
-          $element = $build;
-          if ($blazies->use('theme_blazy')) {
-            unset($element['captions']);
-          }
-          else {
-            $element[static::$captionId] = $captions;
-            unset($element['captions'], $build['captions']);
-          }
-
-          $element[static::$itemId] = $this->formatter->getBlazy($build);
-        }
+        $element = $this->toElement($blazies, $build);
       }
     }
 

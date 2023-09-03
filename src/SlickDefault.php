@@ -14,10 +14,8 @@ class SlickDefault extends BlazyDefault {
 
   /**
    * {@inheritdoc}
-   *
-   * @todo enable post blazy:2.17, and remove dup from self::htmlSettings().
-   * protected static $id = 'slicks';
    */
+  protected static $id = 'slicks';
 
   /**
    * {@inheritdoc}
@@ -65,9 +63,8 @@ class SlickDefault extends BlazyDefault {
   public static function extendedSettings() {
     return [
       'thumbnail' => '',
-      // @todo remove post 2.10.
-      'use_theme_blazy' => FALSE,
-    ] + self::imageSettings() + parent::extendedSettings();
+    ] + self::imageSettings()
+      + parent::extendedSettings();
   }
 
   /**
@@ -115,8 +112,7 @@ class SlickDefault extends BlazyDefault {
   public static function htmlSettings() {
     return [
       // @todo remove post 2.17:
-      'slicks'    => \blazy()->settings(self::values()),
-
+      // 'slicks' => \blazy()->settings(self::values()),
       // @todo remove after migrations.
       'item_id'   => 'slide',
       'namespace' => 'slick',
@@ -162,22 +158,6 @@ class SlickDefault extends BlazyDefault {
   }
 
   /**
-   * Returns svg-related field formatter settings.
-   *
-   * @todo remove post blazy:2.17.
-   */
-  public static function svgSettings() {
-    return [
-      'svg_inline' => FALSE,
-      'svg_fill' => FALSE,
-      'svg_sanitize' => TRUE,
-      'svg_sanitize_remote' => FALSE,
-      'svg_hide_caption' => FALSE,
-      'svg_attributes' => '',
-    ];
-  }
-
-  /**
    * Verify the settings.
    */
   public static function verify(array &$settings, $manager): void {
@@ -197,16 +177,7 @@ class SlickDefault extends BlazyDefault {
    * {@inheritdoc}
    */
   protected static function values(): array {
-    $items = [];
-    foreach (self::slicks() as $key => $value) {
-      if (is_bool($value)) {
-        $items['is'][$key] = $value;
-      }
-      else {
-        $items[$key] = $value;
-      }
-    }
-    return $items;
+    return self::slicks();
   }
 
 }

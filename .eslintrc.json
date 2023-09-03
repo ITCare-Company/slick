@@ -1,0 +1,5 @@
+{
+  // Located at /modules/contrib/slick, run:
+  // eslint . -o ../../eslint/slick.html -f html
+  "extends": "../blazy/.eslintrc.json"
+}

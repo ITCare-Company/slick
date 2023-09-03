@@ -2,8 +2,8 @@
 
 namespace Drupal\Tests\slick\Unit\Form;
 
-use Drupal\Tests\UnitTestCase;
 use Drupal\slick\Form\SlickAdmin;
+use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
