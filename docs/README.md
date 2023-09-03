@@ -77,7 +77,7 @@ Read more at:
 
    This is CSS easing fallback for non-supporting browsers.
 
-3. [Blazy](https://drupal.org/project/blazy) 2.10+ since Slick:2.7
+3. [Blazy](https://drupal.org/project/blazy) 2.17+ since Slick:2.10
 
    To reduce DRY stuffs, and as a bonus, advanced lazyloading such as delay
    lazyloading for below-fold sliders, iframe, (fullscreen) CSS background
@@ -99,8 +99,7 @@ Slick to avoid headaches for just ~15-minute read.
 2. **COMPOSER:**
 
    ```
-   $ composer require npm-asset/blazy \
-   npm-asset/slick-carousel:1.8.0 \
+   $ composer require npm-asset/slick-carousel:1.8.0 \
    npm-asset/jquery-mousewheel \
    npm-asset/jquery.easing \
    drupal/blazy \
@@ -113,7 +112,7 @@ Slick to avoid headaches for just ~15-minute read.
 Please check out below for solutions:  
 
 * [Slick 7.x](https://www.drupal.org/project/slick/issues/3261726#comment-14406766)
-* [Slick D8+](https://www.drupal.org/project/slick/issues/3257390)
+* [Slick 8.x+](https://www.drupal.org/project/slick/issues/3257390)
 
 
 ***

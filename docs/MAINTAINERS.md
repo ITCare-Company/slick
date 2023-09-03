@@ -6,7 +6,7 @@
 * [Arshadcn](https://www.drupal.org/u/arshadcn)
 * [Contributors](https://www.drupal.org/node/2232779/committers)
 * CHANGELOG.txt for helpful souls with their patches, suggestions and reports.
-* Slick 8.x by gausarts, and other contributors.
+* Slick 8.x - 3.x by gausarts, and other contributors.
 * Slick 7.x-3.x by gausarts, based on Slick 8.x-2.x with Blazy.
 * Slick 7.x-2.x by gausarts, inspired by Flexslider with CTools integration.
 * Slick 7.x-1.x by arshadcn, the original author.

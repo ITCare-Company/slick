@@ -189,7 +189,8 @@ Note, non-BEM classes are added by JS.
 </div>
 ```
 
-`asNavFor` should target `slick-initialized` class/ID attributes.
+`asNavFor` should target `slick-initialized` ID attributes. This is taken care
+of by the module if using the provided formatters, or Views styles.
 
 
 ### CURRENT DEVELOPMENT STATUS
