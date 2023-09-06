@@ -3,7 +3,6 @@
 namespace Drupal\slick\Plugin\Field\FieldFormatter;
 
 use Drupal\blazy\Field\BlazyEntityVanillaBase;
-use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\slick\SlickDefault;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -71,22 +70,6 @@ abstract class SlickEntityFormatterBase extends BlazyEntityVanillaBase {
     return ['view_mode' => '']
       + SlickDefault::baseSettings()
       + parent::defaultSettings();
-  }
-
-  /**
-   * {@inheritdoc}
-   *
-   * @todo remove post blazy:2.17, no differences so far.
-   */
-  public function viewElements(FieldItemListInterface $items, $langcode) {
-    $entities = $this->getEntitiesToView($items, $langcode);
-
-    // Early opt-out if the field is empty.
-    if (empty($entities)) {
-      return [];
-    }
-
-    return $this->commonViewElements($items, $langcode, $entities);
   }
 
 }

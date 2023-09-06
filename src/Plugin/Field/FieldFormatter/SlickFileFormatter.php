@@ -33,6 +33,11 @@ class SlickFileFormatter extends SlickFileFormatterBase {
   /**
    * {@inheritdoc}
    */
+  protected static $useOembed = TRUE;
+
+  /**
+   * {@inheritdoc}
+   */
   protected static $useSvg = TRUE;
 
   /**
@@ -40,16 +45,6 @@ class SlickFileFormatter extends SlickFileFormatterBase {
    */
   public static function defaultSettings() {
     return SlickDefault::svgSettings() + parent::defaultSettings();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function buildElement(array &$element, $entity) {
-    $this->blazyOembed->build($element);
-
-    // Might need image item from OEmbed service.
-    parent::buildElement($element, $entity);
   }
 
   /**
@@ -79,6 +74,15 @@ class SlickFileFormatter extends SlickFileFormatterBase {
   public static function isApplicable(FieldDefinitionInterface $field_definition) {
     $storage = $field_definition->getFieldStorageDefinition();
     return $storage->isMultiple() && $storage->getSetting('target_type') === 'file';
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @todo remove post blazy:2.17.
+   */
+  public function buildElement(array &$element, $entity) {
+    $this->blazyOembed->build($element);
   }
 
 }

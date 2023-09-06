@@ -756,10 +756,10 @@ class SlickForm extends SlickFormBase {
 
       $elements['lazyLoad'] = [
         'type'         => 'select',
-        'title'        => $this->t('Lazy load'),
+        'title'        => $this->t('Lazy load (Deprecated)'),
         'options'      => $this->getLazyloadOptions(),
         'empty_option' => $this->t('- None -'),
-        'description'  => $this->t("Set lazy loading technique. Ondemand will load the image as soon as you slide to it. Progressive loads one image after the other when the page loads. Anticipated preloads images, and requires Slick 1.6.1+. To share images for Pinterest, leave empty, otherwise no way to read actual image src. It supports Blazy module to delay loading below-fold images until 100px before they are visible at viewport, and/or have a bonus lazyLoadAhead when the beforeChange event fired.", ['@url' => '//www.drupal.org/project/imageinfo_cache']),
+        'description'  => $this->t("Deprecated in slick:2.10, and is removed in slick:3.x for Blazy. Set lazy loading technique. Ondemand will load the image as soon as you slide to it. Progressive loads one image after the other when the page loads. Anticipated preloads images, and requires Slick 1.6.1+. To share images for Pinterest, leave empty, otherwise no way to read actual image src. It supports Blazy module to delay loading below-fold images until 100px before they are visible at viewport, and/or have a bonus lazyLoadAhead when the beforeChange event fired.", ['@url' => '//www.drupal.org/project/imageinfo_cache']),
       ];
 
       $elements['mouseWheel'] = [

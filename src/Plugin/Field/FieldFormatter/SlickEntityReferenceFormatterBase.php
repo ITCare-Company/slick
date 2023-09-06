@@ -68,7 +68,7 @@ abstract class SlickEntityReferenceFormatterBase extends BlazyEntityReferenceBas
   /**
    * {@inheritdoc}
    */
-  protected function buildElementThumbnail(array &$build, array $element) {
+  protected function withElementThumbnail(array &$build, array $element): void {
     // The settings in $element has updated metadata extracted from media.
     $settings  = $this->formatter->toHashtag($element);
     $entity    = $element['#entity'];
@@ -111,6 +111,15 @@ abstract class SlickEntityReferenceFormatterBase extends BlazyEntityReferenceBas
       'thumb_positions' => TRUE,
       'nav'             => TRUE,
     ] + parent::getPluginScopes();
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @todo deprecated in 2.10 and is removed in slick:3.x.
+   */
+  protected function buildElementThumbnail(array &$build, array $element) {
+    $this->withElementThumbnail($build, $element);
   }
 
 }

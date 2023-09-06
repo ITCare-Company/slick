@@ -76,9 +76,4 @@ interface SlickInterface extends SlickBaseInterface {
    */
   public function toJson(array $js): array;
 
-  /**
-   * Checks which lazyload to use.
-   */
-  public function whichLazy(array &$settings): void;
-
 }

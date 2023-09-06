@@ -70,9 +70,7 @@ function template_preprocess_slick(&$variables) {
   // Blazy can still lazyload an unslick.
   // The lazy supercedes JS lazyLoad for background, breakpoints, media, etc.
   if ($display != 'thumbnail') {
-    if ($blazies->is('blazy') && !$blazies->is('unlazy')) {
-      $js['lazyLoad'] = 'blazy';
-    }
+    $js['lazyLoad'] = 'blazy';
   }
 
   // Make slick language-direction-aware.

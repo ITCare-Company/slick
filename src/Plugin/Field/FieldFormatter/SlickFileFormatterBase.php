@@ -51,30 +51,42 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
    * {@inheritdoc}
    */
   public function buildElements(array &$build, $files, $langcode) {
-    $settings   = $this->formatter->toHashtag($build);
-    $blazies    = $settings['blazies'];
-    $tn_caption = $settings['thumbnail_caption'] ?? NULL;
-    $is_nav     = $blazies->is('nav') ?: $settings['nav'] ?? FALSE;
+    $settings = $this->formatter->toHashtag($build);
+    $blazies  = $settings['blazies'];
+    $is_nav   = $blazies->is('nav') ?: $settings['nav'] ?? FALSE;
 
     foreach ($this->getElements($build, $files) as $element) {
+      if (!$element) {
+        continue;
+      }
+
       // Build individual item.
       $build['items'][] = $element;
 
       // Build individual thumbnail.
       if ($is_nav) {
-        $sets = $this->formatter->toHashtag($element);
-        $item = $this->formatter->toHashtag($element, 'item', NULL);
-        $caption = [];
-
-        if ($tn_caption && $item && $text = $item->{$tn_caption} ?? NULL) {
-          $caption = ['#markup' => Xss::filterAdmin($text)];
-        }
-
-        // Thumbnail usages: asNavFor pagers, dot, arrows thumbnails.
-        $tn = $this->formatter->getThumbnail($sets, $item, $caption);
-        $build[static::$navId]['items'][] = $tn;
+        $this->withElementThumbnail($build, $element);
       }
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function withElementThumbnail(array &$build, array $element): void {
+    // The settings in $element has updated metadata extracted from media.
+    $settings = $this->formatter->toHashtag($element);
+    $item     = $this->formatter->toHashtag($element, 'item', NULL);
+    $_caption = $settings['thumbnail_caption'] ?? NULL;
+    $caption  = [];
+
+    if ($_caption && $item && $text = $item->{$_caption} ?? NULL) {
+      $caption = ['#markup' => Xss::filterAdmin($text)];
+    }
+
+    // Thumbnail usages: asNavFor pagers, dot, arrows thumbnails.
+    $tn = $this->formatter->getThumbnail($settings, $item, $caption);
+    $build[static::$navId]['items'][] = $tn;
   }
 
   /**

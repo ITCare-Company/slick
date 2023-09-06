@@ -2,8 +2,6 @@
 
 namespace Drupal\slick\Entity;
 
-use Drupal\blazy\Blazy;
-
 /**
  * Defines the Slick configuration entity.
  *
@@ -224,17 +222,6 @@ class Slick extends SlickBase implements SlickInterface {
   }
 
   /**
-   * Checks which lazyload to use.
-   */
-  public function whichLazy(array &$settings): void {
-    $lazy = $this->getSetting('lazyLoad');
-
-    // `Loading` priority, `No JavaScript: lazy`, etc.
-    Blazy::which($settings, $lazy, 'lazy', 'lazy');
-    $settings['_lazy'] = TRUE;
-  }
-
-  /**
    * Strip out options containing default values so to have real clean JSON.
    *
    * @return array
@@ -245,6 +232,19 @@ class Slick extends SlickBase implements SlickInterface {
    */
   public function removeDefaultValues(array $js): array {
     return $this->toJson($js);
+  }
+
+  /**
+   * Deprecated in blazy:8.x-2.17.
+   *
+   * Since blazy:2.17, sliders lazyloads are deprecated to avoid complication.
+   *
+   * @deprecated in slick:8.x-2.10 and is removed from slick:3.0.0. Use
+   * none instead.
+   * @see https://www.drupal.org/node/3239708
+   */
+  public function whichLazy(array &$settings): void {
+    // Do nothing.
   }
 
 }

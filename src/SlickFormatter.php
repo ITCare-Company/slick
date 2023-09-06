@@ -62,11 +62,6 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
 
     $config->set('is.nav', $nav);
 
-    // Do not bother for SlickTextFormatter, or when vanilla is on.
-    if (empty($settings['vanilla'])) {
-      $optionset->whichLazy($settings);
-    }
-
     // Pass basic info to parent::buildSettings().
     parent::buildSettings($build, $items);
   }

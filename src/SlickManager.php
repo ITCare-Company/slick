@@ -502,7 +502,6 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $config->set('is.mousewheel', $wheel)
       ->set('is.down_arrow', $down_arrow);
 
-    $optionset->whichLazy($settings);
     $element['#settings'] = $settings;
 
     return $settings;

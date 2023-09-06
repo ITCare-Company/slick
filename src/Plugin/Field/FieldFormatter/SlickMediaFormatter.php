@@ -3,7 +3,6 @@
 namespace Drupal\slick\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FieldDefinitionInterface;
-use Drupal\Core\Field\FieldItemListInterface;
 
 /**
  * Plugin implementation of the 'slick media' formatter.
@@ -27,22 +26,6 @@ class SlickMediaFormatter extends SlickEntityReferenceFormatterBase {
    */
   public function blazyManager() {
     return $this->formatter;
-  }
-
-  /**
-   * {@inheritdoc}
-   *
-   * @todo remove post blazy:2.17, no differences so far.
-   */
-  public function viewElements(FieldItemListInterface $items, $langcode) {
-    $entities = $this->getEntitiesToView($items, $langcode);
-
-    // Early opt-out if the field is empty.
-    if (empty($entities)) {
-      return [];
-    }
-
-    return $this->commonViewElements($items, $langcode, $entities);
   }
 
   /**

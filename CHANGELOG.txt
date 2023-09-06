@@ -1,4 +1,8 @@
 
+Slick 8.x-2.0-dev, 2023-09-04
+-----------------------------
+- Deprecated sliders lazy loads to avoid complication for just Blazy.
+
 Slick 8.x-2.0-dev, 2023-08-30
 -----------------------------
 - Update slick.api.php for blazy:2.17.
