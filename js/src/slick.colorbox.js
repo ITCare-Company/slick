@@ -34,7 +34,7 @@
       var $slick = $box.closest('.slick');
       var $slider = $slick.find('> .slick__slider');
       var $clone = $slider.find('.slick-cloned .litebox');
-      var total = parseInt($slick.data('slickCount'), 10);
+      var total = parseInt($slick.data('slickCount'), 0);
       var $counter = $('#cboxCurrent');
       var curr;
 

@@ -49,22 +49,16 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @todo remove it into self::withElementOverride() post blazy:2.17.
    */
   public function buildElements(array &$build, $files, $langcode) {
-    $settings = $this->formatter->toHashtag($build);
-    $blazies  = $settings['blazies'];
-    $is_nav   = $blazies->is('nav') ?: $settings['nav'] ?? FALSE;
-
     foreach ($this->getElements($build, $files) as $element) {
-      if (!$element) {
-        continue;
-      }
+      if ($element) {
+        // Build individual item.
+        $build['items'][] = $element;
 
-      // Build individual item.
-      $build['items'][] = $element;
-
-      // Build individual thumbnail.
-      if ($is_nav) {
+        // Build individual thumbnail.
         $this->withElementThumbnail($build, $element);
       }
     }
@@ -74,6 +68,10 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
    * {@inheritdoc}
    */
   protected function withElementThumbnail(array &$build, array $element): void {
+    if (!$build['#asnavor']) {
+      return;
+    }
+
     // The settings in $element has updated metadata extracted from media.
     $settings = $this->formatter->toHashtag($element);
     $item     = $this->formatter->toHashtag($element, 'item', NULL);

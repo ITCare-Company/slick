@@ -87,6 +87,18 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
   /**
    * {@inheritdoc}
    */
+  public function preElements(array &$build, $items, array $entities = []): void {
+    parent::preElements($build, $items, $entities);
+
+    $settings = $build['#settings'];
+
+    $build['#asnavor'] = $settings['blazies']->is('nav');
+    $build['#vanilla'] = !empty($settings['vanilla']);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function verifySafely(array &$settings, $key = 'blazies', array $defaults = []) {
     SlickDefault::verify($settings, $this);
 
