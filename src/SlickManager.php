@@ -308,10 +308,14 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     // Grid already has grid__content wrapper, skip.
     $attrs   = $blazies->get('item.wrapper_attributes', []);
     $wrapper = $blazies->count() > 1;
-    $use_ca  = $wrapper && (empty($settings['grid']) || $attrs);
-    if ($use_ca) {
-      $data['#wrapper_attributes']['class'][] = $prefix . '__content';
-      if ($attrs) {
+    $use_ca  = empty($settings['grid']) || $attrs;
+
+    if ($use_ca || $wrapper) {
+      if ($use_ca) {
+        $data['#wrapper_attributes']['class'][] = $prefix . '__content';
+      }
+
+      if ($attrs && $wrapper) {
         $data['#wrapper_attributes'] = $this->merge($data['#wrapper_attributes'], $attrs);
       }
     }

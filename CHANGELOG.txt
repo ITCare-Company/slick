@@ -1,4 +1,8 @@
 
+Slick 8.x-2.0-dev, 2023-09-14
+-----------------------------
+- Fixed for slide__content when enabling Use theme_blazy() option.
+
 Slick 8.x-2.0-dev, 2023-09-04
 -----------------------------
 - Deprecated sliders lazy loads to avoid complication for just Blazy.
