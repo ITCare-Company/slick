@@ -667,6 +667,8 @@ function hook_slick_options_alter(array &$options, array $settings, Slick $slick
  * @ingroup slick_api
  */
 function hook_slick_settings_alter(array &$build, $items) {
+  // Since blazy:2.17, this may be replaced with just hook_blazy_settings_alter
+  // for the entire blazy ecosytem instead.
   // Most configurable settings are put as direct key-value pairs.
   // Before blazy:2.17, the key is plain.
   // $settings = &$build['settings'];
