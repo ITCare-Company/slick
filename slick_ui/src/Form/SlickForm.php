@@ -213,7 +213,7 @@ class SlickForm extends SlickFormBase {
         $formsets['#title_display'] = 'before';
       }
 
-      if (in_array($name, ['mobileFirst', 'asNavFor', 'accessibility'])) {
+      if (in_array($name, $this->tooltipBottom())) {
         $formsets['#wrapper_attributes']['class'][] = 'form-item--tooltip-bottom';
       }
     }
@@ -400,7 +400,7 @@ class SlickForm extends SlickFormBase {
                   $subsets['#title_display'] = 'before';
                 }
 
-                if (in_array($k, ['adaptiveHeight', 'autoplay', 'arrows'])) {
+                if (in_array($k, $this->tooltipBottom())) {
                   $subsets['#wrapper_attributes']['class'][] = 'form-item--tooltip-bottom';
                 }
 
@@ -935,8 +935,16 @@ class SlickForm extends SlickFormBase {
       // Defines the default values if available.
       $defaults = Slick::defaultSettings();
       foreach ($elements as $name => $element) {
-        $default = $element['type'] == 'checkbox' ? FALSE : '';
-        $elements[$name]['default'] = $defaults[$name] ?? $default;
+        $checkbox = $element['type'] == 'checkbox';
+        $default  = $checkbox ? FALSE : '';
+        $value    = $defaults[$name] ?? $default;
+        $value    = is_string($value) ? strip_tags($value ?? '') : $value;
+
+        $elements[$name]['default'] = $value;
+
+        if (isset($elements[$name]['description'])) {
+          $elements[$name]['description'] .= $this->getDefaultValue($value, $checkbox);
+        }
       }
 
       foreach (Slick::getDependentOptions() as $parent => $items) {
@@ -1068,6 +1076,36 @@ class SlickForm extends SlickFormBase {
 
     $this->manager->moduleHandler()->alter('slick_options_required_by_template', $options);
     return $options;
+  }
+
+  /**
+   * Returns default value.
+   */
+  private function getDefaultValue($value, $checkbox): string {
+    $empty = !$checkbox && empty($value) && $value != '0';
+    $value = var_export($value, TRUE);
+
+    if ($empty) {
+      $value = $this->t('None');
+    }
+
+    return '<br><em>' . $this->t('Default: @value', [
+      '@value' => $value,
+    ]) . '</em>';
+  }
+
+  /**
+   * Returns form items to have tooltip bottom.
+   */
+  private function tooltipBottom(): array {
+    return [
+      'mobileFirst',
+      'asNavFor',
+      'accessibility',
+      'adaptiveHeight',
+      'arrows',
+      'autoplay',
+    ];
   }
 
 }
