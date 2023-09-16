@@ -110,7 +110,6 @@ class SlickForm extends SlickFormBase {
     ];
 
     if ($admin_css) {
-      // $form['optimized']['#field_suffix'] = '&nbsp;';
       $form['optimized']['#title_display'] = 'before';
 
       $form['skin']['#prefix'] = '<div class="b-nativegrid b-nativegrid--form b-tooltip is-b-gapless">';
@@ -163,6 +162,10 @@ class SlickForm extends SlickFormBase {
 
       $formsets = &$form['settings'][$name];
       if ($element_type) {
+        if ($admin_css && $element_type == 'checkbox') {
+          $formsets['#title_display'] = 'before';
+        }
+
         $formsets['#type'] = $element_type;
         if ($element_type != 'hidden') {
           $formsets['#attributes'] = $tooltip;
@@ -206,11 +209,6 @@ class SlickForm extends SlickFormBase {
       if (is_int($element['default'])) {
         $formsets['#maxlength'] = 60;
         $formsets['#attributes']['class'][] = 'form-text--int';
-      }
-
-      if ($admin_css && !isset($element['field_suffix']) && is_bool($element['default'])) {
-        // $formsets['#field_suffix'] = '&nbsp;';
-        $formsets['#title_display'] = 'before';
       }
 
       if (in_array($name, $this->tooltipBottom())) {
@@ -302,8 +300,7 @@ class SlickForm extends SlickFormBase {
                 $detroyable['#field_suffix'] = $responsive['field_suffix'];
               }
 
-              if ($admin_css && !isset($responsive['field_suffix']) && $responsive['type'] == 'checkbox') {
-                // $detroyable['#field_suffix'] = '&nbsp;';
+              if ($admin_css && $responsive['type'] == 'checkbox') {
                 $detroyable['#title_display'] = 'before';
               }
 
@@ -338,6 +335,8 @@ class SlickForm extends SlickFormBase {
               // @fixme, boolean default is ignored at index 0 only.
               foreach ($responsive as $k => $item) {
                 $item['default'] = $item['default'] ?? '';
+                $type = $item['type'] ?? NULL;
+
                 $form['responsives']['responsive'][$i][$key][$k] = [
                   '#title'         => $item['title'] ?? '',
                   '#default_value' => $options['responsives']['responsive'][$i][$key][$k] ?? $item['default'],
@@ -346,8 +345,12 @@ class SlickForm extends SlickFormBase {
                 ];
 
                 $subsets = &$form['responsives']['responsive'][$i][$key][$k];
-                if (isset($item['type'])) {
-                  $subsets['#type'] = $item['type'];
+                if ($type) {
+                  $subsets['#type'] = $type;
+
+                  if ($admin_css && $type == 'checkbox') {
+                    $subsets['#title_display'] = 'before';
+                  }
                 }
 
                 // Specify proper states for the breakpoint form elements.
@@ -393,11 +396,6 @@ class SlickForm extends SlickFormBase {
 
                 if (isset($item['field_suffix'])) {
                   $subsets['#field_suffix'] = $item['field_suffix'];
-                }
-
-                if ($admin_css && !isset($item['field_suffix']) && is_bool($item['default'])) {
-                  // $subsets['#field_suffix'] = '&nbsp;';
-                  $subsets['#title_display'] = 'before';
                 }
 
                 if (in_array($k, $this->tooltipBottom())) {

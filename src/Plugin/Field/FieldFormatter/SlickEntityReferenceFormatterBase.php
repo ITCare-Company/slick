@@ -3,7 +3,6 @@
 namespace Drupal\slick\Plugin\Field\FieldFormatter;
 
 use Drupal\blazy\Field\BlazyEntityReferenceBase;
-use Drupal\blazy\Field\BlazyField;
 use Drupal\Component\Utility\Xss;
 use Drupal\slick\SlickDefault;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -87,8 +86,7 @@ abstract class SlickEntityReferenceFormatterBase extends BlazyEntityReferenceBas
         $captions = ['#markup' => Xss::filterAdmin($text)];
       }
       else {
-        // @todo 2.17: $captions = $this->viewField($entity, $_caption, $view_mode);
-        $captions = BlazyField::view($entity, $_caption, $view_mode);
+        $captions = $this->viewField($entity, $_caption, $view_mode);
       }
     }
 
