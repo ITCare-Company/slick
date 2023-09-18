@@ -7,16 +7,13 @@
 
 
 ### QUICK PERFORMANCE TIPS
-* Use lazyLoad **ondemand / anticipated** for tons of images, not
-  **progressive**. Unless within an ajaxified lightbox.
-* Use lazyload **Blazy** for carousels below the fold to delay loading them.
+* Slick lazyloads are **deprecated in 2.10**, use Blazy for anything instead.
 * Tick **Optimized** option on the top right of Slick optionset edit page.
 * Use image style with regular sizes containing effect **crop** in the name.
   This way all images will inherit dimensions calculated once.
 * Disable core library **slick-theme.css** as it contains font **slick** which
   may not be in use when using own icon font at:
   **/admin/config/media/slick/ui**
-* Use Blazy multi-serving images, Responsive image, or Picture, accordingly.
 * Uninstall Slick UI at production.
 * Enable Drupal cache, and CSS/ JS assets aggregation.
 

@@ -27,9 +27,7 @@ samples from [Slick Example](https://drupal.org/project/slick_extras) only if
 trouble to build slicks. Spending 5 minutes or so will save you hours in
 building more complex slideshows.
 
-The module supports Slick 1.6 above until 1.8.1. Versions 1.9.0 and above are
-not currently supported. Slick 2.x is just out 9/21/15, and hasn't been
-officially supported now, Jan 2020.
+Slick 2.x was out 9/21/15, and is not supported now, Jan 2020.
 
 ***
 ## <a name="first"> </a>FIRST THINGS FIRST!
@@ -58,7 +56,7 @@ Read more at:
      library, it does not have to be moved or renamed.
    * Slick v1.6.0 is the only version that is fully supported - it is
      battle-tested and has fewer issues, it only lacks some newer features such
-     as extra lazy-load.
+     as extra lazy-load which was deprecated in Slick:2.10 anyway.
 
    **Accessible version**
 

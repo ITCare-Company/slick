@@ -936,7 +936,7 @@ class SlickForm extends SlickFormBase {
         $checkbox = $element['type'] == 'checkbox';
         $default  = $checkbox ? FALSE : '';
         $value    = $defaults[$name] ?? $default;
-        $value    = is_string($value) ? strip_tags($value ?? '') : $value;
+        $value    = is_string($value) ? strip_tags($value) : $value;
 
         $elements[$name]['default'] = $value;
 
