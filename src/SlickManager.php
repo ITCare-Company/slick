@@ -610,7 +610,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
       }
 
       // Listens to signaled attributes via hook_alters.
-      Blazy::gridCheckAttributes($attrs, $content_attrs, $blazies, FALSE);
+      $this->gridCheckAttributes($attrs, $content_attrs, $blazies, FALSE);
 
       $theme = empty($settings['vanilla']) ? 'slide' : 'vanilla';
       $content = [
