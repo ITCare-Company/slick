@@ -319,7 +319,8 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
         $data['#wrapper_attributes'] = $this->merge($data['#wrapper_attributes'], $attrs);
       }
     }
-    // @todo enable blazy:2.17: parent::toBlazy($data, $captions, $delta);
+
+    parent::toBlazy($data, $captions, $delta);
   }
 
   /**
@@ -654,17 +655,6 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    */
   public function verifyItem(array &$element, $delta): void {
     // Do nothing.
-  }
-
-  /**
-   * {@inheritdoc}
-   *
-   * @todo remove at 3.x.
-   */
-  public function verify(array &$settings): void {
-    parent::verify($settings);
-
-    SlickDefault::verify($settings, $this);
   }
 
 }

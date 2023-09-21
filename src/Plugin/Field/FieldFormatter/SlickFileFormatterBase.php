@@ -50,18 +50,15 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
   /**
    * {@inheritdoc}
    *
-   * @todo remove it into self::withElementOverride() post blazy:2.17.
+   * @todo move ::withElementThumbnail() content here if no further needs.
    */
-  public function buildElements(array &$build, $files, $langcode) {
-    foreach ($this->getElements($build, $files) as $element) {
-      if ($element) {
-        // Build individual item.
-        $build['items'][] = $element;
-
-        // Build individual thumbnail.
-        $this->withElementThumbnail($build, $element);
-      }
-    }
+  protected function withElementOverride(array &$build, array $element): void {
+    // If ($build['#vanilla']) {
+    // Build media item including custom highres video thumbnail.
+    // @todo re-check/ refine for Paragraphs, etc.
+    // $this->blazyOembed->build($element);
+    // }
+    $this->withElementThumbnail($build, $element);
   }
 
   /**

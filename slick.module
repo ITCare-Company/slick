@@ -104,13 +104,3 @@ function slick_page_attachments(array &$attachments) {
     }
   }
 }
-
-/**
- * Implements hook_hook_info().
- *
- * @todo deprecate and remove post slick: 3.x, or 9.x, not 2.x, for BC.
- */
-function slick_hook_info() {
-  $hooks['slick_skins_info'] = ['group' => 'slick'];
-  return $hooks;
-}

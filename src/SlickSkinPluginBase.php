@@ -2,11 +2,14 @@
 
 namespace Drupal\slick;
 
+// @todo use Drupal\blazy\Plugin\SkinPluginBase;
 use Drupal\Core\Plugin\PluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides base class for all slick skins.
+ *
+ * @todo extends SkinPluginBase
  */
 abstract class SlickSkinPluginBase extends PluginBase implements SlickSkinPluginInterface {
 
