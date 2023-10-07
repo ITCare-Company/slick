@@ -516,8 +516,12 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    * Returns slick navigation with the structured array similar to main display.
    */
   protected function buildNavigation(array &$build, array $items, $id): array {
-    $settings              = $this->toHashtag($build);
-    $options               = $build['#options'];
+    $settings = $this->toHashtag($build);
+    $options  = $build['#options'];
+
+    // Only designed for main display, not thumbnails.
+    unset($settings['skin_arrows'], $settings['skin_dots']);
+
     $settings['optionset'] = $settings['optionset_thumbnail'];
     $settings['skin']      = $settings['skin_thumbnail'];
     $settings['display']   = 'thumbnail';
