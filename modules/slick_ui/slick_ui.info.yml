@@ -1,7 +1,7 @@
 name: 'Slick UI'
 type: module
 description: 'Provides Slick carousel configuration UI.'
-core_version_requirement: ^9.3 || ^10 || ^11
+core_version_requirement: '>=9.3'
 package: Slick
 configure: entity.slick.collection
 dependencies:

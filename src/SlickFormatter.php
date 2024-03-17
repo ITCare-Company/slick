@@ -92,7 +92,7 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
 
     $settings = $build['#settings'];
 
-    $build['#asnavor'] = $settings['blazies']->is('nav');
+    $build['#asnavfor'] = $settings['blazies']->is('nav');
     $build['#vanilla'] = !empty($settings['vanilla']);
   }
 
