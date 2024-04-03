@@ -79,15 +79,6 @@ function slick_library_info_alter(&$libraries, $extension) {
 }
 
 /**
- * Provides a wrapper to replace deprecated libraries_get_path() at ease.
- *
- * @todo remove by slick:3.x.
- */
-function slick_libraries_get_path($name, $base_path = FALSE) {
-  return slick()->getLibrariesPath($name, $base_path);
-}
-
-/**
  * Implements hook_page_attachments().
  */
 function slick_page_attachments(array &$attachments) {
