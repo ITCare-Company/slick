@@ -14,7 +14,6 @@ trait SlickFormatterTrait {
 
   use BlazyFormatterTrait {
     injectServices as blazyInjectServices;
-    getCommonFieldDefinition as blazyCommonFieldDefinition;
   }
 
   use BlazyFormatterViewTrait;

@@ -49,8 +49,6 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
 
   /**
    * {@inheritdoc}
-   *
-   * @todo move ::withElementThumbnail() content here if no further needs.
    */
   protected function withElementOverride(array &$build, array $element): void {
     // If ($build['#vanilla']) {
@@ -58,13 +56,6 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
     // @todo re-check/ refine for Paragraphs, etc.
     // $this->blazyOembed->build($element);
     // }
-    $this->withElementThumbnail($build, $element);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function withElementThumbnail(array &$build, array $element): void {
     if (!$build['#asnavfor']) {
       return;
     }
