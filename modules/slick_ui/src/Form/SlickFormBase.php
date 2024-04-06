@@ -15,14 +15,14 @@ abstract class SlickFormBase extends BlazyEntityFormBase {
   use EasingTrait;
 
   /**
-   * The slick admin service.
+   * {@inheritdoc}
    *
    * @var \Drupal\slick\Form\SlickAdminInterface
    */
   protected $admin;
 
   /**
-   * The slick manager service.
+   * {@inheritdoc}
    *
    * @var \Drupal\slick\SlickManagerInterface
    */

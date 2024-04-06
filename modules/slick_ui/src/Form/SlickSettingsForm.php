@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class SlickSettingsForm extends BlazyConfigFormBase {
 
   /**
-   * The slick manager.
+   * {@inheritdoc}
    *
    * @var \Drupal\slick\SlickManagerInterface
    */

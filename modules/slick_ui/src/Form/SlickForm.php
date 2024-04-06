@@ -553,7 +553,7 @@ class SlickForm extends SlickFormBase {
    * @see https://kenwheeler.github.io/slick
    */
   protected function getFormElements() {
-    if (!isset($this->formElements)) {
+    if (!$this->formElements) {
       $elements = [];
 
       $elements['mobileFirst'] = [

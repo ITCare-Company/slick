@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 abstract class SlickListBuilderBase extends BlazyListBuilderBase {
 
   /**
-   * The slick manager.
+   * {@inheritdoc}
    *
    * @var \Drupal\slick\SlickManagerInterface
    */

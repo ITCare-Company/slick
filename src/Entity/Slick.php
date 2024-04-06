@@ -63,28 +63,28 @@ class Slick extends SlickBase implements SlickInterface {
    * {@inheritdoc}
    */
   public function getBreakpoints(): int {
-    return $this->breakpoints ?? 0;
+    return $this->breakpoints;
   }
 
   /**
    * {@inheritdoc}
    */
   public function getSkin(): string {
-    return $this->skin ?? '';
+    return $this->skin;
   }
 
   /**
    * {@inheritdoc}
    */
   public function getGroup(): string {
-    return $this->group ?? '';
+    return $this->group;
   }
 
   /**
    * {@inheritdoc}
    */
   public function optimized(): bool {
-    return $this->optimized ?? FALSE;
+    return $this->optimized;
   }
 
   /**

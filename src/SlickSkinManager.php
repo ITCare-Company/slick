@@ -250,7 +250,7 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
    * {@inheritdoc}
    */
   public function getEasingPath(): ?string {
-    if (!isset($this->easingPath)) {
+    if (!$this->easingPath) {
       $path = NULL;
       if ($manager = self::service('slick.manager')) {
         $easings = ['easing', 'jquery.easing'];
@@ -291,7 +291,7 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
    * {@inheritdoc}
    */
   public function getSkins(): array {
-    if (!isset($this->skinDefinition)) {
+    if (!$this->skinDefinition) {
       $cid = 'slick_skins_data';
       $cache = $this->cacheBackend->get($cid);
 
@@ -352,7 +352,7 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
    * {@inheritdoc}
    */
   public function libraryInfoBuild(): array {
-    if (!isset($this->libraryInfoBuild)) {
+    if (!$this->libraryInfoBuild) {
       $this->libraryInfoBuild = $this->getSkinLibraries();
     }
     return $this->libraryInfoBuild;
@@ -362,7 +362,7 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
    * {@inheritdoc}
    */
   public function getSlickPath(): ?string {
-    if (!isset($this->slickPath)) {
+    if (!$this->slickPath) {
       if ($manager = self::service('slick.manager')) {
         if ($this->config('library') == 'accessible-slick') {
           $libs = ['accessible360--accessible-slick', 'accessible-slick'];
@@ -427,10 +427,7 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
    */
   public function isBreaking(): bool {
     if (!isset($this->isBreaking)) {
-      $this->isBreaking = FALSE;
-      if ($this->config('library') == 'accessible-slick') {
-        $this->isBreaking = TRUE;
-      }
+      $this->isBreaking = $this->config('library') == 'accessible-slick';
     }
     return $this->isBreaking;
   }
