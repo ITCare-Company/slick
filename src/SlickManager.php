@@ -652,13 +652,4 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     }
   }
 
-  /**
-   * {@inheritdoc}
-   *
-   * @todo remove post blazy:2.17.
-   */
-  public function verifyItem(array &$element, $delta): void {
-    // Do nothing.
-  }
-
 }
