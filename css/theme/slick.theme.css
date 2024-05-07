@@ -10,6 +10,14 @@
   box-sizing: border-box;
 }
 
+/* Fix for unnecessary Olivero Grid surprises causing Slick excessive height. */
+div[class*="view-slick"],
+div[class*="view-slick"] .view-content,
+div[class*="view-blazy"],
+div[class*="view-blazy"] .view-content {
+  display: block;
+}
+
 .slick img {
   height: auto;
 }
