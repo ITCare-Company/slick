@@ -112,7 +112,7 @@ class SlickForm extends SlickFormBase {
     if ($admin_css) {
       $form['optimized']['#title_display'] = 'before';
 
-      $form['skin']['#prefix'] = '<div class="b-nativegrid b-nativegrid--form b-tooltip is-b-gapless">';
+      $form['skin']['#prefix'] = '<div class="b-nativegrid b-nativegrid--form b-tooltip is-b-narrow is-b-gapless">';
       if ($_default) {
         $form['breakpoints']['#suffix'] = '</div>';
       }

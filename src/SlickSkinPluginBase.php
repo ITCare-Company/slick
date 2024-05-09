@@ -48,7 +48,7 @@ abstract class SlickSkinPluginBase extends PluginBase implements SlickSkinPlugin
     ContainerInterface $container,
     array $configuration,
     $plugin_id,
-    $plugin_definition
+    $plugin_definition,
   ) {
     $instance = new static($configuration, $plugin_id, $plugin_definition);
     $instance->manager = $container->get('slick.manager');

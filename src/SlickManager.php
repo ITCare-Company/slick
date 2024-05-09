@@ -380,7 +380,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
   protected function prepareOptions(
     Slick &$optionset,
     array &$options,
-    array &$settings
+    array &$settings,
   ): void {
     $blazies    = $settings['blazies'];
     $route_name = $blazies->get('route_name');

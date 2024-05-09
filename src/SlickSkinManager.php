@@ -116,7 +116,7 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
     CacheBackendInterface $cache_backend,
     ModuleHandlerInterface $module_handler,
     $root,
-    ConfigFactoryInterface $config
+    ConfigFactoryInterface $config,
   ) {
     // parent::__construct(
     // 'Plugin/slick',

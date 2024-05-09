@@ -41,7 +41,7 @@ class SlickAdmin implements SlickAdminInterface {
    */
   public function __construct(
     BlazyAdminInterface $blazy_admin,
-    SlickManagerInterface $manager
+    SlickManagerInterface $manager,
   ) {
     $this->blazyAdmin = $blazy_admin;
     $this->manager = $manager;
@@ -457,7 +457,7 @@ class SlickAdmin implements SlickAdminInterface {
     array $target_bundles = [],
     array $allowed_field_types = [],
     $entity_type = 'media',
-    $target_type = ''
+    $target_type = '',
   ): array {
     return $this->blazyAdmin->getFieldOptions($target_bundles, $allowed_field_types, $entity_type, $target_type);
   }

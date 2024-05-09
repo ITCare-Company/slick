@@ -3,6 +3,7 @@
 namespace Drupal\slick_ui\Controller;
 
 use Drupal\Component\Utility\Html;
+use Drupal\Component\Utility\Xss;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\slick\Entity\SlickInterface;
 
@@ -80,29 +81,42 @@ class SlickListBuilder extends SlickListBuilderBase {
     foreach ($skins as $key => $skin) {
       $name = $skin['name'] ?? $key;
       $group = Html::escape($skin['group'] ?? 'None');
-      $provider = Html::escape($skin['provider'] ?? 'Slick');
-      $description = Html::escape($skin['description'] ?? 'No description');
+      $provider = Html::escape($skin['provider'] ?? 'slick');
+      $description = Xss::filterAdmin($skin['description'] ?? 'No description');
 
-      $markup = '<h3>' . $this->t('@skin <br><small>Id: @id | Group: @group | Provider: @provider</small>', [
+      $markup = '<h3>' . $this->t('@skin', [
         '@skin' => $name,
+      ]) . '</h3>';
+
+      $markup .= '<p>' . $this->t('Id: @id | Group: @group', [
         '@id' => $key,
         '@group' => $group,
-        '@provider' => $provider,
-      ]) . '</h3>';
+      ]) . '</p>';
 
       $markup .= '<p><em>&mdash; ' . $description . '</em></p>';
 
-      $availaible_skins[$key] = [
+      $availaible_skins[$provider][$key] = [
         '#markup' => '<div class="messages messages--status">' . $markup . '</div>',
       ];
+
+      ksort($availaible_skins[$provider]);
     }
 
     ksort($availaible_skins);
-    $availaible_skins = ['default' => $availaible_skins['default']] + $availaible_skins;
+    if ($item = $availaible_skins['slick']['default'] ?? []) {
+      $core = $availaible_skins['slick'];
+      unset($core['default']);
+      $availaible_skins['slick'] = [
+        'default' => $item,
+      ];
+
+      $availaible_skins['slick'] += $core;
+    }
 
     $settings = [];
     $settings['grid'] = 3;
     $settings['grid_medium'] = 2;
+    $settings['grid_small'] = 1;
     $settings['style'] = 'column';
 
     $header = '<br><hr><h2>' . $this->t('Available skins') . '</h2>';
@@ -110,7 +124,28 @@ class SlickListBuilder extends SlickListBuilderBase {
     $build['skins_header']['#markup'] = $header;
     $build['skins_header']['#weight'] = 20;
 
-    $build['skins'] = $manager->toGrid($availaible_skins, $settings);
+    $skin_items = [];
+    foreach ($availaible_skins as $provider => $items) {
+      $skin_items[$provider] = [
+        '#type'  => 'details',
+        '#open'  => FALSE,
+        '#title' => $this->t('Provider: @provider', [
+          '@provider' => $provider,
+        ]),
+      ];
+
+      $grids = [];
+      foreach ($items as $skin => $item) {
+        $grids[$skin] = $item;
+      }
+
+      $skin_items[$provider]['list'] = [
+        '#type' => 'container',
+        'items' => $manager->toGrid($grids, $settings),
+      ];
+    }
+
+    $build['skins'] = $skin_items;
     $build['skins']['#weight'] = 21;
     $build['skins']['#attached'] = $manager->attach($settings);
     $build['skins']['#attached']['library'][] = 'blazy/admin';
