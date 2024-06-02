@@ -46,15 +46,6 @@ abstract class SlickEntityFormatterBase extends BlazyEntityVanillaBase {
   protected static $fieldType = 'entity';
 
   /**
-   * Returns the blazy manager.
-   *
-   * @todo remove at/by 3.x.
-   */
-  public function blazyManager() {
-    return $this->formatter;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function defaultSettings() {
