@@ -7,6 +7,7 @@
   "extends": "../../../core/.eslintrc.legacy.json",
   "ignorePatterns": ["*.yml", "config/**/*", "tests/*", "js/*.min.js", "js/*/*.min.js", "js/*/*/*.min.js"],
   "rules": {
+    "prettier/prettier": 0,
     "consistent-this": [0, "me"],
     "max-params": 0,
     "id-length": [1, {"min": 1}],
