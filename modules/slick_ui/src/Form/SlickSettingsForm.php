@@ -2,8 +2,8 @@
 
 namespace Drupal\slick_ui\Form;
 
-use Drupal\blazy\Form\BlazyConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\blazy\Form\BlazyConfigFormBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
