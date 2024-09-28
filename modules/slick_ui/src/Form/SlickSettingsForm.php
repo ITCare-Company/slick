@@ -109,7 +109,7 @@ class SlickSettingsForm extends BlazyConfigFormBase {
       ->save();
 
     // Invalidate the library discovery cache to update new assets.
-    $this->libraryDiscovery->clearCachedDefinitions();
+    // @todo update for D12 $this->libraryDiscovery->clearCachedDefinitions();
     $this->configFactory->clearStaticCache();
 
     parent::submitForm($form, $form_state);
