@@ -28,16 +28,23 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
   /**
    * {@inheritdoc}
    */
-  public function buildSettings(array &$build, $items) {
+  public function preBuildElements(array &$build, $items, array $entities = []) {
     $this->hashtag($build);
-
     $settings = &$build['#settings'];
-    $this->verifySafely($settings);
 
+    $this->verifySafely($settings);
     $blazies = $settings['blazies'];
-    $config  = $settings['slicks'];
+    $config = $settings['slicks'];
+
+    $optionset = Slick::verifyOptionset($build, $settings['optionset']);
 
     // Prepare integration with Blazy.
+    $blazies->set('initial', $optionset->getSetting('initialSlide') ?: 0);
+
+    // Pass initial to parent required by Preload.
+    parent::preBuildElements($build, $items, $entities);
+
+    // Slick specific stuffs.
     $settings['_unload'] = FALSE;
 
     // Only display thumbnail nav if having at least 2 slides. This might be
@@ -54,20 +61,6 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
     $settings['nav'] = $nav;
     $blazies->set('is.nav', $nav);
     $config->set('is.nav', $nav);
-
-    // Pass basic info to parent::buildSettings().
-    parent::buildSettings($build, $items);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function preBuildElements(array &$build, $items, array $entities = []) {
-    parent::preBuildElements($build, $items, $entities);
-
-    $this->hashtag($build);
-    $settings = &$build['#settings'];
-    $this->verifySafely($settings);
 
     // Only trim overridables options if disabled.
     if (empty($settings['override']) && isset($settings['overridables'])) {
@@ -96,24 +89,6 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
     SlickDefault::verify($settings, $this);
 
     return parent::verifySafely($settings, $key, $defaults);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function preSettingsData(array &$settings): void {
-    $this->verifySafely($settings);
-
-    $blazies = $settings['blazies'];
-
-    // @todo update Slick::verifyOptionset() parameters.
-    $build = [];
-    $optionset = Slick::verifyOptionset($build, $settings['optionset']);
-
-    // Prepare integration with Blazy.
-    $blazies->set('initial', $optionset->getSetting('initialSlide') ?: 0);
-
-    parent::preSettingsData($settings);
   }
 
 }
