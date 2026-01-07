@@ -11,6 +11,8 @@
  * [Configuration](#configuration)
  * [Slick Formatters](#formatters)
  * [Troubleshooting](#troubleshooting)
+ * [Benchmarking & Performance Guidelines](#benchmarking)
+ * [Strategic Optimization Checklist](#optimization)
  * [FAQ](#faq)
  * [Contribution](#contribution)
  * [Maintainers](#maintainers)
@@ -44,7 +46,7 @@ Read more at:
   slick.js. The reason, release 1.8.1 with package.json 1.8.1 has misleading
   version 1.8.0 written in slick.js. If they don't match, they are not supported
   by this module aka broken, only fixable with hilarious elaborate works aka
-  headaches.  
+  headaches.
   **What breaks**: dots, nested divities, out of sync navigation given less
   slides, etc.
 + **Battle-tested version**: 1.6.0. If you see problems with later versions
@@ -93,7 +95,7 @@ Read more at:
      demands your attentions on few specific options as prompted when saving
      the Optionset forms: `rows`, `slidesPerRow`, `slidesToShow`, etc.
 
-2. [Download jqeasing](https://github.com/gdsmith/jquery.easing), so available:  
+2. [Download jqeasing](https://github.com/gdsmith/jquery.easing), so available:
 
    **/libraries/easing/jquery.easing.min.js**
 
@@ -131,7 +133,7 @@ Slick to avoid headaches for just ~15-minute read.
 
 ***
 ## <a name="uninstallation"> </a>UNINSTALLATION
-Please check out below for solutions:  
+Please check out below for solutions:
 
 * [Slick 7.x](https://www.drupal.org/project/slick/issues/3261726#comment-14406766)
 * [Slick 8.x+](https://www.drupal.org/project/slick/issues/3257390)

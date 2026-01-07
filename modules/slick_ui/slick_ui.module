@@ -37,6 +37,7 @@ function slick_ui_help($route_name) {
       'FAQS',
       'TROUBLESHOOTING',
       'CONTRIBUTION',
+      'BENCHMARKING',
       'MAINTAINERS',
     ];
 
