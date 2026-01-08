@@ -1,9 +1,22 @@
 ***
-## <a name="benchmarking"></a>Benchmarking & Performance Guidelines
+## <a name="benchmarking"></a>BENCHMARKING & PERFORMANCE GUIDELINES
 
 This document serves as the technical foundation for auditing and optimizing
 Slick. Drawing from over a decade of resolving fundamental technical barriers,
 these guidelines are streamlined for clarity and accountability.
+
+To distinguish genuine performance flaws from inherent feature costs, we adhere
+to rigorous validation thresholds. Based on the recorded benchmarking, a
+performance regression is only validated by a minimum **1500% increase in page weight** or a **100% speed discrepancy**.
+
+Minor variances are recognized as intentional, modular trade-offs for advanced functionality. For example, the aesthetic overhead of a "Blur" effect requires
+a negligible ~2kB of JS/CSS. Furthermore, while we provide a suite of optional features like a media player, lightbox integration and skins, these are
+configurable assets whose weight is dictated by the user's specific creative requirements. We classify these as feature-driven enhancements, not
+architectural bloat.
+
+Re-engagement on these topics requires a deep alignment with the technical
+challenges outlined below. This standard ensures a fair, "apples-to-apples"
+analysis and fosters a truly productive, data-driven exchange.
 
 ### Prove it yourself!
 
@@ -158,5 +171,5 @@ Use this checklist to audit your implementation:
   **"Use theme field"** remains unchecked to reduce DOM depth and "Divitis."
 * **Admin UIs:**
 
-  Visit `/admin/config/media/blazy` and `/admin/config/media/slick/ui` for more
-  optimization options, including Media formatters.
+  Visit `/admin/config/media/blazy` and `/admin/config/media/slick/ui`,
+  including Media formatters for more optimization options.
