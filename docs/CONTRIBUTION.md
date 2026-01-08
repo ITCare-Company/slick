@@ -1,3 +1,4 @@
+***
 ## <a name="contribution"></a>SUBMITTING PATCHES OR ISSUES
 
 Please use the provided issue template to ensure your reports are technically actionable. High-quality reports allow us to maintain a standard of excellence.
@@ -20,13 +21,15 @@ use default formatters to rule out custom overrides.
 branches.
 * **Search First:** Check the issue queue for duplicates.
 * **Categorize:** When in doubt, file as a **Support Request**. Valid bugs
-will be re-categorized by maintainers upon verification.
+will be re-categorized by maintainers upon verification. This ensures we don't
+continue receiving false alarms on beautiful mornings.
 
 ### SUBMITTING PATCHES
 A patch is a contribution toward collective excellence. To ensure a successful
 merge:
 
-* **Document Intent:** Use the issue body to provide a thorough technical explanation. Patches without explanatory context will be deferred.
+* **Document Intent:** Use the issue body to provide a thorough technical
+explanation. Patches without explanatory context will be deferred.
 * **Reference Standards:** Provide links to official Drupal Change Records or documentation, especially for coding standards.
 * **Validate:** Ensure you are working against the latest **dev branch**.
 * **Consistency:** Every bug fix must include clear steps for reproduction. No reproduction, no validation.
@@ -44,7 +47,9 @@ an issue:
 
 **For Validated Bug Reports:**
 Provide consistent reproduction steps, detailed environment info, and
-screenshots of both the output and the Slick administrative form. If the issue persists outside of Drupal, please isolate it in a
+screenshots of both the output and the Slick administrative form.
+Specific to JavaScript, press  `F12`, capture **Console** tab for potential
+errors. If the issue persists, please isolate it in a
 [JSFiddle](https://jsfiddle.net/).
 
 ---
@@ -54,20 +59,31 @@ screenshots of both the output and the Slick administrative form. If the issue p
 We prioritize and credit contributions that advance the project through
 technical rigor.
 
-1.  **Valued Contributions:** We welcome Support/Feature requests, Bug reports,
-and Meta/Tasks that provide actionable data.
-2.  **Issue Resolution:** If an issue is closed for lack of data, feel free to re-open it once the required technical evidence or reproduction steps are
-provided.
+1. **Valued Contributions:**
+
+   We welcome Support/Feature requests, Bug reports, and Meta/Tasks that provide
+   actionable data.
+2. **Issue Resolution:**
+
+   If an issue is closed for lack of data, feel free to re-open it once the
+   required technical evidence or reproduction steps are provided. We also
+   reserve the right to remain silent, not due to discourtesy, but mostly a
+   cell phone limitation with mini keyboards used to manage issues.
 
 **The Boundary of Engagement:**
+
 Critical feedback is welcome provided it is backed by **technical data**
-(benchmarks, screenshots, or documentation). We prioritize project health and collective time; therefore, discussions that deviate into unproductive
+(benchmarks, screenshots, or documentation). We prioritize project health and
+collective time; therefore, discussions that deviate into unproductive
 negativity or fail to offer actionable insights will be closed to maintain
 focus.
 
 **Reciprocity:**
+
 We recognize that defects are part of the development process. Constructive
 criticism and elegant patches help us eliminate them. We operate on a principle
-of mutual respect: provide professional, data-backed insights, and you will be credited with gratitude in our `CHANGELOG.txt` or [committers list](https://www.drupal.org/node/2232779/committers).
+of mutual respect: provide professional, data-backed insights, and you will be
+credited with gratitude in our `CHANGELOG.txt`
+or [committers list](https://www.drupal.org/node/2232779/committers).
 
 Thank you for your cooperation in maintaining a high standard of engineering.
