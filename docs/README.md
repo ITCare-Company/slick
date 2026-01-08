@@ -147,10 +147,10 @@ Visit the following to configure Slick:
 
 2. Visit any entity types:
 
-  + `/admin/structure/types`
-  + `/admin/structure/block/block-content/types`
-  + `/admin/structure/paragraphs_type`
-  + etc.
+   + `/admin/structure/types`
+   + `/admin/structure/block/block-content/types`
+   + `/admin/structure/paragraphs_type`
+   + etc.
 
     Use Slick as a formatter under **Manage display** for multi-value fields:
     Image, Media, Paragraphs, Entity reference, or even Text.
@@ -163,7 +163,8 @@ Visit the following to configure Slick:
 
 ***
 ## <a name="recommended-modules"> </a>RECOMMENDED MODULES
-Slick supports enhancements and more complex layouts.
+Slick works with fields and Views, and supports enhancements for image, video,
+audio, SVG, CSS backgrounds and HTML media types with more complex layouts.
 
 ### OPTIONAL
 * [Colorbox](https://drupal.org/project/colorbox), to have grids/slides that
@@ -206,8 +207,9 @@ The Slick module has several sub-modules:
   Engineered for a **"CLS-zero" strategy**, our framework integrates
   **sophisticated preloading** alongside native `fetchpriority` and `decoding`
   to systematically eliminate LCP discovery delays. We provide rigorous
-  optimization for every asset—from **standard images** and **responsive picture elements** to **optimized video posters**. While we leverage modern CSS
-  `aspect-ratio` for layout stability, we maintain a refined
+  optimization for every asset—from **standard images**, **CSS background**
+  and **responsive picture elements** to **optimized video posters**. While we
+  leverage modern CSS `aspect-ratio` for layout stability, we maintain a refined
   **padding-bottom fallback** to ensure backward compatibility (BC) without
   sacrificing precision.
 * **Intelligent Lazy-loading**:
