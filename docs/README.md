@@ -202,24 +202,32 @@ The Slick module has several sub-modules:
 ***
 ## <a name="features"></a>FEATURES
 
+* **Deep Integration**:
+
+  Seamlessly works with Core Media, Views, Paragraphs, and Media contrib
+  modules. Supports Image, Responsive image, (local|remote|iframe) videos, SVG,
+  DIV (CSS backgrounds), either inline, fields, views, or within lightboxes.
 * **LCP & CLS Management**:
 
   Engineered for a **"CLS-zero" strategy**, our framework integrates
   **sophisticated preloading** alongside native `fetchpriority` and `decoding`
   to systematically eliminate LCP discovery delays. We provide rigorous
-  optimization for every asset—from **standard images**, **CSS background**
+  optimization for every asset—from **standard images**, **CSS backgrounds**
   and **responsive picture elements** to **optimized video posters**. While we
   leverage modern CSS `aspect-ratio` for layout stability, we maintain a refined
   **padding-bottom fallback** to ensure backward compatibility (BC) without
   sacrificing precision.
 * **Intelligent Lazy-loading**:
 
-  Sophisticated preloading via the Blazy engine for images, iframes, SVG,
-  HTML5 video, audio, and HTML media.
-* **Deep Integration**:
+  Sophisticated preloading via the Blazy engine for images, CSS backgrounds,
+  iframes, SVG, HTML5 video, audio, and HTML media type.
+  * Multi-serving lazyloaded images, including multi-breakpoint CSS backgrounds.
+* **Privacy & GDPR Compliance**:
 
-  Seamlessly works with Core Media, Views, Paragraphs, and Media contrib
-  modules.
+  Utilizes a **Two-Click Media Loader** via the "Image to Iframe" option.
+  No third-party tracking scripts are initialized until the user actively
+  engages with the play button—satisfying strict **GDPR and ePrivacy**
+  requirements.
 * **Developer Friendly**:
 
   Features a "Vanilla" mode and a
@@ -229,16 +237,31 @@ The Slick module has several sub-modules:
 
   Fullscreen, Split, multi-row, or Grid layouts built with pure CSS and zero
   JavaScript beyond the initializer.
+* **Nested sliders/overlays**:
+
+  Multiple carousels within a single Slick via Slick Paragraphs and Slick Views.
 * **Randomization**:
 
   A strategic solution for refreshing cached content (ads, e-commerce) to ensure
   a dynamic user experience across pages without compromising performance.
-* **GDPR Compliance**:
+* **Robust content supports:**
 
-  Utilizes a **Two-Click Media Loader** via the "Image to Iframe" option.
-  No third-party tracking scripts are initialized until the user actively
-  engages with the play button—satisfying strict **GDPR and ePrivacy**
-  requirements.
-* **Navigation Options**:
+  HTML, responsive image/ picture, responsive iframe, SVG, video, audio and
+  third party contents.
+* **Inline & lightbox mixed-media:**
+
+  A single **Media switcher** option for various interactions: image to content,
+  iframe, and (quasi-)lightboxes: Slick lightbox, Colorbox, PhotoSwipe, Flybox,
+  Magnific Popup, Zooming, etc.
+* **Navigation/ Pager Options**:
 
   Arrows, Dots (circle, static grid, or hoverable), Tabs, and Image Thumbnails.
+  + **Arrows**
+  + **Dots**, circle dots, dots as static grid thumbnails, and dots with
+    hoverable thumbnails.
+  + [**Text tabs**](https://www.drupal.org/project/issues/search?issue_tags=slick%20tabs), just provide Thumbnail caption, and leave Thumbnail
+    style/image empty to achieve:
+
+    * [Vertical tabs](https://www.drupal.org/files/issues/Bildschirmfoto%202016-03-16%20um%2012.09.36.png)
+    * [Inline tabs](https://www.drupal.org/files/issues/thumbnail-caption-or-any-text-as-navigation.png)
+  + [**Image thumbnails/tabs**](https://www.drupal.org/project/issues/search?issue_tags=slick%20asnavfor)
