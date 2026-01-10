@@ -150,7 +150,10 @@ To respect the community's time, we ask for the following due diligence:
 > contribution is practical and effective. At first sight, Slick is slightly
 > heavier given the first visible image is not lazy-loaded, however applying
 > identical **Core Web Vitals** rules, no matter how absurd, to all components
-> without reservation will properly reveal significant discrepancies.
+> without reservation will properly reveal significant discrepancies. This is
+> almost identical to a 10-year-old issue, and such recurring played-out issues
+> require a **final, actionable resolution** so we can focus more on the project
+> progress and improvement to benefit the wider community.
 
 #### The Accountability Challenge
 

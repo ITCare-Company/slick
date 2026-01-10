@@ -44,6 +44,7 @@ class SlickSettingsFormTest extends KernelTestBase {
     'file',
     'image',
     'media',
+    'user',
     'blazy',
     'slick',
     'slick_ui',
@@ -55,7 +56,19 @@ class SlickSettingsFormTest extends KernelTestBase {
   protected function setUp(): void {
     parent::setUp();
 
-    $this->installConfig(static::$modules);
+    $this->installSchema('file', ['file_usage']);
+    $this->installEntitySchema('file');
+    $this->installEntitySchema('media');
+    $this->installEntitySchema('user');
+
+    $this->installConfig('image');
+    $this->installConfig('media');
+    $this->installConfig('system');
+
+    $this->installConfig([
+      'blazy',
+      'slick',
+    ]);
 
     $this->slickManager = $this->container->get('slick.manager');
 
