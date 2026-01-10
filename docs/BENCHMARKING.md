@@ -138,7 +138,8 @@ To respect the community's time, we ask for the following due diligence:
 3.  **Technical Rigor:**
 
     High effort in your submission ensures high-speed resolution. Reports must
-    meet these minimum technical standards to be processed.
+    meet these minimum technical standards to be processed. In short:
+    *present Slick's flaws with apples-to-apples benchmarks professionally*.
 
 > **Note on Native Lazy-loading:**
 > As of this writing, significant performance discrepancies remain demonstrable

@@ -233,26 +233,29 @@ The Slick module has several sub-modules:
   Features a "Vanilla" mode and a
   [robust API](https://git.drupalcode.org/project/slick/blob/3.0.x/slick.api.php)
   for custom/theme implementations.
-* **Modular Skins**:
+* **Modular Skins & Versatile Designs**:
 
   Fullscreen, Split, multi-row, or Grid layouts built with pure CSS and zero
   JavaScript beyond the initializer.
-* **Nested sliders/overlays**:
+* **Nested Sliders/Overlays**:
 
   Multiple carousels within a single Slick via Slick Paragraphs and Slick Views.
 * **Randomization**:
 
   A strategic solution for refreshing cached content (ads, e-commerce) to ensure
   a dynamic user experience across pages without compromising performance.
-* **Robust content supports:**
+* **Robust Content Supports:**
 
   HTML, responsive image/ picture, responsive iframe, SVG, video, audio and
   third party contents.
-* **Inline & lightbox mixed-media:**
+* **Inline & lightbox Mixed-media:**
 
   A single **Media switcher** option for various interactions: image to content,
   iframe, and (quasi-)lightboxes: Slick lightbox, Colorbox, PhotoSwipe, Flybox,
   Magnific Popup, Zooming, etc.
+* **Editor Friendly:**
+
+  `Splide Filter` using simple shortcodes, see [Filter tips](/filter/tips).
 * **Navigation/ Pager Options**:
 
   Arrows, Dots (circle, static grid, or hoverable), Tabs, and Image Thumbnails.
