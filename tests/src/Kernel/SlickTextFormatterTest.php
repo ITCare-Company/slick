@@ -6,7 +6,6 @@ use Drupal\Core\Form\FormState;
 use Drupal\Tests\blazy\Kernel\BlazyKernelTestBase;
 use Drupal\Tests\slick\Traits\SlickKernelTrait;
 use Drupal\Tests\slick\Traits\SlickUnitTestTrait;
-use Drupal\blazy\Blazy;
 
 /**
  * Tests the Slick field rendering using the text field type.
@@ -101,8 +100,7 @@ class SlickTextFormatterTest extends BlazyKernelTestBase {
     $render_empty = $this->slickManager->renderer()->renderRoot($build_empty[$this->testEmptyName]);
     $this->assertEmpty($render_empty);
 
-    $build['#settings'] = Blazy::init();
-    $scopes = $this->formatterInstance->buildSettings($build, NULL);
+    $scopes = $this->formatterInstance->buildSettings();
     $this->assertEquals($this->testPluginId, $scopes['blazies']->get('field.plugin_id'));
 
     $form = [];

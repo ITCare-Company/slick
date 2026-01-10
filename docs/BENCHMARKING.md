@@ -147,7 +147,10 @@ To respect the community's time, we ask for the following due diligence:
 > largely dictated by modern **Core Web Vitals** protocols. Achieving mastery of
 > these subtleties — specifically the **hidden** and **nested** formatters
 > within core site-building architecture — is vital to ensuring your
-> contribution is practical and effective.
+> contribution is practical and effective. At first sight, Slick is slightly
+> heavier given the first visible image is not lazy-loaded, however applying
+> identical **Core Web Vitals** rules, no matter how absurd, to all components
+> without reservation will properly reveal significant discrepancies.
 
 #### The Accountability Challenge
 
