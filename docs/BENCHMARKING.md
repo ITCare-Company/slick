@@ -1,93 +1,162 @@
+
 ***
-## <a name="benchmarking"></a>BENCHMARKING & PERFORMANCE GUIDELINES
+## <a name="benchmarking"></a>Benchmarking & Performance Guidelines
 
-This document serves as the technical foundation for auditing and optimizing
-Slick. Drawing from over a decade of resolving fundamental technical barriers,
-these guidelines are streamlined for clarity and accountability.
+This project is built on over a decade of addressing complex, real-world
+performance constraints. This document defines a **repeatable, evidence-based
+framework** for auditing and optimizing Slick within modern
+**Core Web Vitals (CWV)** expectations.
 
-We encourage a healthy, skeptical review to ensure proper expectations and
-completeness. However, re-engagement on this performance topic requires a deep
-alignment with the technical challenges outlined below. This standard ensures
-a fair, "apples-to-apples" analysis and fosters a truly productive, data-driven
-exchange to maximize benefits for the wider community.
+We welcome **healthy skepticism**, critical audits, and alternative
+implementations—**provided they are supported by verifiable data rather than
+anecdotal observation**. Productive performance discussions require shared
+grounding in technical context, reproducible methodology, and clearly defined
+constraints. The guidelines below exist to ensure **fair, apples-to-apples
+analysis** and to elevate discourse from opinion to contribution.
 
-We recognize that the web is a moving target. This challenge is not a closed
-door, but an open invitation to evolve. If your benchmarks reveal a bottleneck
-in modern metrics like LCP or overall architecture, we don't just want to hear
-about it—we want to collaborate on the fix. Data is the bridge between a
-complaint and a contribution. However, to maintain compliance with
-**Core Web Vitals**, minor performance oversights should be viewed as
-opportunities for fine-tuning, not as symptoms of architectural failure. We do
-not retreat into basic workarounds that compromise the visual experience.
+The web is a moving target. This is not a closed position, but an **open,
+iterative process**. If you believe you have identified a regression or
+architectural bottleneck—whether in modern metrics like **LCP**, or even
+overall system behavior—we invite you to validate it using the protocols below.
+If the data holds, we are prepared to collaborate on refinement or correction.
 
-### Prove it yourself!
-We recognize that seasoned experts may find this baseline familiar. Please
-regard this as a technical foundation; if you are already proficient with the
-basics, feel free to skip ahead to the primary contribution requirements.
+In this space, **data is the bridge between a complaint and a contribution**.
+Let us focus on the craft, serve the data, and raise the bar together.
 
-#### Standardized Benchmarking Protocols
+---
 
-To ensure a well-informed and constructive judgment, please follow these
-protocols:
+### Standardized Benchmarking Protocols
 
-- **Understand the Ecosystem:**
+Please regard this section as a technical foundation. If you are already fluent
+with performance auditing fundamentals, feel free to skip ahead to the
+contribution requirements.
 
-  Familiarize yourself with **Core Web Vitals** (CWV) and the specific
-  configurations within Blazy/Slick UIs, including Media formatter forms. Many
-  perceived "flaws" are often the result of misconfiguration rather than
-  code limitations. We do have oversights, and they are normally taken care of
-  by bug fixes. However specific to this audit, elaborate benchmarking is
-  required for fairness.
+For architectural context, see:
+[Blazy & CWV Design Rationale](https://git.drupalcode.org/project/blazy/-/blob/3.0.x/docs/ARCHITECTURE#why-cwv)
 
-- **Comparative Analysis:**
+To ensure informed and constructive evaluation, please follow these protocols:
 
-  - **Scope:**
+#### Understand the Ecosystem
 
-    Provide a direct comparison between Slick and alternative
-    modules, or the Slick API vs. custom theme-based implementations.
+- Familiarize yourself with **Core Web Vitals** and the relevant configuration
+  surfaces within **Blazy** and **Slick**, including Media formatter UIs.
+- These tools are intentionally flexible; observed performance variance is
+  often environmental or configurational rather than architectural.
+- While standard bugs are addressed through regular maintenance, **this audit
+  framework requires comprehensive benchmarking** to ensure technical accuracy
+  and fairness.
 
-  - **Baseline:**
+---
 
-    Use code released prior to **2025-10-20** to establish a fair historical
-    baseline.
+#### Comparative Analysis
 
-  - **Accountability:**
+##### Scope
 
-    Testing the latest releases is encouraged, provided the exposure window
-    and any post-patch improvements are documented.
+- Provide a **direct comparison** between:
+  - Slick and alternative modules, or
+  - Slick APIs and custom theme-level implementations.
 
-  - **Professionalism:**
+##### Baseline
 
-    If citing specific alternatives involves sensitive comparisons, provide
-    those names and test pages via private message for our internal reproduction
-    to keep the public record focused on technical data.
+- Use code released **prior to 2025-10-20** as a historical reference point.
+- Testing newer releases is encouraged, provided the exposure window and any
+  post-patch improvements are clearly documented.
 
-  - **Stress Testing:**
+##### Professionalism
 
-    Since Drupal core provides native lazy-loading for `IMG` and `IFRAME`,
-    your benchmark must include at least one complex media type
-    (**VIDEO, AUDIO, or HTML**).
+- If comparisons involve sensitive alternatives, you may provide names and test
+  pages via private message to allow internal reproduction while keeping public
+  discussion focused on technical findings.
 
-    - Note that only the Blazy ecosystem supports sophisticated mixed-media
-      handling; for a fair comparison, ensure alternatives offer equivalent
-      handling or separate media types onto different pages.
-    - A **20-item sample** is the minimum requirement for a valid benchmark.
-    - Most front-end modules are measured by their output, only visible when
-      given an extreme burden.
+---
 
-  - **Isolation:**
+#### Stress Testing (Required)
 
-    Tests must be conducted in **Production mode** with strict isolation
-    (no library leaks or global scope pollution).
+Because Drupal core already provides native lazy-loading for `IMG` and
+`IFRAME`, meaningful audits must extend beyond trivial cases.
 
-  - **Objective:**
+- Benchmarks **must include at least one complex media type**:
+  **VIDEO**, **AUDIO**, or **HTML**.
+- As the Blazy ecosystem is designed for mixed-media coordination:
+  - Either ensure functional parity between alternatives, or
+  - Isolate media types onto separate pages for controlled comparison.
+- A **minimum 20-item sample** is required to establish a statistically
+  meaningful baseline.
+- Front-end systems should be evaluated under load; architectural behavior
+  becomes visible only under meaningful stress.
 
-    Genuine, accountable, legally sound technical corrections with
-    considerations to eliminate potential contribution hindrances.
+---
 
-For a different perspective, feel free to choose your own adventure!
+#### Media Placement Awareness
 
-### Pro Tips for Accurate Audits:
+- Benchmarks must explicitly distinguish between:
+  - **Above-the-fold (LCP-critical)** assets
+  - **Below-the-fold** deferred content
+- Architectural intent differs between critical and non-critical media and must
+  be evaluated accordingly.
+
+---
+
+#### Isolation Requirements
+
+- Tests must be conducted in **Production mode** with strict isolation:
+  - No library leaks
+  - No global scope pollution
+  - No ads or third-party noise
+- If evaluating CLS relative to TTFB, temporarily (un-)install BigPipe until the
+  rendering strategy is fully understood:
+  [Have your cake and eat it too](https://git.drupalcode.org/project/blazy/-/blob/3.0.x/docs/OPTIMIZATION.md#cls)
+
+Proper isolation enables accurate judgment.
+
+---
+
+#### Objective
+Genuine, accountable, and technically rigorous corrections that prioritize
+project alignment with **Core Web Vitals** and eliminate hindrances to
+high-quality contributions.
+
+---
+
+### Path to Contribution
+
+If you believe you have identified a genuine flaw, we welcome your report. To
+respect community time and maintain project velocity, we ask for the following
+due diligence:
+
+#### 1. Define the Flaw
+
+A qualifying flaw is a **measurable discrepancy** between two or more
+benchmarked implementations.
+
+Based on publicly recorded benchmarks, historically observed baselines indicate
+that **meaningful regressions** typically manifest as:
+
+- ~**1500% increase in page weight**, or
+- ~**100% speed discrepancy**
+
+These figures are **reference magnitudes**, not rhetorical thresholds or
+anomalies, and scale with sample size and architectural complexity.
+
+Minor asset size differences resulting from **intentional modular features**
+(skins, media players, lightboxes, etc.) are recognized as explicit trade-offs
+for advanced functionality and fall outside core architectural regression
+analysis. We view these as essential efficiency gains for site builders rather than architectural bloat or performance regressions.
+
+---
+
+#### 2. Document the Setup
+
+Provide comprehensive documentation, including:
+
+- Formatter and UI screenshots
+- Comparative configuration states
+- Accessible test pages
+- Lighthouse / GTmetrix / CWV reports
+
+---
+
+#### 3. Pro Tips for Accurate Audits:
 
 - Use **Dropzone JS** for local file handling.
 - Use a single unlimited **Media field** to easily switch formatters within
@@ -96,7 +165,35 @@ For a different perspective, feel free to choose your own adventure!
   Views-style sliders (Slick Views), Slick Paragraphs or Slick Vanilla in favor
   of direct **Slick Media** formatter implementations for now.
 
-### What are the benefits for you?
+---
+
+#### 3. Technical Rigor
+
+High-effort submissions receive high-speed resolution.
+
+Minimum requirements:
+
+- **Objective Benchmarking:**
+
+  Technical findings using "apples-to-apples" comparisons under identical CWV protocols and environmental parity.
+
+- **Evidence over Anecdote:**
+
+  Subjective observation and misconfiguration must not substitute for measured
+  results. "Exploiting" self-inflicted bottlenecks—such as mocking performance
+  while neglecting or refusing to enable caching or asset aggregation—is
+  considered anecdotal, not evidence-based. Anecdotal lags are possible, but not
+  hard evidence. While we appreciate and have given due credit with a sincere gratitude for a well-crafted "hilarious failure" and the comedy found in the
+  architectural struggle, we now aim to move beyond surface-level tropes.
+
+- **Resolved Issue Isolation:**
+
+  Leverage the provided configuration and [Strategic Optimization Checklist](#optimization) below to ensure resolved issues remain isolated from the
+  audits.
+
+---
+
+#### 5. What are the benefits for you?
 
 **Credits and gratitude.** Every successful contribution or data-driven
 disagreement that leads to a code correction is celebrated. We provide
@@ -105,125 +202,109 @@ contributors, ensuring your expertise is recognized by the entire community.
 
 ---
 
-### The Path to Contribution
+### Note on Native Lazy-Loading & CWV
 
-If you believe you have identified a genuine flaw, we welcome your issue report.
-To respect the community's time, we ask for the following due diligence:
+Native lazy-loading is valuable, but **one-size-fits-all implementations** do
+not eliminate architectural differences under CWV scrutiny.
 
-1.  **Define the Flaw:**
+While Slick may appear marginally heavier at first glance—because the initial
+visible asset is **intentionally not lazy-loaded to preserve LCP**—applying
+identical CWV constraints across all components consistently reveals the true
+performance characteristics, as of this writing. A deep understanding of these subtleties—specifically regarding **hidden** and **nested** formatters—is essential for any meaningful contribution.
 
-    A qualifying flaw is a significant discrepancy between two or more
-    benchmarked implementations.
+This framework reflects long-standing benchmarking precedent. Continued
+reliance on **legacy anecdotes** or **subjective critiques** may stall
+ecosystem progress.
 
-    To distinguish genuine performance flaws from inherent feature costs,
-    we adhere to rigorous validation thresholds. Based on the recorded
-    benchmarking, a performance regression is only validated by a minimum
-    **1500% increase in page weight** or a **100% speed discrepancy**. The
-    larger the tested items are, the more significant the discrepancy is.
+> *Unresolved technical assumptions hinder a healthy ecosystem.*
 
-    Minor variances are recognized as intentional, modular trade-offs for
-    advanced functionality. For example, the aesthetic overhead of a "Blur"
-    effect requires a negligible ~2kB of JS/CSS. Furthermore, while we provide
-    a suite of optional features like a media player, lightbox integration and
-    skins, these are configurable assets whose weight is dictated by the user's
-    specific creative requirements. Library sizes may vary as well. We classify
-    these as feature-driven enhancements, not architectural bloat.
-
-2.  **Document the Setup:**
-
-    Attach comprehensive screenshots of your setup,
-    including Blazy/Slick UIs, formatter settings, comparative results,
-    accessible pages and **Lighthouse/GT Metrix/CWV** reports.
-
-3.  **Technical Rigor:**
-
-    High effort in your submission ensures high-speed resolution. Reports must
-    meet these minimum technical standards to be processed. In short:
-    *present Slick's flaws with apples-to-apples benchmarks professionally*.
-
-> **Note on Native Lazy-loading:**
-> As of this writing, significant performance discrepancies remain demonstrable
-> even with core's or other modules's native lazy-loading. These variances are
-> largely dictated by modern **Core Web Vitals** protocols. Achieving mastery of
-> these subtleties — specifically the **hidden** and **nested** formatters
-> within core site-building architecture — is vital to ensuring your
-> contribution is practical and effective. At first sight, Slick is slightly
-> heavier given the first visible image is not lazy-loaded, however applying
-> identical **Core Web Vitals** rules, no matter how absurd, to all components
-> without reservation will properly reveal significant discrepancies. This is
-> almost identical to a 10-year-old issue, and such recurring played-out issues
-> require a **final, actionable resolution** so we can focus more on the project
-> progress and improvement to benefit the wider community.
-
-#### The Accountability Challenge
-
-This project builds for excellence, not the path of least resistance. Recent
-discussions regarding decoupling Slick from Blazy overlook a vital reality:
-removing Blazy removes the **Core Web Vitals** optimizations (like
-sophisticated LCP integration and preloading) that define this project’s
-performance edge.
-
-We welcome independent audits. We remain open to the possibility we have
-overlooked a relevant factor. Our goal is to move past anecdotal observations
-and focus on **verifiable, sound data**. By "serving the data," you help us
-maintain a professional environment for the benefit of the entire
-Drupal community.
+To move forward, we encourage a transition from repetitive discourse to
+**reproducible, data-driven accountability**.
 
 ---
 
-### <a name="optimization"></a>Strategic Optimization Checklist
+### Data-Driven Accountability
 
-Proper configuration ensures the module works for you, not against you.
-Use this checklist to audit your implementation:
+This project prioritizes architectural integrity and CWV compliance over the
+path of least resistance.
 
-#### 1. Essential UI Refinements
+All feedback is welcome when expressed as **accountable contribution**.
+
+This challenge is **not validation-seeking nor confrontational**. We remain
+open to the possibility that relevant factors have been overlooked, and humbly
+invite engagement grounded in technical merit.
+
+By **serving the data**, you help maintain a professional, high-performance
+environment for the benefit of the wider Drupal community.
+
+
+---
+
+## <a name="optimization"></a>Strategic Optimization Checklist
+
+Proper configuration ensures the module works for you, not against you. Use this checklist to audit your implementation:
+
+### 1. Essential UI Refinements
 
 - **Optimized Mode:**
 
-  Enable the **Optimized** checkbox in the Slick optionset to strip unnecessary
-  bytes.
+    Enable the **Optimized** checkbox in the Slick optionset to strip
+    unnecessary bytes.
 
 - **Production Clean-up:**
 
-  Always **uninstall Slick UI** in production; configuration belongs in code
-  or exported features.
+    Always **uninstall Slick UI** in production; configuration belongs in code
+    or exported features.
 
-#### 2. Asset & Resource Management
+### 2. Asset & Resource Management
 
 - **CSS Lean-loading:**
 
-  Disable the core `slick-theme.css` library if using custom icon fonts at
-  `/admin/config/media/slick/ui`
+    Disable the core `slick-theme.css` library if using custom icon fonts at
+    `/admin/config/media/slick/ui`. Only if broken, copy any of its relevant
+    rules into your own theme.
 
 - **Lazyload HTML:**
 
-  For third-party embeds (Instagram/Pinterest, etc), enable **Lazyload HTML** in
-  the Blazy UI to prevent blocking the main thread.
+    For third-party embeds (Instagram, Pinterest, etc.), enable
+    **Lazyload HTML** in the Blazy UI. Offloading heavy third-party scripts
+    prevents main-thread blocking and preserves host page performance.
+
+- **Lazyload IFRAME:**
+
+    Using the **Media Switcher** option with a static image preview is the primary defense against heavy third-party scripts. By intercepting iframe requests until user interaction, the main thread remains responsive during initial page load.
 
 - **Global Performance:**
 
-  Ensure Drupal’s core **CSS/JS aggregation** and caching are active at
-  `/admin/config/development/performance`.
+    Ensure Drupal’s core **CSS/JS aggregation** and caching are active at
+    `/admin/config/development/performance`.
 
-#### 3. Media & Image Engineering
+### 3. Media & Image Engineering
 
 - **Prevent Layout Shift (CLS):**
 
-  Use image styles with a **"crop"** effect whenever possible.
-  Select the relevant **Aspect ratio** option in the formatter UI and enable
-  **Modern CSS aspect-ratio** (available since Blazy 3.0.17).
+    The **Aspect Ratio** is our primary defense against
+    **Cumulative Layout Shift (CLS)**. By reserving space before media loads, we
+    prevent container collapse and page jumps.
+
+    - **Strategy:** Use image styles with a **"crop"** effect whenever possible.
+      Select the **Aspect ratio** in the formatter UI and enable **Modern CSS aspect-ratio** in Blazy settings.
+
+    - **Fluid Logic:** While native lazy loading handles basic shifts, Blazy’s
+      **adaptive intelligence** provides robust fallbacks for legacy
+      environments and fluid containers.
+
+    - **The BigPipe + Blazy bridge:** See how to [have your cake and eat it too](https://git.drupalcode.org/project/blazy/-/blob/3.0.x/docs/OPTIMIZATION.md#cls).
 
 - **Loading Priority:**
 
-  Use the **Preload** and **Loading Priority** options for "above-the-fold"
-  assets to optimize LCP (Largest Contentful Paint) elements.
+    Use **Preload** and **Loading Priority** options for "above-the-fold" assets to optimize **Largest Contentful Paint (LCP)**. Treat hero media as a priority, not an afterthought.
 
 - **Responsive Standards:**
 
-  Prioritize Core **Responsive Image** if storage permits. Otherwise, utilize
-  formats like **WebP** or **AVIF** with a versatile design.
+    Prioritize **Core Responsive Image** whenever storage permits. If storage is a constraint, utilize modern formats like **WebP** or **AVIF** to maintain visual fidelity at a fraction of the weight along with a versatile design.
 
-#### 4. Logic & Interaction Settings
+### 4. Logic & Interaction Settings
 
 - **Disable Autoplay/Infinite:**
 
@@ -244,32 +325,30 @@ Use this checklist to audit your implementation:
 
   For massive sets, use **Blazy Grid + Lightbox** (Colorbox, PhotoSwipe, etc.).
   This is objectively faster than a Slick-only implementation for static
-  viewing, at least until we can make ajaxified Slick Views (3-4-hour backers
-  are welcome at Slick Views to move this feature out of premium versions).
+  viewing, at least until we can make ajaxified Slick (3-4-hour community-funded efforts or sponsorships are welcome at [Slick Views](https://drupal.org/project/slick_views)).
 
-#### 5. Additional Optimization Settings & Automated Intelligence
-Visit `/admin/config/media/blazy/ui` for further tuning. While Blazy supports
-backward compatibility (BC) by default, you should optimize for modern
-environments by leveraging both UI options and the module's internal logic:
+### 5. Additional Optimization Settings & Automated Intelligence
+While Blazy supports backward compatibility (BC) by default, you should optimize for modern environments by leveraging both UI options and the module's internal logic:
 
 - **Native Lazyload:**
 
-  Favor native browser lazy-loading (and disable unnecessary polyfills) to
-  reduce main-thread execution when targetting modern sites.
+    Favor native browser lazy-loading to reduce main-thread execution by
+    enabling **No JavaScript + polyfills** when targetting modern sites. This also minimizes "apples-to-oranges" benchmarking issues when comparing Slick against feature-limited alternatives.
 
 - **Lean Markup:**
 
-  Enable **Remove field/view wrapper CSS classes** and ensure
-  **"Use theme field"** remains unchecked to reduce DOM depth and "Divitis."
+    Avoid "Divitis." Enable **Remove field/view wrapper CSS classes** and if provided, ensure **"Use theme field"** remains unchecked to keep the DOM
+    tree shallow and fast.
 
 - **Noscript Compatibility:**
 
-  While `<noscript>` tags provide a fallback for users without JavaScript,
-  they add extra weight to the HTML. If your target audience is modern
-  performance-critical, consider keeping this fallback disabled to shave off
-  every possible byte.
+    While `<noscript>` provides a fallback, it adds HTML weight. If your target audience is modern browsers or performance-critical, disable this fallback
+    to shave off every possible byte.
 
-- **Admin UIs:**
 
-  Visit `/admin/config/media/blazy` and `/admin/config/media/slick/ui`,
-  including Media formatters for more optimization options.
+- **Fine-Tuning:**
+
+   * Audit your settings at `/admin/config/media/blazy`,
+     `/admin/config/media/slick/ui`, and Media formatters, for more optimization
+     options. The administrative UI is your cockpit for precision tuning.
+   * Refer to [Blazy Optimization Checklist](https://git.drupalcode.org/project/blazy/-/blob/3.0.x/docs/OPTIMIZATION.md) for additional details.

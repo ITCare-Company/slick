@@ -1,3 +1,4 @@
+
 ***
 ## <a name="contribution"></a>SUBMITTING PATCHES OR ISSUES
 
@@ -32,29 +33,33 @@ merge:
 explanation. Patches without explanatory context will be deferred.
 * **Reference Standards:** Provide links to official Drupal Change Records or documentation, especially for coding standards.
 * **Validate:** Ensure you are working against the latest **dev branch**.
-* **Consistency:** Every bug fix must include clear steps for reproduction. No reproduction, no validation.
+* **Consistency:** Every bug fix must include clear steps for reproduction. Bugs may result from flaws in the code, glitches, or custom implementations that are normally beyond the scope of project issues. That is why reproduction is crucial — no reproduction, no validation.
 
 ---
 
-## BUG REPORTS OR SUPPORT REQUESTS
+### BUG REPORTS OR SUPPORT REQUESTS
 
 A baseline understanding of Drupal site building is required. Before opening
 an issue:
 
 * Consult the README via **`/admin/help`** and review field descriptions.
-* Install **slick_example** to observe a verified, working implementation.
+* Install **Slick Example** to observe a verified, working implementation. Any display issues must be confronted against the working samples.
 * Search the issue queue; many solutions are already documented.
 
 **For Validated Bug Reports:**
-Provide consistent reproduction steps, detailed environment info, and
+
+Provide consistent reproduction steps, detailed environment information, and
 screenshots of both the output and the Slick administrative form.
-Specific to JavaScript, press  `F12`, capture **Console** tab for potential
-errors. If the issue persists, please isolate it in a
-[JSFiddle](https://jsfiddle.net/).
+
+For JavaScript-related issues, press `F12` and capture the **Console** tab for
+any potential errors. Fix those first if they are unrelated to this module.
+
+If the issue persists, please isolate it in a
+[JSFiddle](https://jsfiddle.net/), or share it with clear evidence and reliable reproduction steps.
 
 ---
 
-## <a name="issues"></a> PROJECT HEALTH: CONSTRUCTIVE VS. NON-CONSTRUCTIVE
+### <a name="issues"></a> PROJECT HEALTH: CONSTRUCTIVE VS. NON-CONSTRUCTIVE
 
 We prioritize and credit contributions that advance the project through
 technical rigor.
@@ -63,12 +68,11 @@ technical rigor.
 
    We welcome Support/Feature requests, Bug reports, and Meta/Tasks that provide
    actionable data.
+
 2. **Issue Resolution:**
 
    If an issue is closed for lack of data, feel free to re-open it once the
-   required technical evidence or reproduction steps are provided. We also
-   reserve the right to remain silent, not due to discourtesy, but mostly a
-   cell phone limitation with mini keyboards used to manage issues.
+   required technical evidence or reproduction steps are provided.
 
 **The Boundary of Engagement:**
 
@@ -77,6 +81,12 @@ Critical feedback is welcome provided it is backed by **technical data**
 collective time; therefore, discussions that deviate into unproductive
 negativity or fail to offer actionable insights will be closed to maintain
 focus.
+
+We also reserve the right to remain silent—not out of discourtesy, but because some issues are triaged in constrained contexts (including mobile devices),
+where time, attention, and input precision are naturally limited.
+
+Open collaboration thrives on clarity, evidence, and mutual respect. We welcome thoughtful discussion, reproducible reports, and data-backed critiques. At the same time, to preserve maintainer focus and project sustainability, we may
+choose not to engage with speculative claims, repeated assertions without evidence, or discussions rooted in hearsay rather than measurable behavior. Silence in such cases should be understood as a boundary, not a dismissal.
 
 **Reciprocity:**
 
