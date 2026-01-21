@@ -1,6 +1,6 @@
 
 ***
-## <a name="contribution"></a>SUBMITTING PATCHES OR ISSUES
+## <a name="contribution"> </a>SUBMITTING PATCHES OR ISSUES
 
 Please use the provided issue template to ensure your reports are technically actionable. High-quality reports allow us to maintain a standard of excellence.
 
@@ -33,7 +33,9 @@ merge:
 explanation. Patches without explanatory context will be deferred.
 * **Reference Standards:** Provide links to official Drupal Change Records or documentation, especially for coding standards.
 * **Validate:** Ensure you are working against the latest **dev branch**.
-* **Consistency:** Every bug fix must include clear steps for reproduction. Bugs may result from flaws in the code, glitches, or custom implementations that are normally beyond the scope of project issues. That is why reproduction is crucial — no reproduction, no validation.
+* **Consistency:** Every bug fix must include clear steps for reproduction. Bugs
+may result from flaws in the code, glitches, or custom implementations that are normally beyond the scope of project issues. That is why reproduction is crucial
+— no reproduction, no validation.
 
 ---
 
@@ -82,11 +84,15 @@ collective time; therefore, discussions that deviate into unproductive
 negativity or fail to offer actionable insights will be closed to maintain
 focus.
 
-We also reserve the right to remain silent—not out of discourtesy, but because some issues are triaged in constrained contexts (including mobile devices),
+We also reserve the right to remain silent—not out of discourtesy, but because
+some issues are triaged in constrained contexts (including mobile devices),
 where time, attention, and input precision are naturally limited.
 
-Open collaboration thrives on clarity, evidence, and mutual respect. We welcome thoughtful discussion, reproducible reports, and data-backed critiques. At the same time, to preserve maintainer focus and project sustainability, we may
-choose not to engage with speculative claims, repeated assertions without evidence, or discussions rooted in hearsay rather than measurable behavior. Silence in such cases should be understood as a boundary, not a dismissal.
+Open collaboration thrives on clarity, evidence, and mutual respect. We welcome thoughtful discussion, reproducible reports, and data-backed critiques. At the
+same time, to preserve maintainer focus and project sustainability, we may
+choose not to engage with speculative claims, repeated assertions without
+evidence, or discussions rooted in hearsay rather than measurable behavior.
+Silence in such cases should be understood as a boundary, not a dismissal.
 
 **Reciprocity:**
 

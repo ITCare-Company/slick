@@ -18,7 +18,7 @@
  * [Maintainers](#maintainers)
 
 ***
-## <a name="introduction"></a>INTRODUCTION
+## <a name="introduction"> </a>INTRODUCTION
 
 Visit **/admin/help/slick_ui** once Slick UI installed to read this in comfort.
 
@@ -164,13 +164,14 @@ Visit the following to configure Slick:
 
 
 ***
-## <a name="features"></a>FEATURES
+## <a name="features"> </a>FEATURES
 
 - **Deep Integration**:
 
   Seamlessly works with Core Media, Views, Paragraphs, and Media contrib
   modules. Supports Image, Responsive image, (local|remote|iframe) videos, SVG,
   DIV (CSS backgrounds), either inline fields and views, or within lightboxes.
+
 - **LCP & CLS Management**:
 
   Engineered for a **"CLS-zero" strategy**, our framework integrates
@@ -181,59 +182,73 @@ Visit the following to configure Slick:
   leverage modern CSS `aspect-ratio` for layout stability, we maintain a refined
   **padding-bottom fallback** to ensure backward compatibility (BC) without
   sacrificing precision.
+
 - **Intelligent Lazy-loading**:
 
    Sophisticated preloading via the Blazy engine for images, CSS backgrounds,
   iframes, SVG, HTML5 video, audio, and HTML media type.
    * Multi-serving lazyloaded images and multi-breakpoint CSS backgrounds.
+
 - **Privacy & GDPR Compliance**:
 
-  Utilizing a **Two-Click Media Loader** via the **Media Switcher > Image to Iframe** option;
-  no third-party tracking scripts are initialized until the user actively
-  engages with the play button—satisfying strict **GDPR and ePrivacy**
-  requirements.
+  Utilizing a **Two-Click Media Loader** via the
+  **Media Switcher > Image to Iframe** option; no third-party tracking scripts
+  are initialized until the user actively engages with the play
+  button—satisfying strict **GDPR and ePrivacy** requirements.
+
 - **Developer Friendly**:
 
    Features a **Vanilla** mode and a
   [**robust API**](https://git.drupalcode.org/project/slick/blob/3.0.x/slick.api.php)
   for custom/theme implementations.
+
 - **Editor Friendly:**
 
    The `Slick Filter` provides a streamlined shortcode for embedding rich
   multimedia slides and grids directly within text editors; see
   [Filter tips](/filter/tips).
+
 - **Modular & Extensible Skins**:
 
-   Our layouts are built with Pure CSS—no bloated JS invited beyond the initializer.
+   Our layouts are built with Pure CSS—no bloated JS invited beyond the
+   initializer.
 
    * *Fullscreen with thumbnails or videos:* For cinematic storytellers.
-   * *Fullscreen or Fullwidth with overlayed video slides:* For professional visionaries.
+   * *Fullscreen or Fullwidth with overlayed video slides:* For professional
+     visionaries.
    * *Fullwidth with down arrow:* For pleasant companies with massive
-   information below the fold.
-   * *Inline & Vertical Tabs:* For guided journeys through dense information. Complexity, beautifully curated.
+     information below the fold.
+   * *Inline & Vertical Tabs:* For guided journeys through dense information.
+     Complexity, beautifully curated.
    * *Split:* A perfect 50/50 balance of description and media.
    * *Grid:* For organized chaos. With Native Grid, it’s the perfect marriage
-   of high-end aesthetics and structural rigidity.
-   * And a few more as available at [Slick UI](/admin/config/media/slick#slick-skins).
+      of high-end aesthetics and structural rigidity.
+   * And a few more as available at
+     [Slick UI](/admin/config/media/slick#slick-skins).
 
    They are basic OOTB; however Themers may craft the aesthetic blueprints, and Developers register them as a plugin for Site Builders to execute.
 
 - **Nested Sliders/Overlays**:
 
   Multiple carousels within a single Slick via Slick Paragraphs and Slick Views. Overlaying static or sliding videos over large background can not be easier.
+
 - **Randomization**:
 
-  A strategic solution for refreshing cached content (ads, client lists, e-commerce) to ensure
-  a dynamic user experience across pages without compromising performance.
+  A strategic solution for refreshing cached content (ads, client lists,
+  e-commerce) to ensure a dynamic user experience across pages without
+  compromising performance.
+
 - **Robust Content Supports:**
 
   HTML, responsive image/ picture, responsive iframe, SVG, video, audio and
   third party contents.
+
 - **Inline & Lightbox Mixed-media:**
 
   A single **Media switcher** option for various interactions: image to content,
-  iframe, media player, and (quasi-)lightboxes: Slick lightbox, Colorbox, PhotoSwipe, Flybox,
-  Magnific Popup, Zooming, etc.
+  iframe, media player, and (quasi-)lightboxes: Slick lightbox, Colorbox,
+  PhotoSwipe, Flybox, Magnific Popup, Zooming, etc.
+
 - **Navigation/ Pager Options**:
 
   Arrows, Dots (circle, static grid, or hoverable), Tabs, and Image Thumbnails.
@@ -289,4 +304,5 @@ The Slick module has several sub-modules:
 ### SIMILAR MODULES
 
 * [Splide](https://drupal.org/project/splide): The vanilla JavaScript slider.
-Slick’s successor with enhanced accessibility, plugin, navigable vanilla supports, and more.
+Slick’s successor with enhanced accessibility, plugin, navigable vanilla
+supports, and more.

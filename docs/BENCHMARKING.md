@@ -1,6 +1,6 @@
 
 ***
-## <a name="benchmarking"></a>Benchmarking & Performance Guidelines
+## <a name="benchmarking"> </a>Benchmarking & Performance Guidelines
 
 This project is built on over a decade of addressing complex, real-world
 performance constraints. This document defines a **repeatable, evidence-based
@@ -32,7 +32,7 @@ with performance auditing fundamentals, feel free to skip ahead to the
 contribution requirements.
 
 For architectural context, see:
-[Blazy & CWV Design Rationale](https://git.drupalcode.org/project/blazy/-/blob/3.0.x/docs/ARCHITECTURE#why-cwv)
+[Blazy & CWV Design Rationale](https://git.drupalcode.org/project/blazy/-/blob/3.0.x/docs/ARCHITECTURE.md#why-cwv)
 
 To ensure informed and constructive evaluation, please follow these protocols:
 
@@ -99,13 +99,14 @@ Because Drupal core already provides native lazy-loading for `IMG` and
 
 #### Isolation Requirements
 
-- Tests must be conducted in **Production mode** with strict isolation:
+- Tests must be conducted in **Production mode** with strict, balanced
+  isolation:
   - No library leaks
   - No global scope pollution
   - No ads or third-party noise
 - If evaluating CLS relative to TTFB, temporarily (un-)install BigPipe until the
   rendering strategy is fully understood:
-  [Have your cake and eat it too](https://git.drupalcode.org/project/blazy/-/blob/3.0.x/docs/OPTIMIZATION.md#cls)
+  [Have your cake and eat it too](https://git.drupalcode.org/project/blazy/-/blob/3.0.x/docs/OPTIMIZATION.md#cls).
 
 Proper isolation enables accurate judgment.
 
@@ -129,8 +130,9 @@ due diligence:
 A qualifying flaw is a **measurable discrepancy** between two or more
 benchmarked implementations.
 
-Based on publicly recorded benchmarks, historically observed baselines indicate
-that **meaningful regressions** typically manifest as:
+Based on one publicly and three privately recorded benchmarks, historically
+observed baselines indicate that **meaningful regressions** typically manifest
+as:
 
 - ~**1500% increase in page weight**, or
 - ~**100% speed discrepancy**
@@ -138,10 +140,11 @@ that **meaningful regressions** typically manifest as:
 These figures are **reference magnitudes**, not rhetorical thresholds or
 anomalies, and scale with sample size and architectural complexity.
 
-Minor asset size differences resulting from **intentional modular features**
+Minor library and asset size differences resulting from **intentional modular features**
 (skins, media players, lightboxes, etc.) are recognized as explicit trade-offs
 for advanced functionality and fall outside core architectural regression
-analysis. We view these as essential efficiency gains for site builders rather than architectural bloat or performance regressions.
+analysis. We view these as essential efficiency gains for site builders rather
+than architectural bloat or performance regressions.
 
 ---
 
@@ -210,7 +213,8 @@ not eliminate architectural differences under CWV scrutiny.
 While Slick may appear marginally heavier at first glance—because the initial
 visible asset is **intentionally not lazy-loaded to preserve LCP**—applying
 identical CWV constraints across all components consistently reveals the true
-performance characteristics, as of this writing. A deep understanding of these subtleties—specifically regarding **hidden** and **nested** formatters—is essential for any meaningful contribution.
+performance characteristics, as of this writing. A deep understanding of these subtleties—specifically regarding **hidden** and **nested** formatters—is
+essential for any meaningful contribution.
 
 This framework reflects long-standing benchmarking precedent. Continued
 reliance on **legacy anecdotes** or **subjective critiques** may stall
@@ -240,7 +244,7 @@ environment for the benefit of the wider Drupal community.
 
 ---
 
-## <a name="optimization"></a>Strategic Optimization Checklist
+## <a name="optimization"> </a>Strategic Optimization Checklist
 
 Proper configuration ensures the module works for you, not against you. Use this checklist to audit your implementation:
 
@@ -272,7 +276,8 @@ Proper configuration ensures the module works for you, not against you. Use this
 
 - **Lazyload IFRAME:**
 
-    Using the **Media Switcher** option with a static image preview is the primary defense against heavy third-party scripts. By intercepting iframe requests until user interaction, the main thread remains responsive during initial page load.
+    Using the **Media Switcher** option with a static image preview is the
+    primary defense against heavy third-party scripts. By intercepting iframe requests until user interaction, the main thread remains responsive during initial page load.
 
 - **Global Performance:**
 
@@ -298,11 +303,15 @@ Proper configuration ensures the module works for you, not against you. Use this
 
 - **Loading Priority:**
 
-    Use **Preload** and **Loading Priority** options for "above-the-fold" assets to optimize **Largest Contentful Paint (LCP)**. Treat hero media as a priority, not an afterthought.
+    Use **Preload** and **Loading Priority** options for "above-the-fold" assets
+    to optimize **Largest Contentful Paint (LCP)**. Treat hero media as a
+    priority, not an afterthought.
 
 - **Responsive Standards:**
 
-    Prioritize **Core Responsive Image** whenever storage permits. If storage is a constraint, utilize modern formats like **WebP** or **AVIF** to maintain visual fidelity at a fraction of the weight along with a versatile design.
+    Prioritize **Core Responsive Image** whenever storage permits. If storage is
+    a constraint, utilize modern formats like **WebP** or **AVIF** to maintain
+    visual fidelity at a fraction of the weight along with a versatile design.
 
 ### 4. Logic & Interaction Settings
 
@@ -328,12 +337,16 @@ Proper configuration ensures the module works for you, not against you. Use this
   viewing, at least until we can make ajaxified Slick (3-4-hour community-funded efforts or sponsorships are welcome at [Slick Views](https://drupal.org/project/slick_views)).
 
 ### 5. Additional Optimization Settings & Automated Intelligence
-While Blazy supports backward compatibility (BC) by default, you should optimize for modern environments by leveraging both UI options and the module's internal logic:
+While Blazy supports backward compatibility (BC) by default, you should optimize
+for modern environments by leveraging both UI options and the module's internal
+logic:
 
 - **Native Lazyload:**
 
     Favor native browser lazy-loading to reduce main-thread execution by
-    enabling **No JavaScript + polyfills** when targetting modern sites. This also minimizes "apples-to-oranges" benchmarking issues when comparing Slick against feature-limited alternatives.
+    enabling **No JavaScript + polyfills** when targetting modern sites. This
+    also minimizes "apples-to-oranges" benchmarking issues when comparing Slick
+    against feature-limited alternatives.
 
 - **Lean Markup:**
 

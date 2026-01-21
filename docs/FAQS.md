@@ -1,6 +1,6 @@
 
 ***
-## <a name="faq"></a>FAQ
+## <a name="faq"> </a>FAQ
 
 ### PROGRAMATICALLY
 [**slick.api.php**](https://git.drupalcode.org/project/slick/blob/3.0.x/slick.api.php)

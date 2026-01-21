@@ -1,6 +1,6 @@
 
 ***
-## <a name="troubleshooting"></a>TROUBLESHOOTING
+## <a name="troubleshooting"> </a>TROUBLESHOOTING
 Please read this before submitting issues. This brief is worth reading to save
 you from headaches.
 
