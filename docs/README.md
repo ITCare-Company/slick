@@ -36,7 +36,6 @@ samples.
 
 Slick library v2.x was out 2015/9/21, and is not supported now, 2023/09.
 
----
 ***
 ## <a name="first"> </a>FIRST THINGS FIRST!
 Read more at:
@@ -68,7 +67,6 @@ Read more at:
   **Version 1.6.0** is the most stable and least problematic release. It lacks
   *non-essential* features but ensures structural integrity.
 
----
 ***
 ## <a name="requirements"> </a>REQUIREMENTS
 * [Blazy](https://drupal.org/project/blazy)
@@ -106,7 +104,6 @@ Read more at:
   `/libraries/easing/jquery.easing.min.js`.
   (Fallback for legacy browsers; ignorable if using CSS3 easing alone).
 
----
 ***
 ## <a name="installation"> </a>INSTALLATION & UPGRADES
 
@@ -128,9 +125,9 @@ Read more at:
    For upgrading Blazy and it's sub-modules from 1.x to 2.x or 3+.
 
 4. [**Update SOP**](https://git.drupalcode.org/project/blazy/blob/3.0.x/docs/UPDATING.md#update-sop)
+
    A definitive guide for update and upgrade troubleshootings, including WSOD.
 
----
 ***
 ## <a name="uninstallation"> </a>UNINSTALLATION
 Should be fine now, however please check out below if any issues:
@@ -138,7 +135,6 @@ Should be fine now, however please check out below if any issues:
 * [Slick 7.x](https://www.drupal.org/project/slick/issues/3261726#comment-14406766)
 * [Slick 8.x+](https://www.drupal.org/project/slick/issues/3257390)
 
----
 ***
 ## <a name="configuration"> </a>CONFIGURATION
 Visit the following to configure Slick:
@@ -185,9 +181,9 @@ Visit the following to configure Slick:
 
 - **Intelligent Lazy-loading**:
 
-   Sophisticated preloading via the Blazy engine for images, CSS backgrounds,
+  Sophisticated preloading via the Blazy engine for images, CSS backgrounds,
   iframes, SVG, HTML5 video, audio, and HTML media type.
-   * Multi-serving lazyloaded images and multi-breakpoint CSS backgrounds.
+    * Multi-serving lazyloaded images and multi-breakpoint CSS backgrounds.
 
 - **Privacy & GDPR Compliance**:
 
@@ -198,20 +194,20 @@ Visit the following to configure Slick:
 
 - **Developer Friendly**:
 
-   Features a **Vanilla** mode and a
+  Features a **Vanilla** mode and a
   [**robust API**](https://git.drupalcode.org/project/slick/blob/3.0.x/slick.api.php)
   for custom/theme implementations.
 
 - **Editor Friendly:**
 
-   The `Slick Filter` provides a streamlined shortcode for embedding rich
+  The `Slick Filter` provides a streamlined shortcode for embedding rich
   multimedia slides and grids directly within text editors; see
   [Filter tips](/filter/tips).
 
 - **Modular & Extensible Skins**:
 
-   Our layouts are built with Pure CSS—no bloated JS invited beyond the
-   initializer.
+  Our layouts are built with Pure CSS—no bloated JS invited beyond the
+  initializer.
 
    * *Fullscreen with thumbnails or videos:* For cinematic storytellers.
    * *Fullscreen or Fullwidth with overlayed video slides:* For professional
@@ -226,7 +222,8 @@ Visit the following to configure Slick:
    * And a few more as available at
      [Slick UI](/admin/config/media/slick#slick-skins).
 
-   They are basic OOTB; however Themers may craft the aesthetic blueprints, and Developers register them as a plugin for Site Builders to execute.
+  They are basic OOTB; however Themers may craft the aesthetic blueprints, and
+  Developers register them as a plugin for Site Builders to execute.
 
 - **Nested Sliders/Overlays**:
 
@@ -234,9 +231,9 @@ Visit the following to configure Slick:
 
 - **Randomization**:
 
-  A strategic solution for refreshing cached content (ads, client lists,
-  e-commerce) to ensure a dynamic user experience across pages without
-  compromising performance.
+  A strategic solution for refreshing cached content
+  (*ads, client lists, e-commerce*) to ensure a dynamic user experience across
+  pages without compromising performance.
 
 - **Robust Content Supports:**
 

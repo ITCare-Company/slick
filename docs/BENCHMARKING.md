@@ -5,7 +5,7 @@
 This project is built on over a decade of addressing complex, real-world
 performance constraints. This document defines a **repeatable, evidence-based
 framework** for auditing and optimizing Slick within modern
-**Core Web Vitals (CWV)** expectations.
+[**Core Web Vitals (CWV)**](https://git.drupalcode.org/project/blazy/-/blob/3.0.x/docs/ARCHITECTURE.md) expectations.
 
 We welcome **healthy skepticism**, critical audits, and alternative
 implementations—**provided they are supported by verifiable data rather than
@@ -16,7 +16,7 @@ analysis** and to elevate discourse from opinion to contribution.
 
 The web is a moving target. This is not a closed position, but an **open,
 iterative process**. If you believe you have identified a regression or
-architectural bottleneck—whether in modern metrics like **LCP**, or even
+architectural bottleneck—whether in modern metrics like **LCP**, **CLS** or even
 overall system behavior—we invite you to validate it using the protocols below.
 If the data holds, we are prepared to collaborate on refinement or correction.
 
@@ -108,13 +108,14 @@ Because Drupal core already provides native lazy-loading for `IMG` and
   rendering strategy is fully understood:
   [Have your cake and eat it too](https://git.drupalcode.org/project/blazy/-/blob/3.0.x/docs/OPTIMIZATION.md#cls).
 
-Proper isolation enables accurate judgment.
+Proper [isolation](https://git.drupalcode.org/project/blazy/-/blob/3.0.x/docs/OPTIMIZATION.md#cls) and [configuration](#optimization) enable accurate
+evaluation.
 
 ---
 
 #### Objective
 Genuine, accountable, and technically rigorous corrections that prioritize
-project alignment with **Core Web Vitals** and eliminate hindrances to
+[project alignment with **Core Web Vitals**] (https://git.drupalcode.org/project/blazy/-/blob/3.0.x/docs/ARCHITECTURE.md) and eliminate hindrances to
 high-quality contributions.
 
 ---
@@ -140,11 +141,12 @@ as:
 These figures are **reference magnitudes**, not rhetorical thresholds or
 anomalies, and scale with sample size and architectural complexity.
 
-Minor library and asset size differences resulting from **intentional modular features**
-(skins, media players, lightboxes, etc.) are recognized as explicit trade-offs
-for advanced functionality and fall outside core architectural regression
-analysis. We view these as essential efficiency gains for site builders rather
-than architectural bloat or performance regressions.
+Minor library and asset size differences resulting from
+**intentional modular features** (skins, media players, lightboxes, etc.) are
+recognized as explicit trade-offs for advanced functionality and fall outside
+core architectural regression analysis. We view these as essential efficiency
+gains for site builders rather than architectural bloat or performance
+regressions.
 
 ---
 
@@ -170,7 +172,7 @@ Provide comprehensive documentation, including:
 
 ---
 
-#### 3. Technical Rigor
+#### 4. Technical Rigor
 
 High-effort submissions receive high-speed resolution.
 
@@ -178,7 +180,8 @@ Minimum requirements:
 
 - **Objective Benchmarking:**
 
-  Technical findings using "apples-to-apples" comparisons under identical CWV protocols and environmental parity.
+  Technical findings using "apples-to-apples" comparisons under identical CWV
+  protocols and environmental parity.
 
 - **Evidence over Anecdote:**
 
@@ -186,7 +189,8 @@ Minimum requirements:
   results. "Exploiting" self-inflicted bottlenecks—such as mocking performance
   while neglecting or refusing to enable caching or asset aggregation—is
   considered anecdotal, not evidence-based. Anecdotal lags are possible, but not
-  hard evidence. While we appreciate and have given due credit with a sincere gratitude for a well-crafted "hilarious failure" and the comedy found in the
+  hard evidence. While we appreciate and have given due credit with a sincere
+  gratitude for a well-crafted "hilarious failure" and the comedy found in the
   architectural struggle, we now aim to move beyond surface-level tropes.
 
 - **Resolved Issue Isolation:**
@@ -213,7 +217,8 @@ not eliminate architectural differences under CWV scrutiny.
 While Slick may appear marginally heavier at first glance—because the initial
 visible asset is **intentionally not lazy-loaded to preserve LCP**—applying
 identical CWV constraints across all components consistently reveals the true
-performance characteristics, as of this writing. A deep understanding of these subtleties—specifically regarding **hidden** and **nested** formatters—is
+performance characteristics, **as of this writing**. A deep understanding of
+these subtleties—specifically regarding **hidden** and **nested** formatters—is
 essential for any meaningful contribution.
 
 This framework reflects long-standing benchmarking precedent. Continued
@@ -277,7 +282,9 @@ Proper configuration ensures the module works for you, not against you. Use this
 - **Lazyload IFRAME:**
 
     Using the **Media Switcher** option with a static image preview is the
-    primary defense against heavy third-party scripts. By intercepting iframe requests until user interaction, the main thread remains responsive during initial page load.
+    primary defense against heavy third-party scripts. By intercepting iframe
+    requests until user interaction, the main thread remains responsive during
+    initial page load.
 
 - **Global Performance:**
 
@@ -292,14 +299,20 @@ Proper configuration ensures the module works for you, not against you. Use this
     **Cumulative Layout Shift (CLS)**. By reserving space before media loads, we
     prevent container collapse and page jumps.
 
-    - **Strategy:** Use image styles with a **"crop"** effect whenever possible.
+    - **Strategy:**
+
+      Use image styles with a **"crop"** effect whenever possible.
       Select the **Aspect ratio** in the formatter UI and enable **Modern CSS aspect-ratio** in Blazy settings.
 
-    - **Fluid Logic:** While native lazy loading handles basic shifts, Blazy’s
+    - **Fluid Logic:**
+
+      While native lazy loading handles basic shifts, Blazy’s
       **adaptive intelligence** provides robust fallbacks for legacy
       environments and fluid containers.
 
-    - **The BigPipe + Blazy bridge:** See how to [have your cake and eat it too](https://git.drupalcode.org/project/blazy/-/blob/3.0.x/docs/OPTIMIZATION.md#cls).
+    - **The BigPipe + Blazy bridge:**
+
+      See how to [have your cake and eat it too](https://git.drupalcode.org/project/blazy/-/blob/3.0.x/docs/OPTIMIZATION.md#cls).
 
 - **Loading Priority:**
 
@@ -334,7 +347,9 @@ Proper configuration ensures the module works for you, not against you. Use this
 
   For massive sets, use **Blazy Grid + Lightbox** (Colorbox, PhotoSwipe, etc.).
   This is objectively faster than a Slick-only implementation for static
-  viewing, at least until we can make ajaxified Slick (3-4-hour community-funded efforts or sponsorships are welcome at [Slick Views](https://drupal.org/project/slick_views)).
+  viewing, at least until we can make ajaxified Slick (3-4-hour community-funded
+  efforts or sponsorships are welcome at
+  [Slick Views](https://drupal.org/project/slick_views)).
 
 ### 5. Additional Optimization Settings & Automated Intelligence
 While Blazy supports backward compatibility (BC) by default, you should optimize
@@ -350,12 +365,14 @@ logic:
 
 - **Lean Markup:**
 
-    Avoid "Divitis." Enable **Remove field/view wrapper CSS classes** and if provided, ensure **"Use theme field"** remains unchecked to keep the DOM
+    Avoid "Divitis." Enable **Remove field/view wrapper CSS classes** and if
+    provided, ensure **"Use theme field"** remains unchecked to keep the DOM
     tree shallow and fast.
 
 - **Noscript Compatibility:**
 
-    While `<noscript>` provides a fallback, it adds HTML weight. If your target audience is modern browsers or performance-critical, disable this fallback
+    While `<noscript>` provides a fallback, it adds HTML weight. If your target
+    audience is modern browsers or performance-critical, disable this fallback
     to shave off every possible byte.
 
 
