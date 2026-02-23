@@ -115,7 +115,7 @@ evaluation.
 
 #### Objective
 Genuine, accountable, and technically rigorous corrections that prioritize
-[project alignment with **Core Web Vitals**] (https://git.drupalcode.org/project/blazy/-/blob/3.0.x/docs/ARCHITECTURE.md) and eliminate hindrances to
+[project alignment with **Core Web Vitals**](https://git.drupalcode.org/project/blazy/-/blob/3.0.x/docs/ARCHITECTURE.md) and eliminate hindrances to
 high-quality contributions.
 
 ---
