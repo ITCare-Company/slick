@@ -455,8 +455,21 @@ strong claims can sometimes be perceived as **arrogance**.
 
 That perception is understandable, particularly for readers unfamiliar with
 the project’s early rough history. However, in engineering, the most productive
-response is **counter-data**, not repetition of unsupported claims or persistent
+response is **counter-data**: reproducible evidence, clear benchmarks, and
+actionable findings, rather than repetition of unsupported claims or persistent
 mischaracterization of the work.
+
+In good faith, and with the aim of breaking that cycle, **Peaceseeder** was
+established to help facilitate credible and accountable **counter-data**. We
+hope it encourages those who have criticized Slick over the years—or anyone with
+genuine concerns—to demonstrate their points through measurable evidence that
+can benefit the project, its users, and the contributors themselves through the
+credibility and recognition that come with meaningful results under the
+[**Benchmarking & Performance Guidelines**](#benchmarking).
+
+We are not concerned by correction. Over time, this project has adapted to many
+valid critiques and treated mistakes as lessons. Good-faith correction remains
+welcome.
 
 ### The Technical Accountability Challenge ("Peaceseeder")
 
@@ -497,20 +510,34 @@ useful without evidence or context:
 5. Labeling a project a failure without using available UI or formatter
    features.
 6. Turning technical disagreement into personal criticism of maintainers.
-7. Attacking useless peripherals that doesn't add values for the users when
+7. Attacking useless peripherals that don't add values for the users when
    technical claims are not substantiated.
 
-Slick provides enough solutions for its own scope to perform. Ignoring these
-solutions and missing benchmarks are the root cause of these non-accountable
-issues, easily identified as "intentional" due to lacking of interests in
-the provided solutions. We no longer have capacity to entertain controversy for
-its own sake. We don't view negativity without accountability as a contribution.
-If there are genuine performance problems in Slick, those concerned are welcome
-to meet the very basic technical challenge in
-[**Benchmarking & Performance Guidelines**](#benchmarking) with accountability.
-We have mastered this basic challenge for more than a decade, we'd be happy to
-see those concerned master it as well for more productive contributions. This
-notice is friendly, relaxed and meant to be helpful to those concerned.
+Slick provides enough solutions within its intended scope to perform
+effectively. Repeatedly overlooking those solutions while presenting unsupported
+performance claims has been a recurring source of confusion. When available
+remedies are ignored and no benchmarks are provided, concerns become difficult
+to evaluate or act upon in a meaningful way.
+
+As a result, Slick is sometimes criticized for challenges it has already
+addressed, while labels such as "slow" or "heavy" are repeated without
+supporting evidence. This pattern has persisted since 2014. With due respect,
+such commentary does not diminish Slick as much as it highlights the need for
+stronger technical rigor. Unsupported criticism may create momentary noise, but
+it does not advance understanding.
+
+We no longer have capacity to entertain controversy for its own sake. Negativity
+without accountability is not considered a contribution. If there are genuine
+performance problems in Slick, those concerned are sincerely encouraged to
+engage the very basic technical challenge in
+[**Benchmarking & Performance Guidelines**](#benchmarking) with integrity,
+reproducibility, and actionable data.
+
+This project has approached that standard for more than a decade, and welcomes
+others to do the same so discussions can become more productive. Because
+unsupported narratives have repeated for many years, this clarification is
+documented for transparency and educational value. It is intended in a
+constructive spirit.
 
 By contrast, feedback backed by data and communicated constructively is always
 considered a contribution.
@@ -536,8 +563,9 @@ of rigor, degradation follows. The focus here is:
 Slick 7.2+, as a giveback project, was developed under real-world constraints.
 The initial implementation—including Slick Extras skins, media player features
 later shown to be **GDPR-friendly**, and Colorbox integrations— was produced in
-a short, high-pressure cycle (two weeks to be precise), followed by over a
-decade of iteration and refinement.
+a short, high-pressure cycle (two weeks to be precise) while working with
+theming, coding and site building, followed by over a decade of iteration and
+refinement.
 
 The system has been validated across legacy environments (including older
 browser support, down to IE6–7, with minor unpublished adjustments) and
@@ -558,21 +586,25 @@ baselines in place, maintainership no longer requires constant re-litigation of
 settled claims. The project has fairly matured, and it is reasonable to expect
 discussions to fairly mature with it.
 
-This project is offered as-is, with a consistent principle over a decade:
+This project is offered as-is, with a consistent principle over more than a
+decade:
 
 **Technical decisions should be grounded in evidence, not assumption. If useful,
-use it. If not, leave it alone. If you can, help. If not, leave it alone.**
+use it. If not, leave it alone. If you can help, help. If not, leave it alone.**
 
-May this encourage new contributors not to be discouraged by loud debate. It
-appears circular controversy for its own sake is being "normalized". And
-performance is one of favorite subjects some attempted to speak loudly, and
-some missed the point since 2014. I hope documenting the technical reality being
-obfuscated persistently is not considered another obfuscation, but instead a
-genuine historical perpective for those concerned to confidently meet the very
-basic challenge of [**Benchmarking & Performance Guidelines**](#benchmarking) in
-a credible, and actionable manner, so we can all clear the cloud, and save our
-limited and precious time to focus on the things that actually pay the bill.
+May this encourage new contributors not to be discouraged by loud debate.
+Circular controversy can sometimes become "normalized", especially around
+familiar topics such as performance. Since 2014, some discussions have repeated
+the same claims while missing the basic requirement of measurement.
+
+The purpose of documenting persistent misconceptions is not to create further
+controversy, but to preserve historical context and encourage higher-quality
+participation. Those concerned are welcome to meet the straightforward challenge
+of [**Benchmarking & Performance Guidelines**](#benchmarking) in a credible and
+actionable manner so we can all save our limited and precious time to focus on
+the things that actually pay the bill.
 
 While there is no longer capacity to engage endlessly with unsupported claims,
 collaboration remains welcome when it is data-driven, solution-oriented, and
-focused on advancing the work for the broader community, and when time permits.
+focused on advancing the project for the broader community, and only when time
+permits.
