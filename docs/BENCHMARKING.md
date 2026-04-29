@@ -169,6 +169,8 @@ Provide comprehensive documentation, including:
 - To avoid measurement complications from nested field formatters, exclude
   Views-style sliders (Slick Views), Slick Paragraphs or Slick Vanilla in favor
   of direct **Slick Media** formatter implementations for now.
+- Apply the identical **CWV** rules without reservation, including into hidden
+  or nested formatters.
 
 ---
 
@@ -382,3 +384,195 @@ logic:
      `/admin/config/media/slick/ui`, and Media formatters, for more optimization
      options. The administrative UI is your cockpit for precision tuning.
    * Refer to [Blazy Optimization Checklist](https://git.drupalcode.org/project/blazy/-/blob/3.0.x/docs/OPTIMIZATION.md) for additional details.
+
+---
+
+## <a name="manifesto"> </a> Technical Manifesto: A Decade of Empirical Introspection
+
+### The Era of Anecdotal Critique
+
+In the first five years of this project, development encountered recurring
+opposition framed as performance critique. Unfortunately, some assertions were
+presented as definitive conclusions without accompanying data or reproducible
+benchmarks—an approach that can obscure rather than clarify technical reality.
+
+At the time, as a newcomer to module development while the project was still in
+its staggering baby beta steps, I allowed for the possibility that these
+perspectives were valid. However, professional rigor ultimately required
+verification through objective measurement.
+
+Not all feedback was anecdotal. Many helpful and highly skilled contributors
+offered valuable guidance. I especially remember an excellent contribution from
+the Coder maintainer, who kindly identified mistakes, explained the reasoning,
+and even provided a fix. It was a compiler-related issue: `$this->$var` should
+be `$this->{$var}`. That kind of contribution—precise, focused on the root
+cause, educational, and constructive—was invaluable to me as a learner. They
+knew the code was rough, yet still took the time to help.
+
+### The Benchmarking Reality
+
+To resolve recurring questions, I conducted structured benchmarking using
+**XHProf** and **GTMetrix**. The results—archived in a long-standing project
+issue—showed a stark reality: some alternatives claimed to be leaner were
+significantly heavier (up to **~1500%**) and measurably slower, with microsecs
+higher memory overhead. The gap also increased with sample size, including
+comparisons against the project in its beta form.
+
+This revealed a consistent pattern: assumptions had been treated as conclusions
+without validation. The lesson is straightforward—
+
+**performance claims require data, not volume or controversy.**
+
+We value simplicity (“KISS”) where it is appropriate. However, simplicity is not
+a substitute for solving complex problems, and applying it indiscriminately can
+lead to incorrect conclusions or measurable regressions.
+
+### The Cycle of Resistance
+
+Given the discrepancy, benchmark context was added to the project home as a
+reference point. This was not intended as a "**boast**", but as documentation—
+a baseline for informed discussion. It served as a technical boundary: a pause
+for reflection, or ready **counter-data** when discussions drifted away from
+evidence.
+
+It is natural for maintainers to be protective of work they built—especially in
+its fragile early stages. Most creators understand that instinct.
+
+To some readers, that may appear overly assertive or protective. Others who
+review the issue history, documentation, or conduct independent benchmarking may
+simply view it as pragmatic context, underscored by the caveat
+"**for better or worse**" and a careful nod to Uncle Ben's responsibilities of
+power. Perception varies.
+
+Despite this, similar cycles continued: empirical data was often bypassed in
+favor of recurring, unverified claims. This creates friction—not because of
+disagreement, but because discussions restart without engaging existing
+benchmark evidence or project home documentation.
+
+It is worth noting:
+
+strong claims can sometimes be perceived as **arrogance**.
+
+That perception is understandable, particularly for readers unfamiliar with
+the project’s early rough history. However, in engineering, the most productive
+response is **counter-data**, not repetition of unsupported claims or persistent
+mischaracterization of the work.
+
+### The Technical Accountability Challenge ("Peaceseeder")
+
+Sustained ambiguity around performance has a real cost: it devalues documented
+work and slows meaningful progress. To address this, a technical accountability
+baseline was introduced.
+
+This is not a barrier, but a baseline expectation:
+
+* Performance critiques should include reproducible benchmarks.
+* Claims should reference relevant context (ecosystem solutions,
+  **Core Web Vitals**, core architectural site-building scope).
+* Discussions should build on existing documentation rather than restart from
+  assumptions.
+
+Without this, performance conversations tend to loop without resolution. The
+goal is not to exclude critique—
+
+**it is to make critique effective, credible, and actionable.**
+
+Unproductive controversy is no longer useful to the project, its users, or the
+participants themselves. Disagreement remains welcome when grounded in
+verifiable evidence.
+
+### Examples of Unproductive Critiques
+
+To avoid repeated patterns, the following are examples of critiques that are not
+useful without evidence or context:
+
+1. Declaring a tool slow after disabling caching or aggregation, or without
+   evaluating the provided solutions.
+2. Claiming a tool is heavy without comparing equivalent alternatives, such as
+   large media sets, while providing no configuration data or comparative
+   benchmarks. Axiom is being "exploited" as an issue without fair comparison.
+3. Attributing CLS issues to a module when layout instability comes from broader
+   page configuration.
+4. Calling a tool unusable due to incomplete or incorrect configuration.
+5. Labeling a project a failure without using available UI or formatter
+   features.
+6. Turning technical disagreement into personal criticism of maintainers.
+7. Attacking useless peripherals that doesn't add values for the users when
+   technical claims are not substantiated.
+
+Slick provides enough solutions for its own scope to perform. Ignoring these
+solutions and missing benchmarks are the root cause of these non-accountable
+issues, easily identified as "intentional" due to lacking of interests in
+the provided solutions. We no longer have capacity to entertain controversy for
+its own sake. We don't view negativity without accountability as a contribution.
+If there are genuine performance problems in Slick, those concerned are welcome
+to meet the very basic technical challenge in
+[**Benchmarking & Performance Guidelines**](#benchmarking) with accountability.
+We have mastered this basic challenge for more than a decade, we'd be happy to
+see those concerned master it as well for more productive contributions. This
+notice is friendly, relaxed and meant to be helpful to those concerned.
+
+By contrast, feedback backed by data and communicated constructively is always
+considered a contribution.
+
+### The Science of the Medium
+
+From an artistic perspective, structural integrity is governed by science. We
+understand how **Zinc White/PW4 (ZnO)** forms metal soaps that can lead to
+delamination (as documented by Marion Mecklenburg and Charles Tumosa); how
+environmental factors degrade materials over time; or the fascinating, albeit
+toxic, history of **Lead White** from ancient cosmetics and paint to its modern
+reproduction using ancient Dutch stack method and its European ban.
+
+Technical systems behave similarly.
+
+When the medium—code or communication—is compromised by weak assumptions or lack
+of rigor, degradation follows. The focus here is:
+
+**to prioritize measurable, testable understanding over unsupported claims.**
+
+### Project History and Expectations
+
+Slick 7.2+, as a giveback project, was developed under real-world constraints.
+The initial implementation—including Slick Extras skins, media player features
+later shown to be **GDPR-friendly**, and Colorbox integrations— was produced in
+a short, high-pressure cycle (two weeks to be precise), followed by over a
+decade of iteration and refinement.
+
+The system has been validated across legacy environments (including older
+browser support, down to IE6–7, with minor unpublished adjustments) and
+continues to meet expectations under modern **Core Web Vitals** evaluations when
+measured properly and consistently.
+
+No system is perfect. However, repeatable performance data confirms the
+project’s practical utility.
+
+If there are areas for improvement, they are welcome—provided they are
+demonstrated clearly and tested rigorously. Contributions that clarify,
+benchmark, or improve the system are valued.
+
+The long-standing issue queue, project-home documentation, and later the
+**Peaceseeder** were created to give critiques a shared grounding in technical
+context, reproducible methodology, and clearly defined constraints. With those
+baselines in place, maintainership no longer requires constant re-litigation of
+settled claims. The project has fairly matured, and it is reasonable to expect
+discussions to fairly mature with it.
+
+This project is offered as-is, with a consistent principle over a decade:
+
+**Technical decisions should be grounded in evidence, not assumption. If useful,
+use it. If not, leave it alone. If you can, help. If not, leave it alone.**
+
+May this encourage new contributors not to be discouraged by loud debate. It
+appears circular controversy for its own sake is being "normalized". And
+performance is one of favorite subjects some attempted to speak loudly, and
+some missed the point since 2014. I hope documenting the technical reality being
+obfuscated persistently is not considered another obfuscation, but instead a
+genuine historical perpective for those concerned to confidently meet the very
+basic challenge of [**Benchmarking & Performance Guidelines**](#benchmarking) in
+a credible, and actionable manner, so we can all clear the cloud, and save our
+limited and precious time to focus on the things that actually pay the bill.
+
+While there is no longer capacity to engage endlessly with unsupported claims,
+collaboration remains welcome when it is data-driven, solution-oriented, and
+focused on advancing the work for the broader community, and when time permits.

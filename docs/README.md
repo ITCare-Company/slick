@@ -12,6 +12,7 @@
  * [Slick Formatters](#formatters)
  * [Benchmarking & Performance Guidelines](#benchmarking)
  * [Strategic Optimization Checklist](#optimization)
+ * [Technical Manifesto: A Decade of Empirical Introspection](#manifesto)
  * [Troubleshooting](#troubleshooting)
  * [FAQ](#faq)
  * [Contribution](#contribution)
