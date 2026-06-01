@@ -409,14 +409,14 @@ be `$this->{$var}`. That kind of contribution—precise, focused on the root
 cause, educational, and constructive—was invaluable to me as a learner. They
 knew the code was rough, yet still took the time to help.
 
-### The Benchmarking Reality
+#### The Benchmarking Reality
 
 To resolve recurring questions, I conducted structured benchmarking using
 **XHProf** and **GTMetrix**. The results—archived in a long-standing project
 issue—showed a stark reality: some alternatives claimed to be leaner were
 significantly heavier (up to **~1500%**) and measurably slower, with microsecs
-higher memory overhead. The gap also increased with sample size, including
-comparisons against the project in its beta form.
+higher memory overhead given just 17 images. The gap also increased with sample
+size, including comparisons against the project in its beta form.
 
 This revealed a consistent pattern: assumptions had been treated as conclusions
 without validation. The lesson is straightforward—
@@ -427,7 +427,7 @@ We value simplicity (“KISS”) where it is appropriate. However, simplicity is
 a substitute for solving complex problems, and applying it indiscriminately can
 lead to incorrect conclusions or measurable regressions.
 
-### The Cycle of Resistance
+#### The Cycle of Resistance
 
 Given the discrepancy, benchmark context was added to the project home as a
 reference point. This was not intended as a "**boast**", but as documentation—
@@ -457,90 +457,117 @@ That perception is understandable, particularly for readers unfamiliar with
 the project’s early rough history. However, in engineering, the most productive
 response is **counter-data**: reproducible evidence, clear benchmarks, and
 actionable findings, rather than repetition of unsupported claims or persistent
-mischaracterization of the work.
+mis-characterization of the work.
 
-In good faith, and with the aim of breaking that cycle, **Peaceseeder** was
-established to help facilitate credible and accountable **counter-data**. We
-hope it encourages those who have criticized Slick over the years—or anyone with
-genuine concerns—to demonstrate their points through measurable evidence that
-can benefit the project, its users, and the contributors themselves through the
-credibility and recognition that come with meaningful results under the
+In good faith, and with the aim of breaking that cycle,
+[**Peaceseeder**](#benchmarking) was established to help facilitate credible and
+accountable **counter-data**. We hope it encourages those who have criticized
+Slick over the years—or anyone with genuine concerns—to demonstrate their points
+through measurable evidence that can benefit the project, its users, and the
+contributors themselves through the credibility and recognition that come with
+meaningful results under the
 [**Benchmarking & Performance Guidelines**](#benchmarking).
 
 We are not concerned by correction. Over time, this project has adapted to many
 valid critiques and treated mistakes as lessons. Good-faith correction remains
 welcome.
 
-### The Technical Accountability Challenge ("Peaceseeder")
+---
 
-Sustained ambiguity around performance has a real cost: it devalues documented
-work and slows meaningful progress. To address this, a technical accountability
-baseline was introduced.
+### Technical Accountability & Performance Discussions (Peaceseeder)
 
-This is not a barrier, but a baseline expectation:
+Performance discussions are valuable, but they are most productive when grounded
+in reproducible evidence and project context.
 
-* Performance critiques should include reproducible benchmarks.
-* Claims should reference relevant context (ecosystem solutions,
-  **Core Web Vitals**, core architectural site-building scope).
-* Discussions should build on existing documentation rather than restart from
-  assumptions.
+To improve signal quality and reduce recurring ambiguity, this project adopts a
+simple technical baseline for performance conversations.
 
-Without this, performance conversations tend to loop without resolution. The
-goal is not to exclude critique—
+This baseline is not intended to discourage critique. It exists to make critique
+actionable, comparable, and technically useful.
 
-**it is to make critique effective, credible, and actionable.**
+#### Baseline Expectations
 
-Unproductive controversy is no longer useful to the project, its users, or the
-participants themselves. Disagreement remains welcome when grounded in
-verifiable evidence.
+Performance claims are most useful when they include:
 
-### Examples of Unproductive Critiques
+* Reproducible benchmarks or measurable observations.
+* Relevant context (configuration, environment, dataset size, caching state,
+  aggregation state, architectural constraints, ecosystem solutions,
+  **Core Web Vitals**, etc.).
+* Reference to existing project documentation, known caveats, or documented
+  remedies where applicable.
+* Minimal configuration details sufficient to allow independent verification.
 
-To avoid repeated patterns, the following are examples of critiques that are not
-useful without evidence or context:
+When essential context is missing, it becomes difficult to distinguish between:
 
-1. Declaring a tool slow after disabling caching or aggregation, or without
-   evaluating the provided solutions.
-2. Claiming a tool is heavy without comparing equivalent alternatives, such as
-   large media sets, while providing no configuration data or comparative
-   benchmarks. Axiom is being "exploited" as an issue without fair comparison.
-3. Attributing CLS issues to a module when layout instability comes from broader
-   page configuration.
-4. Calling a tool unusable due to incomplete or incorrect configuration.
-5. Labeling a project a failure without using available UI or formatter
-   features.
-6. Turning technical disagreement into personal criticism of maintainers.
-7. Attacking useless peripherals that don't add values for the users when
-   technical claims are not substantiated.
+* project limitations,
+* configuration or site building issues,
+* environmental constraints,
+* integration choices,
+* or genuine defects requiring investigation.
 
-Slick provides enough solutions within its intended scope to perform
-effectively. Repeatedly overlooking those solutions while presenting unsupported
-performance claims has been a recurring source of confusion. When available
-remedies are ignored and no benchmarks are provided, concerns become difficult
-to evaluate or act upon in a meaningful way.
+The goal is not to raise barriers to participation.
 
-As a result, Slick is sometimes criticized for challenges it has already
-addressed, while labels such as "slow" or "heavy" are repeated without
-supporting evidence. This pattern has persisted since 2014. With due respect,
-such commentary does not diminish Slick as much as it highlights the need for
-stronger technical rigor. Unsupported criticism may create momentary noise, but
-it does not advance understanding.
+The goal is to reduce circular discussion and improve the quality of technical
+analysis.
 
-We no longer have capacity to entertain controversy for its own sake. Negativity
-without accountability is not considered a contribution. If there are genuine
-performance problems in Slick, those concerned are sincerely encouraged to
-engage the very basic technical challenge in
-[**Benchmarking & Performance Guidelines**](#benchmarking) with integrity,
-reproducibility, and actionable data.
+The purpose of documenting these expectations is not to discourage critique,
+but to encourage discussions that are technically rigorous, actionable, and
+useful to the broader community.
 
-This project has approached that standard for more than a decade, and welcomes
-others to do the same so discussions can become more productive. Because
-unsupported narratives have repeated for many years, this clarification is
-documented for transparency and educational value. It is intended in a
-constructive spirit.
+If performance concerns are identified, contributors are sincerely encouraged to
+provide benchmarks, reproducible conditions, or implementation evidence so
+findings can be evaluated fairly and independently.
 
-By contrast, feedback backed by data and communicated constructively is always
-considered a contribution.
+#### Examples of Low-Signal Performance Reports
+
+The following patterns are difficult to evaluate without supporting data or
+context:
+
+1. Reporting severe performance issues without benchmark data, environment
+   details, or reproducible steps.
+
+2. Evaluating behavior under intentionally atypical conditions (for example,
+   disabled caching or disabled aggregation) without clearly identifying those
+   conditions.
+
+3. Declaring a feature "heavy" or "slow" without comparative measurements
+   against equivalent alternatives or comparable workloads.
+
+4. Attributing layout instability, loading behavior, or rendering costs
+   exclusively to this project when multiple site-level factors may contribute.
+
+5. Drawing conclusions from incomplete configuration or without testing
+   documented configuration guidance, caveats, or performance recommendations.
+
+6. Proposing architectural changes without accompanying benchmarks,
+   proof-of-concept implementations, or measurable improvement criteria.
+
+These examples are not dismissed automatically. They simply require additional
+technical grounding to become actionable.
+
+#### Examples of Productive Critiques
+
+The following are always welcomed:
+
+* Reproducible bug reports.
+* Benchmark-backed performance analysis.
+* Comparative measurements.
+* Configuration-specific observations.
+* Architectural critique supported by data or implementation evidence.
+* Counterexamples demonstrating measurable regressions.
+* Improvements, patches, experiments, or independently verifiable
+  investigations.
+
+Constructive, data-driven and solution-oriented disagreement is valuable.
+
+Historically, many improvements in this project originated from strong technical
+criticism backed by testing, experimentation, or field observations.
+
+Incorrect observations are also normal in engineering work. Everyone gets things
+wrong occasionally, including maintainers. What matters is whether discussion
+converges toward clearer understanding and better evidence.
+
+---
 
 ### The Science of the Medium
 
@@ -558,53 +585,72 @@ of rigor, degradation follows. The focus here is:
 
 **to prioritize measurable, testable understanding over unsupported claims.**
 
-### Project History and Expectations
+---
 
-Slick 7.2+, as a giveback project, was developed under real-world constraints.
-The initial implementation—including Slick Extras skins, media player features
-later shown to be **GDPR-friendly**, and Colorbox integrations— was produced in
-a short, high-pressure cycle (two weeks to be precise) while working with
-theming, coding and site building, followed by over a decade of iteration and
-refinement.
+### Project Scope & Context
 
-The system has been validated across legacy environments (including older
-browser support, down to IE6–7, with minor unpublished adjustments) and
-continues to meet expectations under modern **Core Web Vitals** evaluations when
-measured properly and consistently.
+Slick has evolved over many years across varied deployment environments,
+workflows, and performance expectations.
+
+The project documentation includes known caveats, troubleshooting guidance, and
+performance recommendations intended to help users operate within the tool’s
+intended scope.
+
+The system has been validated across legacy environments, including older
+browser support, down to IE6–7, specific for Slick 7.2, with minor unpublished
+adjustments. Modern Slick may slightly vary since Blazy 2.6 was only tested
+against IE9, and its 3.x may likely abandon IE families, or require polyfills.
 
 No system is perfect. However, repeatable performance data confirms the
-project’s practical utility.
+project’s practical utility; and it continues to meet expectations under modern
+**Core Web Vitals** evaluations when measured properly and consistently. Like
+any software system, Slick is not universally optimal for every use case. Users
+should evaluate whether it fits their requirements, constraints, and priorities.
 
 If there are areas for improvement, they are welcome—provided they are
 demonstrated clearly and tested rigorously. Contributions that clarify,
 benchmark, or improve the system are valued.
 
-The long-standing issue queue, project-home documentation, and later the
-**Peaceseeder** were created to give critiques a shared grounding in technical
-context, reproducible methodology, and clearly defined constraints. With those
-baselines in place, maintainership no longer requires constant re-litigation of
-settled claims. The project has fairly matured, and it is reasonable to expect
-discussions to fairly mature with it.
+---
 
-This project is offered as-is, with a consistent principle over more than a
-decade:
+### Guiding Principle
 
-**Technical decisions should be grounded in evidence, not assumption. If useful,
-use it. If not, leave it alone. If you can help, help. If not, leave it alone.**
+This project is offered as-is, with a consistent technical principle:
 
-May this encourage new contributors not to be discouraged by loud debate.
-Circular controversy can sometimes become "normalized", especially around
-familiar topics such as performance. Since 2014, some discussions have repeated
-the same claims while missing the basic requirement of measurement.
+**Technical decisions should be guided by observable evidence rather than
+unsupported assumptions.**
 
-The purpose of documenting persistent misconceptions is not to create further
-controversy, but to preserve historical context and encourage higher-quality
-participation. Those concerned are welcome to meet the straightforward challenge
-of [**Benchmarking & Performance Guidelines**](#benchmarking) in a credible and
-actionable manner so we can all save our limited and precious time to focus on
-the things that actually pay the bill.
+If performance concerns exist, they are welcome topics for investigation.
+
+The preferred path is straightforward:
+
+* describe the environment,
+* provide reproducible measurements,
+* share benchmarks or comparative data,
+* identify the observed behavior clearly enough for others to validate
+  independently.
+* and meet the [**Technical Accountability Challenge**](#benchmarking) for more
+  detailed steps in a credible and actionable manner. It may take a pro site
+  builder around 15 minutes, or end users an hour or less. No coding skill is
+  required, just **site building** and proper understanding of the requirements.
+
+That approach helps maintainers, contributors, and users spend limited time on
+issues that can be analyzed, reproduced, and improved.
+
+Slick is just a tool, and must be treated so by reading its manual before
+use or unsupported claims. As a tool, "**avoidable configuration pitfalls**" due
+to improper use have been socialized for many years under **TROUBLESHOOTINGS**
+and **PERFORMANCE TIPS** sections with explicit **for better or worse** caveats,
+including a benchmark link in the project home as an example for independent
+audits before repeating unsupported claims. Since 2025, the link was removed to
+encourage independent and objective benchmarks without being influenced by
+historical achievements which serve more as a baseline context now.
 
 While there is no longer capacity to engage endlessly with unsupported claims,
 collaboration remains welcome when it is data-driven, solution-oriented, and
 focused on advancing the project for the broader community, and only when time
 permits.
+
+[**Technical Accountability Challenge**](#benchmarking) is now formally taking
+over our job to keep unsupported claims entertained in the most professional,
+beneficial and actionable manner.
