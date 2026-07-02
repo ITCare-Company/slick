@@ -138,15 +138,33 @@ as:
 - ~**1500% increase in page weight**, or
 - ~**100% speed discrepancy**
 
-These figures are **reference magnitudes**, not rhetorical thresholds or
-anomalies, and scale with sample size and architectural complexity.
+These figures are **reference magnitudes** given just 17 images, not rhetorical
+thresholds or anomalies, and scale with sample size and architectural
+complexity. Most noticeably when **CWV LCP** rules are applied indiscriminately
+to **any** supported media types, or **GDPR** rules specific for iframes using
+**Media Switcher > Image to iframe** option. Understanding both front-end
+problems and the provided solutions will make things click.
+
+Native lazy-load was incubated back in 2017, and established in 2019, this
+blessing was embraced early since its incubation, however Native lazy-load alone
+can not perform under **CWV** scrutiny. Blazy ecosystem strives to solve what
+Native lazy-load does not attempt to solve since it is intentionally scoped
+by-design. Unverified claims can be derived from the lack of understanding about
+these basic web development challenges about which we have striven to cope with
+more than a decade ago, and are continually refining them whenever we can since
+we understand web is a moving target.
 
 Minor library and asset size differences resulting from
 **intentional modular features** (skins, media players, lightboxes, etc.) are
 recognized as explicit trade-offs for advanced functionality and fall outside
 core architectural regression analysis. We view these as essential efficiency
 gains for site builders rather than architectural bloat or performance
-regressions.
+regressions since these extra features are never loaded by default, until
+explicit needs or intents. This decade-old principle respects advanced users as
+much as helps end users get up and running quickly without unnecessary hurdles.
+End users might get surprised encountering a broken display by default due to
+even Default skin is not loaded, however advanced users who have developed
+their muscle memory and value purity viewed this as a necessary surprise.
 
 ---
 
@@ -430,26 +448,79 @@ lead to incorrect conclusions or measurable regressions.
 #### The Cycle of Resistance
 
 Given the discrepancy, benchmark context was added to the project home as a
-reference point. This was not intended as a "**boast**", but as documentation—
-a baseline for informed discussion. It served as a technical boundary: a pause
-for reflection, or ready **counter-data** when discussions drifted away from
+reference point. This was not intended as a boast, but as documentation—a
+baseline for informed discussion. It serves as technical context or counter-data
+when performance discussions arise and helps ground conversations in measurable
 evidence.
 
-It is natural for maintainers to be protective of work they built—especially in
-its fragile early stages. Most creators understand that instinct.
+It is natural for maintainers to be protective of work they built, especially
+during a project's early stages. Most creators understand that instinct.
 
-To some readers, that may appear overly assertive or protective. Others who
-review the issue history, documentation, or conduct independent benchmarking may
-simply view it as pragmatic context, underscored by the caveat
+Some readers may view benchmark references as overly assertive, while others
+who review the issue history, documentation, or conduct independent
+benchmarking may simply see them as pragmatic context, underscored by the caveat
 "**for better or worse**" and a careful nod to Uncle Ben's responsibilities of
 power. Perception varies.
 
-Despite this, similar cycles continued: empirical data was often bypassed in
-favor of recurring, unverified claims. This creates friction—not because of
-disagreement, but because discussions restart without engaging existing
-benchmark evidence or project home documentation.
+Despite this, similar discussion patterns have continued over time: empirical
+data is sometimes bypassed in favor of recurring claims that are difficult to
+verify. This creates friction, not because disagreement exists, but because
+discussions often restart without engaging existing benchmark evidence or
+project documentation. Technical disagreements are valuable when they advance
+understanding; they are most productive when accompanied by supporting data and
+reproducible findings.
 
-It is worth noting:
+This pattern has appeared repeatedly over the years, so it is worth outlining
+the elements typically needed for an actionable performance report:
+
+1. **Issue:** A performance concern is identified. Good—we should investigate.
+   Before creating a report, verify this basic due diligence first:
+
+   _Is this site-building difficulty, or performance problem?_
+
+   Understanding that they are separate problems will determine the correlation
+   of title and the actual reported issue. Follow
+   [**Benchmarking SOP**](#benchmarking), then proceed as required.
+2. **Reproduction:** A reproducible test case or clear steps are provided.
+3. **Configuration:** Relevant configuration exports, screenshots, or examples
+   are shared.
+4. **Data:** Measurements or benchmarks are included.
+5. **Verification:** Findings are reviewed and validated collaboratively.
+6. **Resolution:** Follow-up confirms whether the issue was resolved or further
+   investigation is required.
+
+When several of these elements are missing, it becomes difficult to act on a
+technical report. Performance discussions are most effective when they remain
+data-driven and reproducible.
+
+These patterns have existed since the 7.2 beta stage. Anecdotal observations are
+not inherently problematic—in fact, they are often valuable in engineering.
+Many important investigations begin with anecdotal reports or intuition. The
+key step is refining those observations into reproducible cases and measurable
+results.
+
+For example, statements such as "Slick is a disaster" become highly useful
+when accompanied by data, benchmarks, and reproduction steps that allow others
+to verify and investigate the claim. Reports that reveal misconfigurations or
+unexpected behavior beyond the reported or documented solutions deserve
+recognition because they help improve the project. We do not hide problems and
+weaknesses; we reveal, expose, troubleshoot and document them transparently in
+the project issues and documentations.
+
+Professional, data-driven discussions replace opinion-based debates with
+objective metrics. This helps depersonalize disagreements and keeps the focus
+on shared project goals. Data distinguishes reproducible technical findings
+from unverified assumptions. The relevant data here is technical, not personal.
+At the same time, data alone is rarely enough; issue resolution also depends on
+constructive framing, collaboration, and mutual respect.
+
+Repeated assertions about failures, architectural shortcomings, or comparative
+performance—when presented without supporting evidence—are difficult to
+evaluate and often lead to discussions that revisit the same ground. The
+project documentation includes guidance intended to reduce duplicate,
+unsupported performance discussions and encourage reproducible reporting.
+
+**It is worth noting:**
 
 strong claims can sometimes be perceived as **arrogance**.
 
@@ -468,8 +539,13 @@ contributors themselves through the credibility and recognition that come with
 meaningful results under the
 [**Benchmarking & Performance Guidelines**](#benchmarking).
 
+The goal is to improve our technical analysis and site-building practices
+together. By meeting the [**Benchmarking SOP**](#benchmarking),
+we can ground performance discussions in shared evidence and continue improving
+both the project and our collective understanding of its behavior.
+
 We are not concerned by correction. Over time, this project has adapted to many
-valid critiques and treated mistakes as lessons. Good-faith correction remains
+valid critiques and treated mistakes as lessons. Good-faith correction remain
 welcome.
 
 ---
@@ -527,8 +603,8 @@ context:
    details, or reproducible steps.
 
 2. Evaluating behavior under intentionally atypical conditions (for example,
-   disabled caching or disabled aggregation) without clearly identifying those
-   conditions.
+   disabled caching or aggregation, or neglecting the provided solutions)
+   without clearly identifying those conditions.
 
 3. Declaring a feature "heavy" or "slow" without comparative measurements
    against equivalent alternatives or comparable workloads.
@@ -637,20 +713,25 @@ The preferred path is straightforward:
 That approach helps maintainers, contributors, and users spend limited time on
 issues that can be analyzed, reproduced, and improved.
 
-Slick is just a tool, and must be treated so by reading its manual before
-use or unsupported claims. As a tool, "**avoidable configuration pitfalls**" due
-to improper use have been socialized for many years under **TROUBLESHOOTINGS**
-and **PERFORMANCE TIPS** sections with explicit **for better or worse** caveats,
-including a benchmark link in the project home as an example for independent
-audits before repeating unsupported claims. Since 2025, the link was removed to
-encourage independent and objective benchmarks without being influenced by
-historical achievements which serve more as a baseline context now.
+Slick is a tool and, like any tool, is best evaluated with reference to its
+documentation, configuration guidance, and measurable results. Over many years,
+common configuration pitfalls and performance considerations have been
+documented under the **TROUBLESHOOTING** and **PERFORMANCE TIPS** sections,
+accompanied by a clear for **better or worse** caveat. The project home also
+historically included benchmark references as baseline context for independent
+evaluation and auditing.
 
-While there is no longer capacity to engage endlessly with unsupported claims,
-collaboration remains welcome when it is data-driven, solution-oriented, and
-focused on advancing the project for the broader community, and only when time
-permits.
+Since 2025, the benchmark link has been removed to encourage independent,
+objective benchmarking without undue influence from historical results, which
+now serve primarily as contextual reference.
 
-[**Technical Accountability Challenge**](#benchmarking) is now formally taking
-over our job to keep unsupported claims entertained in the most professional,
-beneficial and actionable manner.
+While there is limited capacity to revisit recurring performance discussions
+indefinitely, collaboration remains welcome whenever it is data-driven,
+solution-oriented, and focused on advancing the project for the broader
+community, subject to available time and resources.
+
+The [**Technical Accountability Challenge**](#benchmarking) now serves as the
+preferred framework for evaluating performance concerns in a professional,
+actionable, and reproducible manner. By grounding discussions in reproducible
+test cases and measurable data, contributors can help ensure that performance
+reports lead to meaningful investigation and project improvements.
