@@ -131,40 +131,36 @@ due diligence:
 A qualifying flaw is a **measurable discrepancy** between two or more
 benchmarked implementations.
 
-Based on one publicly and three privately recorded benchmarks, historically
-observed baselines indicate that **meaningful regressions** typically manifest
-as:
+Based on one public and three privately recorded benchmarks, historical
+baselines indicate that meaningful architectural regressions typically
+manifest as approximately:
 
-- ~**1500% increase in page weight**, or
-- ~**100% speed discrepancy**
+- **1500% increase in page weight**, or
+- **100% speed discrepancy**
 
-These figures are **reference magnitudes** given just 17 images, not rhetorical
-thresholds or anomalies, and scale with sample size and architectural
-complexity. Most noticeably when **CWV LCP** rules are applied indiscriminately
-to **any** supported media types, or **GDPR** rules specific for iframes using
-**Media Switcher > Image to iframe** option. Understanding both front-end
-problems and the provided solutions will make things click.
+These figures are **reference magnitudes**, observed with a sample of 17
+images. They are neither rhetorical thresholds nor isolated anomalies, and are
+expected to scale with sample size and architectural complexity.
 
-Native lazy-load was incubated back in 2017, and established in 2019, this
-blessing was embraced early since its incubation, however Native lazy-load alone
-can not perform under **CWV** scrutiny. Blazy ecosystem strives to solve what
-Native lazy-load does not attempt to solve since it is intentionally scoped
-by-design. Unverified claims can be derived from the lack of understanding about
-these basic web development challenges about which we have striven to cope with
-more than a decade ago, and are continually refining them whenever we can since
-we understand web is a moving target.
+The largest regressions have consistently appeared when **Core Web Vitals
+(CWV)** guidance—particularly **Largest Contentful Paint (LCP)**—is applied
+indiscriminately across supported media types, or when **GDPR** requirements
+for iframes are addressed without using **Media Switcher → Image to iframe**.
+Understanding these constraints, together with the corresponding solutions,
+provides the necessary context for interpreting benchmark results.
 
-Minor library and asset size differences resulting from
+Native lazy-loading was introduced experimentally in 2017 and became broadly
+available in 2019. The Blazy ecosystem adopted it early while recognizing that
+native lazy-loading intentionally addresses only part of the performance
+problem. Optimizing broader architectural concerns, including **CWV**, remains
+the responsibility of applications built on top of it.
+
+Likewise, minor differences in library or asset size resulting from
 **intentional modular features** (skins, media players, lightboxes, etc.) are
-recognized as explicit trade-offs for advanced functionality and fall outside
-core architectural regression analysis. We view these as essential efficiency
-gains for site builders rather than architectural bloat or performance
-regressions since these extra features are never loaded by default, until
-explicit needs or intents. This decade-old principle respects advanced users as
-much as helps end users get up and running quickly without unnecessary hurdles.
-End users might get surprised encountering a broken display by default due to
-even Default skin is not loaded, however advanced users who have developed
-their muscle memory and value purity viewed this as a necessary surprise.
+considered explicit trade-offs for advanced functionality rather than
+architectural regressions. These components are loaded only when explicitly
+enabled, allowing lightweight defaults while providing additional capabilities
+when required.
 
 ---
 
@@ -215,8 +211,8 @@ Minimum requirements:
 
 - **Resolved Issue Isolation:**
 
-  Leverage the provided configuration and [Strategic Optimization Checklist](#optimization) below to ensure resolved issues remain isolated from the
-  audits.
+  Leverage the provided configuration and [Strategic Optimization Checklist](#optimization)
+  below to ensure resolved issues remain isolated from the audits.
 
 ---
 
@@ -232,23 +228,38 @@ contributors, ensuring your expertise is recognized by the entire community.
 ### Note on Native Lazy-Loading & CWV
 
 Native lazy-loading is valuable, but **one-size-fits-all implementations** do
-not eliminate architectural differences under CWV scrutiny.
+not eliminate architectural differences under **CWV** evaluation.
 
-While Slick may appear marginally heavier at first glance—because the initial
-visible asset is **intentionally not lazy-loaded to preserve LCP**—applying
-identical CWV constraints across all components consistently reveals the true
-performance characteristics, **as of this writing**. A deep understanding of
-these subtleties—specifically regarding **hidden** and **nested** formatters—is
-essential for any meaningful contribution.
+For example, Slick may initially appear slightly heavier because the first
+visible asset is **intentionally excluded from lazy-loading** to preserve
+**LCP**. Applying equivalent CWV constraints across comparable implementations,
+however, consistently reveals their underlying performance characteristics.
+Understanding these nuances—particularly for **hidden** and **nested**
+formatters—is essential when interpreting benchmark results.
 
-This framework reflects long-standing benchmarking precedent. Continued
-reliance on **legacy anecdotes** or **subjective critiques** may stall
-ecosystem progress.
+Applying native lazy-loading (`loading="lazy"`) to hero images,
+above-the-fold content, or visible iframes is a well-known anti-pattern because
+it can significantly degrade **Largest Contentful Paint (LCP)**. Since 2022,
+Slick has addressed this with **Loading priority → Slider**, which eagerly
+loads only the initial visible media while preserving lazy-loading for the
+remaining assets.
 
-> *Unresolved technical assumptions hinder a healthy ecosystem.*
+Iframes present a different challenge. Loading them eagerly substantially
+increases page cost, while lazy-loading them directly may conflict with user
+experience or privacy requirements. Slick instead provides **Media Switcher →
+Image to iframe**, using an image placeholder before replacing it with the
+iframe when appropriate, helping satisfy both **LCP** and **GDPR**
+considerations.
 
-To move forward, we encourage a transition from repetitive discourse to
-**reproducible, data-driven accountability**.
+This framework reflects long-standing benchmarking practice. Performance
+discussions are most productive when supported by reproducible measurements,
+comparable test conditions, and documented implementation details rather than
+isolated observations.
+
+> *Reproducible evidence leads to more productive technical discussions.*
+
+We encourage contributors to evaluate architectural behavior through
+**reproducible, data-driven benchmarking** that others can independently verify.
 
 ---
 
@@ -271,7 +282,8 @@ environment for the benefit of the wider Drupal community.
 
 ## <a name="optimization"> </a>Strategic Optimization Checklist
 
-Proper configuration ensures the module works for you, not against you. Use this checklist to audit your implementation:
+Proper configuration ensures the module works for you, not against you. Use this
+checklist to audit your implementation:
 
 ### 1. Essential UI Refinements
 
@@ -322,7 +334,8 @@ Proper configuration ensures the module works for you, not against you. Use this
     - **Strategy:**
 
       Use image styles with a **"crop"** effect whenever possible.
-      Select the **Aspect ratio** in the formatter UI and enable **Modern CSS aspect-ratio** in Blazy settings.
+      Select the **Aspect ratio** in the formatter UI and enable
+      **Modern CSS aspect-ratio** in Blazy settings.
 
     - **Fluid Logic:**
 
@@ -470,55 +483,9 @@ project documentation. Technical disagreements are valuable when they advance
 understanding; they are most productive when accompanied by supporting data and
 reproducible findings.
 
-This pattern has appeared repeatedly over the years, so it is worth outlining
-the elements typically needed for an actionable performance report:
-
-1. **Issue:** A performance concern is identified. Good—we should investigate.
-   Before creating a report, verify this basic due diligence first:
-
-   _Is this site-building difficulty, or performance problem?_
-
-   Understanding that they are separate problems will determine the correlation
-   of title and the actual reported issue. Follow
-   [**Benchmarking SOP**](#benchmarking), then proceed as required.
-2. **Reproduction:** A reproducible test case or clear steps are provided.
-3. **Configuration:** Relevant configuration exports, screenshots, or examples
-   are shared.
-4. **Data:** Measurements or benchmarks are included.
-5. **Verification:** Findings are reviewed and validated collaboratively.
-6. **Resolution:** Follow-up confirms whether the issue was resolved or further
-   investigation is required.
-
-When several of these elements are missing, it becomes difficult to act on a
-technical report. Performance discussions are most effective when they remain
-data-driven and reproducible.
-
-These patterns have existed since the 7.2 beta stage. Anecdotal observations are
-not inherently problematic—in fact, they are often valuable in engineering.
-Many important investigations begin with anecdotal reports or intuition. The
-key step is refining those observations into reproducible cases and measurable
-results.
-
-For example, statements such as "Slick is a disaster" become highly useful
-when accompanied by data, benchmarks, and reproduction steps that allow others
-to verify and investigate the claim. Reports that reveal misconfigurations or
-unexpected behavior beyond the reported or documented solutions deserve
-recognition because they help improve the project. We do not hide problems and
-weaknesses; we reveal, expose, troubleshoot and document them transparently in
-the project issues and documentations.
-
-Professional, data-driven discussions replace opinion-based debates with
-objective metrics. This helps depersonalize disagreements and keeps the focus
-on shared project goals. Data distinguishes reproducible technical findings
-from unverified assumptions. The relevant data here is technical, not personal.
-At the same time, data alone is rarely enough; issue resolution also depends on
-constructive framing, collaboration, and mutual respect.
-
-Repeated assertions about failures, architectural shortcomings, or comparative
-performance—when presented without supporting evidence—are difficult to
-evaluate and often lead to discussions that revisit the same ground. The
-project documentation includes guidance intended to reduce duplicate,
-unsupported performance discussions and encourage reproducible reporting.
+This pattern has appeared repeatedly over the years, so it is high time to
+establish a framework with an actionable benchmarking for the highest good of
+those concerned.
 
 **It is worth noting:**
 
@@ -560,39 +527,6 @@ simple technical baseline for performance conversations.
 
 This baseline is not intended to discourage critique. It exists to make critique
 actionable, comparable, and technically useful.
-
-#### Baseline Expectations
-
-Performance claims are most useful when they include:
-
-* Reproducible benchmarks or measurable observations.
-* Relevant context (configuration, environment, dataset size, caching state,
-  aggregation state, architectural constraints, ecosystem solutions,
-  **Core Web Vitals**, etc.).
-* Reference to existing project documentation, known caveats, or documented
-  remedies where applicable.
-* Minimal configuration details sufficient to allow independent verification.
-
-When essential context is missing, it becomes difficult to distinguish between:
-
-* project limitations,
-* configuration or site building issues,
-* environmental constraints,
-* integration choices,
-* or genuine defects requiring investigation.
-
-The goal is not to raise barriers to participation.
-
-The goal is to reduce circular discussion and improve the quality of technical
-analysis.
-
-The purpose of documenting these expectations is not to discourage critique,
-but to encourage discussions that are technically rigorous, actionable, and
-useful to the broader community.
-
-If performance concerns are identified, contributors are sincerely encouraged to
-provide benchmarks, reproducible conditions, or implementation evidence so
-findings can be evaluated fairly and independently.
 
 #### Examples of Low-Signal Performance Reports
 
@@ -645,24 +579,6 @@ converges toward clearer understanding and better evidence.
 
 ---
 
-### The Science of the Medium
-
-From an artistic perspective, structural integrity is governed by science. We
-understand how **Zinc White/PW4 (ZnO)** forms metal soaps that can lead to
-delamination (as documented by Marion Mecklenburg and Charles Tumosa); how
-environmental factors degrade materials over time; or the fascinating, albeit
-toxic, history of **Lead White** from ancient cosmetics and paint to its modern
-reproduction using ancient Dutch stack method and its European ban.
-
-Technical systems behave similarly.
-
-When the medium—code or communication—is compromised by weak assumptions or lack
-of rigor, degradation follows. The focus here is:
-
-**to prioritize measurable, testable understanding over unsupported claims.**
-
----
-
 ### Project Scope & Context
 
 Slick has evolved over many years across varied deployment environments,
@@ -691,35 +607,75 @@ benchmark, or improve the system are valued.
 
 ### Guiding Principle
 
-This project is offered as-is, with a consistent technical principle:
+This project is offered as-is, with one consistent technical principle:
 
-**Technical decisions should be guided by observable evidence rather than
-unsupported assumptions.**
+> **Technical decisions should be guided by observable evidence rather than unsupported assumptions.**
 
-If performance concerns exist, they are welcome topics for investigation.
+Performance concerns are always welcome. The most productive reports include
+enough information for others to reproduce, measure, and independently verify
+the observed behavior.
 
-The preferred path is straightforward:
+A typical workflow is:
 
-* describe the environment,
-* provide reproducible measurements,
-* share benchmarks or comparative data,
-* identify the observed behavior clearly enough for others to validate
-  independently.
-* and meet the [**Technical Accountability Challenge**](#benchmarking) for more
-  detailed steps in a credible and actionable manner. It may take a pro site
-  builder around 15 minutes, or end users an hour or less. No coding skill is
-  required, just **site building** and proper understanding of the requirements.
+1. **Identify the issue.** Determine whether the concern is architectural,
+   environmental, or related to site building or configuration.
+2. **Reproduce it.** Provide clear steps or a minimal test case.
+3. **Describe the environment.** Include relevant configuration, dataset size,
+   caching state, aggregation, ecosystem integrations, and architectural
+   constraints.
+4. **Measure it.** Share benchmarks or other objective observations.
+5. **Verify it.** Allow others to reproduce and validate the findings.
+6. **Resolve it.** Confirm whether the issue was addressed or requires further
+   investigation.
 
-That approach helps maintainers, contributors, and users spend limited time on
-issues that can be analyzed, reproduced, and improved.
+For detailed guidance, see the [**Benchmarking SOP**](#benchmarking).
+Experienced site builders can usually complete it in about 15 minutes, while
+most users can do so in under an hour. No coding is required—only site-building
+knowledge and an understanding of the documented requirements.
 
-Slick is a tool and, like any tool, is best evaluated with reference to its
-documentation, configuration guidance, and measurable results. Over many years,
-common configuration pitfalls and performance considerations have been
-documented under the **TROUBLESHOOTING** and **PERFORMANCE TIPS** sections,
-accompanied by a clear for **better or worse** caveat. The project home also
-historically included benchmark references as baseline context for independent
-evaluation and auditing.
+This process helps maintainers, contributors, and users focus their limited time
+on issues that can be analyzed, reproduced, and improved.
+
+---
+
+### Baseline Expectations
+
+Performance reports are most actionable when they include:
+
+- Reproducible benchmarks or measurable observations.
+- Relevant context, such as configuration, environment, dataset size, caching,
+  aggregation, architectural constraints, ecosystem solutions, and
+  **Core Web Vitals (CWV)** considerations.
+- References to existing documentation, known caveats, or documented remedies
+  where applicable.
+- Sufficient configuration details for others to reproduce the results.
+
+Without this context, it is often difficult to determine whether the observed
+behavior reflects:
+
+- a project limitation,
+- a site-building or configuration issue,
+- an environmental constraint,
+- an integration choice,
+- or a genuine defect.
+
+These expectations are not intended to discourage feedback or raise barriers to
+participation. Their purpose is to encourage discussions that are reproducible,
+technically rigorous, and actionable for the broader community.
+
+If a performance concern is identified, contributors are encouraged to provide
+benchmarks, reproducible conditions, or implementation evidence so the findings
+can be evaluated fairly and independently.
+
+---
+
+### A Tool is a Tool
+
+Slick is a tool and, like any tool, is best evaluated using its documentation,
+configuration guidance, and measurable results. Common configuration pitfalls,
+performance considerations, and known trade-offs have been documented over many
+years under **Troubleshooting** and **Performance Tips**, together with
+benchmark references that provide baseline context for independent evaluation.
 
 Since 2025, the benchmark link has been removed to encourage independent,
 objective benchmarking without undue influence from historical results, which
