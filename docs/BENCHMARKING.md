@@ -39,7 +39,7 @@ To ensure informed and constructive evaluation, please follow these protocols:
 #### Understand the Ecosystem
 
 - Familiarize yourself with **Core Web Vitals** and the relevant configuration
-  surfaces within **Blazy** and **Slick**, including Media formatter UIs.
+  surfaces within **Blazy** and **Slick**, including Slick Media formatter UIs.
 - These tools are intentionally flexible; observed performance variance is
   often environmental or configurational rather than architectural.
 - While standard bugs are addressed through regular maintenance, **this audit
@@ -129,7 +129,7 @@ due diligence:
 #### 1. Define the Flaw
 
 A qualifying flaw is a **measurable discrepancy** between two or more
-benchmarked implementations.
+benchmarked implementations. The third normally determines the commonality.
 
 Based on one public and three privately recorded benchmarks, historical
 baselines indicate that meaningful architectural regressions typically

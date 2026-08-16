@@ -107,7 +107,8 @@ class SlickTextFormatterTest extends BlazyKernelTestBase {
     // $build['#settings'] = BlazyApi::init();
     // @todo refine the parameters, but not crucial for now.
     // $scopes = $this->formatterInstance->buildSettings($build, NULL);
-    // $this->assertEquals($this->testPluginId, $scopes['blazies']->get('field.plugin_id'));
+    // $this->assertEquals($this->testPluginId,
+    // $scopes['blazies']->get('field.plugin_id'));
     $form = [];
     $form_state = new FormState();
     $element = $this->formatterInstance->settingsForm($form, $form_state);
