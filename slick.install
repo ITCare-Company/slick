@@ -40,7 +40,7 @@ function slick_requirements($phase) {
         '@name' => $name,
         '@libpath' => $libpath,
       ]),
-      'severity'    => $exists ? REQUIREMENT_OK : REQUIREMENT_ERROR,
+      'severity'    => $exists ? (class_exists('\\Drupal\\Core\\Extension\\Requirement\\RequirementSeverity') ? \Drupal\Core\Extension\Requirement\RequirementSeverity::OK : REQUIREMENT_OK) : (class_exists('\\Drupal\\Core\\Extension\\Requirement\\RequirementSeverity') ? \Drupal\Core\Extension\Requirement\RequirementSeverity::Error : REQUIREMENT_ERROR),
       'value'       => $exists ? t('@name library installed at @path', [
         '@name' => $name,
         '@path' => $path,
