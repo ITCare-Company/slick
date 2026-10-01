@@ -11,6 +11,7 @@ use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
+use Drupal\slick\Attribute\SlickSkin;
 use Drupal\slick\Entity\Slick;
 
 /**
@@ -125,7 +126,7 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
     // SlickSkinPluginInterface::class,
     // 'Drupal\slick\Annotation\SlickSkin'
     // );.
-    parent::__construct(static::$path, $namespaces, $module_handler, static::$interface, static::$annotation);
+    parent::__construct(static::$path, $namespaces, $module_handler, static::$interface, SlickSkin::class, static::$annotation);
 
     $this->root = $root;
     $this->config = $config;
